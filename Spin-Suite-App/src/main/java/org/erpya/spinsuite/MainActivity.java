@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     DB_Manager manager = DB_Manager.getInstance(getApplicationContext());
                     PO po = new PO(getApplicationContext());
+                    po.setIsActive(true);
                     manager.save(po);
                 } catch (Exception e) {
                     e.printStackTrace();
