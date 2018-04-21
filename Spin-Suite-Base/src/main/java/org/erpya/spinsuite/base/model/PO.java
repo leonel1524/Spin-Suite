@@ -18,15 +18,20 @@ package org.erpya.spinsuite.base.model;
 import android.content.Context;
 import android.util.Log;
 
+import org.erpya.spinsuite.base.db.DB_Manager;
+import org.erpya.spinsuite.base.exceptions.SpinSuiteException;
+import org.erpya.spinsuite.base.util.LogM;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Persistence Object for data
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
  * <li> FR [  ]
- * @see https://github.com/erpcya/Spin-Suite/issues/
+ * @see https://github.com/adempiere/spin-suite/issues/2
  */
 public class PO {
 
@@ -149,7 +154,7 @@ public class PO {
      * 	@param clientId client
      */
     protected final void setClientId(int clientId) {
-        setAttributeValueNoCheck("AD_Client_ID", new Integer(clientId));
+        setValueNoCheck("AD_Client_ID", new Integer(clientId));
     }	//	setAD_Client_ID
 
     /**
@@ -168,7 +173,7 @@ public class PO {
      * 	@param orgId org
      */
     public final void setOrgId(int orgId) {
-        setAttributeValueNoCheck("AD_Org_ID", new Integer(orgId));
+        setValueNoCheck("AD_Org_ID", new Integer(orgId));
     }	//	setOrgId
 
     /**
@@ -207,7 +212,7 @@ public class PO {
      * 	@param active active
      */
     public final void setIsActive (boolean active) {
-        setAttributeValue("IsActive", new Boolean(active));
+        setValue("IsActive", new Boolean(active));
     }	//	setActive
 
     /**
@@ -255,7 +260,7 @@ public class PO {
      * 	@param userId user
      */
     protected final void setUpdatedBy (int userId) {
-        setAttributeValueNoCheck("UpdatedBy", new Integer(userId));
+        setValueNoCheck("UpdatedBy", new Integer(userId));
     }	//	setAD_User_ID
 
     /**
@@ -263,7 +268,7 @@ public class PO {
      * @param key
      * @param value
      */
-    protected final void setAttributeValueNoCheck(String key, Object value) {
+    protected final void setValueNoCheck(String key, Object value) {
         attributes.put(key, value);
     }
 
@@ -272,8 +277,64 @@ public class PO {
      * @param key
      * @param value
      */
-    protected final void setAttributeValue(String key, Object value) {
+    public final void setValue(String key, Object value) {
         attributes.put(key, value);
     }
 
+    /**
+     * 	Called before Save for Pre-Save Operation
+     * 	@param newRecord new record
+     *	@return true if record can be saved
+     */
+    protected boolean beforeSave(boolean newRecord) {
+        return true;
+    }	//	beforeSave
+
+    /**
+     * 	Called after Save for Post-Save Operation
+     * 	@param newRecord new record
+     *	@param success true if save operation was success
+     *	@return if save was a success
+     */
+    protected boolean afterSave (boolean newRecord, boolean success) {
+        return success;
+    }	//	afterSave
+
+    /**
+     * 	Is there a Change to be saved?
+     *	@return true if record changed
+     */
+    public boolean isValueChanged() {
+        //  TODO Implement it
+        return false;
+    }	//	isValueChanged
+
+    /**
+     * 	Is new record
+     *	@return true if new
+     */
+    public boolean isNewRecord() {
+        return true;
+    }	//	is_new
+
+    public void saveEx() throws SpinSuiteException {
+        boolean newRecord = false;
+        boolean success = true;
+        //  Before Save trigger
+        if (!beforeSave(newRecord)) {
+            throw new SpinSuiteException("Error After Save");
+        } else {
+            try {
+                DB_Manager.getInstance(context).save(this);
+            } catch (Exception e) {
+                LogM.log(getContext(), this.getClass(), Level.SEVERE, "Save Error", e);
+                success = false;
+            }
+            Log.i("saveEx", "Record Saved");
+        }
+        //  After Save
+        if(!afterSave(newRecord, success)) {
+            throw new SpinSuiteException("Error After Save");
+        }
+    }
 }
