@@ -20,9 +20,11 @@ import android.util.Log;
 
 import org.erpya.spinsuite.base.model.PO;
 
+import org.erpya.spinsuite.base.util.Criteria;
 import org.erpya.spinsuite.base.util.Util;
 
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 /**
  * Database Manager (Handle support for distinct database)
@@ -31,22 +33,22 @@ import java.lang.reflect.Constructor;
  * <li> FR [  ]
  * @see https://github.com/erpcya/Spin-Suite/issues/
  */
-public final class DB_Manager {
+public final class DBManager {
 
     /**
      * Private constructor for evelope
      * @param context
      */
-    private DB_Manager(Context context) {
+    private DBManager(Context context) {
         this.context = context;
     }
 
     /** Private context */
     private Context context = null;
     /** Instance of this    */
-    private static DB_Manager instance = null;
+    private static DBManager instance = null;
     /** Database reference  */
-    private DB_Support database = null;
+    private DBSupport database = null;
     /** Supported Database  */
     private final int COUCH_BASE_LITE = 0;
     /** Supported DB    */
@@ -60,9 +62,9 @@ public final class DB_Manager {
      * @param context
      * @return
      */
-    public static DB_Manager getInstance(Context context) {
+    public static DBManager getInstance(Context context) {
         if(instance == null) {
-            instance = new DB_Manager(context);
+            instance = new DBManager(context);
         }
         //  Default return
         return instance;
@@ -73,7 +75,7 @@ public final class DB_Manager {
      * @return
      * @throws Exception
      */
-    private DB_Support getDatabase() throws Exception {
+    private DBSupport getDatabase() throws Exception {
         if(database == null) {
             loadClass();
         }
@@ -111,14 +113,14 @@ public final class DB_Manager {
         }
         try {
             Class<?> clazz = Class.forName(className);
-            if(DB_Support.class.isAssignableFrom(clazz)) {
+            if(DBSupport.class.isAssignableFrom(clazz)) {
                 return clazz;
             }
             //	Make sure that it is a PO class
             Class<?> superClazz = clazz.getSuperclass();
             //	Validate super class
             while (superClazz != null) {
-                if (superClazz == DB_Support.class) {
+                if (superClazz == DBSupport.class) {
                     Log.e("Error loading class", "Use: " + className);
                     return clazz;
                 }
@@ -153,23 +155,51 @@ public final class DB_Manager {
         //
         Constructor<?> constructor = clazz.getDeclaredConstructor(new Class[]{Context.class});
         //	new instance
-        database = (DB_Support) constructor.newInstance(new Object[] {getContext()});
+        database = (DBSupport) constructor.newInstance(new Object[] {getContext()});
     }
 
     /**
      * Helper Methods
      */
     public void save(PO entity) throws Exception {
-        DB_Support database = getDatabase();
+        DBSupport database = getDatabase();
         //  Is Open
         boolean isOpen = database.isOpen();
         if(!isOpen) {
             database.open();
         }
         //  Save
-        database.savePO(entity);
+        database.saveMap(entity.getMap());
         if(!isOpen) {
             database.close();
         }
+    }
+
+    /**
+     * Get Attributes from criteria, it can resurn null
+     * @param criteria
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> getMap(Criteria criteria) throws Exception {
+        //  Validate metadata for query
+        if (criteria == null) {
+            return null;
+        }
+        //  Else
+        DBSupport database = getDatabase();
+        //  Is Open
+        boolean isOpen = database.isOpen();
+        if(!isOpen) {
+            database.open();
+        }
+        //  Get Map
+        Map<String, Object> attributes = database.getMap(criteria);
+        //  Close if it has been closed
+        if(!isOpen) {
+            database.close();
+        }
+        //  Default return
+        return attributes;
     }
 }

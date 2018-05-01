@@ -1,4 +1,4 @@
-package com.erpya.spinsuite;
+package org.erpya.spinsuite;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,9 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import org.erpya.spinsuite.base.model.GenericPO;
 import org.erpya.spinsuite.base.model.PO;
 
-import org.erpya.spinsuite.base.db.DB_Manager;
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -25,10 +26,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    DB_Manager manager = DB_Manager.getInstance(getApplicationContext());
-                    PO po = new PO(getApplicationContext());
+                    PO po = new GenericPO(getApplicationContext(), "Test");
                     po.setIsActive(true);
-                    manager.save(po);
+                    po.setValue("Table", "Hola");
+                    po.saveEx();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

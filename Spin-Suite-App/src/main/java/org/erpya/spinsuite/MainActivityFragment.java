@@ -1,4 +1,4 @@
-package com.erpya.spinsuite;
+package org.erpya.spinsuite;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;

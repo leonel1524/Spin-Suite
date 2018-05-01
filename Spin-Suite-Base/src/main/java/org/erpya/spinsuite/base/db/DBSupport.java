@@ -15,7 +15,9 @@
  *************************************************************************************/
 package org.erpya.spinsuite.base.db;
 
-import org.erpya.spinsuite.base.model.PO;
+import org.erpya.spinsuite.base.util.Criteria;
+
+import java.util.Map;
 
 /**
  * Interface of distint DB support
@@ -23,7 +25,7 @@ import org.erpya.spinsuite.base.model.PO;
  * <li> FR [  ]
  * @see https://github.com/erpcya/Spin-Suite/issues/
  */
-public interface DB_Support {
+public interface DBSupport {
 
     /**
      * Open Database for use
@@ -37,10 +39,15 @@ public interface DB_Support {
     public void close() throws Exception;
 
     /**
-     * Save a PO from entity parameter
+     * Save a Map from entity parameter
      * @param entity
      */
-    public void savePO(PO entity) throws Exception;
+    public void saveMap(Map<String, Object> entity) throws Exception;
+
+    /**
+    * get Map with attributes and values from criteria
+    */
+    public Map<String, Object> getMap(Criteria condition) throws Exception;
 
     /**
      * Verify if it is open

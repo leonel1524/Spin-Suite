@@ -120,8 +120,7 @@ public class LogM {
 	 * @return int
 	 */
 	public static int getTraceLevel(Context ctx){
-		//	TODO Add trace to context
-		return Level.WARNING.intValue();//Env.getContextAsInt(TRACE_LEVEL_KEY);
+		return Env.getContextAsInt(TRACE_LEVEL_KEY);
 	}
 	
 	/**
@@ -131,6 +130,6 @@ public class LogM {
 	 * @return void
 	 */
 	public static void setTraceLevel(Context ctx, Level traceLevel) {
-		//Env.setContext(TRACE_LEVEL_KEY, traceLevel.intValue());
+		Env.setContext(TRACE_LEVEL_KEY, traceLevel.intValue());
 	}
 }

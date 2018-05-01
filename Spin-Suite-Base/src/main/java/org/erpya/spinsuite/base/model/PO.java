@@ -18,12 +18,14 @@ package org.erpya.spinsuite.base.model;
 import android.content.Context;
 import android.util.Log;
 
-import org.erpya.spinsuite.base.db.DB_Manager;
+import org.erpya.spinsuite.base.db.DBManager;
 import org.erpya.spinsuite.base.exceptions.SpinSuiteException;
 import org.erpya.spinsuite.base.util.LogM;
+import org.erpya.spinsuite.base.util.ValueUtil;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -33,20 +35,52 @@ import java.util.logging.Level;
  * <li> FR [  ]
  * @see https://github.com/adempiere/spin-suite/issues/2
  */
-public class PO {
+public abstract class PO {
 
-    public PO(Context context) {
+    /**
+     * Load from Context and Table Name
+     * @param context
+     * @param tableName
+     */
+    public PO(Context context, String tableName) {
         this.context = context;
+        this.info = new POInfo(context, tableName);
     }
 
-    /** Static constant for ID */
-    private static final String ID_KEY = "_id";
+    /**
+     * From Parent
+     * @param parent
+     */
+    public PO(PO parent) {
+        this(parent.getContext());
+        this.parent = parent;
+    }
+
+    /**
+     * Only context the Meta-Data is populate after
+     * @param context
+     */
+    public PO(Context context) {
+        this.context = context;
+        this.info = new POInfo(context, getTableName());
+    }
+
     /** Map for key and values  */
     private Map<String, Object> attributes = new HashMap<String, Object>();
     /** Map for old key and values  */
     private Map<String, Object> oldAttributes = new HashMap<String, Object>();
     /** Context */
     private Context context = null;
+    /** Parent  */
+    private PO parent;
+    /** PO Info */
+    private POInfo info = null;
+
+    /**
+     * Get Table Name if it is not give from contructor
+     * @return
+     */
+    protected abstract String getTableName();
 
     /**
      * Get Map with key and values, used for save data
@@ -57,11 +91,44 @@ public class PO {
     }
 
     /**
+     * Set Map (Used only for populate from DB)
+     * @param map
+     */
+    public void setMap(Map<String, Object> map) {
+        attributes.putAll(map);
+        oldAttributes.putAll(map);
+    }
+
+    /**
      * Get Identifier for this object
      * @return
      */
     public String getId() {
-        return (String) attributes.get(ID_KEY);
+        return (String) attributes.get(POInfo.ID_KEY);
+    }
+
+    /**
+     * Get PO Information
+     * @return
+     */
+    public POInfo getInfo() {
+        return info;
+    }
+
+    /**
+     * Get Revision for this object
+     * @return
+     */
+    public String getRevision() {
+        return (String) attributes.get(POInfo.REVISION_KEY);
+    }
+
+    /**
+     * Get Attachment for this object
+     * @return
+     */
+    public Object getAttachment() {
+        return attributes.get(POInfo.ATTACHMENT_KEY);
     }
 
     /**
@@ -93,19 +160,7 @@ public class PO {
      *  @return int value or 0
      */
     public int getValueAsInt(String key) {
-        Object value = getValueAsObject(key);
-        if (value == null) {
-            return 0;
-        }
-        //
-        if (value instanceof Integer)
-            return ((Integer)value).intValue();
-        try {
-            return Integer.parseInt(value.toString());
-        } catch (NumberFormatException ex) {
-            Log.w("getValueAsInt", key + " - " + ex.getMessage());
-            return 0;
-        }
+        return ValueUtil.getValueAsInt(attributes.get(key));
     }   //  getValueAsInt
 
     /**
@@ -114,10 +169,7 @@ public class PO {
      *	@return value or ""
      */
     public String getValueAsString (String key) {
-        Object value = getValueAsObject (key);
-        if (value == null)
-            return "";
-        return value.toString();
+        return ValueUtil.getValueAsString(attributes.get(key));
     }	//	get_ValueAsString
 
     /**
@@ -126,13 +178,7 @@ public class PO {
      * @return boolean value
      */
     public boolean getValueAsBoolean(String key) {
-        Object object = getValueAsObject(key);
-        if (object != null) {
-            if (object instanceof Boolean)
-                return ((Boolean)object).booleanValue();
-            return "Y".equals(object);
-        }
-        return false;
+        return ValueUtil.getValueAsBoolean(attributes.get(key));
     }
 
     /**
@@ -140,13 +186,17 @@ public class PO {
      * @param key
      * @return boolean value
      */
-    public Timestamp getValueAsTimestamp(String key) {
-        Object object = getValueAsObject(key);
-        if (object != null) {
-            if (object instanceof Timestamp)
-                return (Timestamp) object;
-        }
-        return null;
+    public Date getValueAsDate(String key) {
+        return ValueUtil.getValueAsDate(attributes.get(key));
+    }
+
+    /**
+     * Get Database value as list
+     * @param key
+     * @return
+     */
+    public List<?> getValueAsList(String key) {
+        return ValueUtil.getValueAsList(attributes.get(key));
     }
 
     /**************************************************************************
@@ -227,16 +277,16 @@ public class PO {
      * 	Get Created
      * 	@return created
      */
-    final public Timestamp getCreated() {
-        return getValueAsTimestamp("Created");
+    final public Date getCreated() {
+        return getValueAsDate("Created");
     }	//	getCreated
 
     /**
      * 	Get Updated
      *	@return updated
      */
-    final public Timestamp getUpdated() {
-        return getValueAsTimestamp("Updated");
+    final public Date getUpdated() {
+        return getValueAsDate("Updated");
     }	//	getUpdated
 
     /**
@@ -325,7 +375,7 @@ public class PO {
             throw new SpinSuiteException("Error After Save");
         } else {
             try {
-                DB_Manager.getInstance(context).save(this);
+                DBManager.getInstance(context).save(this);
             } catch (Exception e) {
                 LogM.log(getContext(), this.getClass(), Level.SEVERE, "Save Error", e);
                 success = false;
