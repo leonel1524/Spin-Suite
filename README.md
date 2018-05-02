@@ -26,9 +26,9 @@ If you want to donate directly to support further development, here is us wallet
 
 ERPCyA: BTC
 ```
-1DWRvjnNcRfbbxv87xpUzgwqgBV65E2wHX
+1LisD4N4xDWtaqemWkfisa7HjGTo9173Fy
 ```
 ERPCyA: ETH
 ```
-0x77E103Ed36437753ec058BCc4C87Dc6D1F006Ebc
+0xC79879af797588357D8e0C7fE894Ad74a58d7825
 ```
