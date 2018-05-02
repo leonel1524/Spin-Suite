@@ -22,7 +22,7 @@ information or see https://www.gnu.org/licenses/gpl-3.0.en.html.
 ## Requirements
  - [Android Studio](https://developer.android.com/studio/index.html)
 
-If you want to donate directly to support further development, here is us wallet
+If you want to donate directly to support further development, here is our wallet
 
 ERPCyA: BTC
 ```
