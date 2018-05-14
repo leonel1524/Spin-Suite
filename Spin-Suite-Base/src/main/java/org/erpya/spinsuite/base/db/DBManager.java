@@ -21,6 +21,7 @@ import android.util.Log;
 import org.erpya.spinsuite.base.model.PO;
 
 import org.erpya.spinsuite.base.util.Criteria;
+import org.erpya.spinsuite.base.util.Env;
 import org.erpya.spinsuite.base.util.Util;
 
 import java.lang.reflect.Constructor;
@@ -49,14 +50,6 @@ public final class DBManager {
     private static DBManager instance = null;
     /** Database reference  */
     private DBSupport database = null;
-    /** Supported Database  */
-    private final int COUCH_BASE_LITE = 0;
-    /** Supported DB    */
-    private static final String[] SUPPORTED_DATABASE = new String[]
-            {       //  Couch Base Lite for Android
-                    "org.erpya.spinsuite.base.db.CouchDBLite_2_0_Support"
-            };
-
     /**
      * Get instance for it (Create new instance if it does not exist)
      * @param context
@@ -96,7 +89,7 @@ public final class DBManager {
      * @return
      */
     private String getClassname() {
-        return SUPPORTED_DATABASE[COUCH_BASE_LITE];
+        return Env.getCurrentSupportedDatabase();
     }
 
     /**

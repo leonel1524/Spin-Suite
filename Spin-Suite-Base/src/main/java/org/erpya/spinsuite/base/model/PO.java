@@ -20,9 +20,12 @@ import android.util.Log;
 
 import org.erpya.spinsuite.base.db.DBManager;
 import org.erpya.spinsuite.base.exceptions.SpinSuiteException;
+import org.erpya.spinsuite.base.util.Criteria;
+import org.erpya.spinsuite.base.util.Env;
 import org.erpya.spinsuite.base.util.LogM;
 import org.erpya.spinsuite.base.util.ValueUtil;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +78,8 @@ public abstract class PO {
     private PO parent;
     /** PO Info */
     private POInfo info = null;
+    /**	Logger							*/
+    protected transient LogM log = new LogM(getContext(), this.getClass());
 
     /**
      * Get Table Name if it is not give from contructor
@@ -188,6 +193,18 @@ public abstract class PO {
      */
     public Date getValueAsDate(String key) {
         return ValueUtil.getValueAsDate(attributes.get(key));
+    }
+
+    /**
+     * For BigDecimal
+     * @param key
+     * @return BigDecimal
+     */
+    public BigDecimal getValueAsBigDecimal(String key) {
+        BigDecimal bd = (BigDecimal)getValueAsObject(key);
+        if (bd == null)
+            return Env.ZERO;
+        return bd;
     }
 
     /**
@@ -386,5 +403,29 @@ public abstract class PO {
         if(!afterSave(newRecord, success)) {
             throw new SpinSuiteException("Error After Save");
         }
+    }
+
+    /**
+     * Get PO from Criteria, it return a instance of PO or null if criteria is null
+     * @param criteria
+     * @return
+     */
+    public boolean reload(Criteria criteria) {
+        if(criteria == null) {
+            return false;
+        }
+        try {
+            Map<String, Object> attributes = DBManager.getInstance(getContext()).getMap(criteria);
+            //  Validate Attributes
+            if(attributes == null) {
+                return false;
+            }
+            //  Else
+            setMap(attributes);
+        } catch (Exception e) {
+            log.warning("Error Loading Data for PO Info" + e.getLocalizedMessage());
+        }
+        //
+        return true;
     }
 }

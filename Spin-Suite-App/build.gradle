@@ -36,4 +36,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.couchbase.lite:couchbase-lite-android-ee:2.0.0'
     implementation project(path: ':Spin-Suite-Base')
+    implementation project(path: ':Database')
+    implementation project(path: ':Printing')
 }

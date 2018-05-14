@@ -9,8 +9,11 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.erpya.database.support.CouchDBLite_2_0_Support;
+import org.erpya.printing.TestPrinter;
 import org.erpya.spinsuite.base.model.GenericPO;
 import org.erpya.spinsuite.base.model.PO;
+import org.erpya.spinsuite.base.util.Env;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,21 +23,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        Env.setCurrentSupportedDatabase(CouchDBLite_2_0_Support.class.getName());
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    PO po = new GenericPO(getApplicationContext(), "Test");
-                    po.setIsActive(true);
-                    po.setValue("Table", "Hola");
-                    po.saveEx();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    PO po = new GenericPO(getApplicationContext(), "Test");
+//                    po.setIsActive(true);
+//                    po.setValue("Table", "Hola");
+//                    po.saveEx();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+                TestPrinter printer = new TestPrinter(getApplicationContext());
+                printer.run();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
             }
         });
     }

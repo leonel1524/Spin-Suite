@@ -21,6 +21,7 @@ import org.erpya.spinsuite.base.db.DBManager;
 import org.erpya.spinsuite.base.util.Condition;
 import org.erpya.spinsuite.base.util.Criteria;
 import org.erpya.spinsuite.base.util.LogM;
+import org.erpya.spinsuite.base.util.Util;
 import org.erpya.spinsuite.base.util.ValueUtil;
 
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class POInfo implements IPOInfo {
     /** Table Name  */
     public static final String TABLE_NAME = "AD_Table";
     /** Attribute for table Search  */
-    private static final String METADATA_TABLE_NAME = "AD_Table_TableName";
+    public static final String METADATA_TABLE_NAME = "AD_Table_TableName";
 
     /**
      * Get Context
@@ -93,8 +94,11 @@ public class POInfo implements IPOInfo {
      * Load PO information
      */
     private void loadInfo() {
+        if(Util.isEmpty(tableName)) {
+            return;
+        }
         try {
-            criteria = new Criteria().addCriteria(METADATA_TABLE_NAME, Condition.EQUAL, TABLE_NAME);
+            criteria = new Criteria().addCriteria(METADATA_TABLE_NAME, Condition.EQUAL, tableName);
             Map<String, Object> attributes = DBManager.getInstance(getContext()).getMap(criteria);
             //  Load
             if(attributes != null

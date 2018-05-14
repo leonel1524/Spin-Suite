@@ -31,6 +31,71 @@ public class LogM {
 	private final static String 	TRACE_LEVEL_KEY = "#TraceLevel";
 
 	/**
+	 * Default contructor
+	 * @param context
+	 * @param clazz
+	 */
+	public LogM(Context context, Class clazz) {
+		this.context = context;
+		this.clazz = clazz;
+	}
+
+	/** Class for log	*/
+	private Class clazz;
+	/**	Context	*/
+	private Context context;
+
+
+	/**
+	 * Log
+	 * @param level
+	 * @param msg
+	 */
+	public void log(Level level, String msg) {
+		log(context, clazz.getName(), level, msg);
+	}
+
+	/**
+	 * For Warning Log
+	 * @param msg
+	 */
+	public void warning(String msg) {
+		log(Level.WARNING, msg);
+	}
+
+	/**
+	 * For Fine Log
+	 * @param msg
+	 */
+	public void fine(String msg) {
+		log(Level.FINE, msg);
+	}
+
+	/**
+	 * For Error Log
+	 * @param msg
+	 */
+	public void error(String msg) {
+		log(Level.SEVERE, msg);
+	}
+
+	/**
+	 * For Severe
+	 * @param msg
+	 */
+	public void severe(String msg) {
+		error(msg);
+	}
+
+	/**
+	 * For finest
+	 * @param msg
+	 */
+	public void finest(String msg) {
+		log(Level.FINEST, msg);
+	}
+
+	/**
 	 * Log
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com 26/02/2014, 20:34:20
 	 * @param ctx

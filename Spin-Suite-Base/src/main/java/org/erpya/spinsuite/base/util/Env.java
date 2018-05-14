@@ -3651,6 +3651,22 @@ public final class Env {
 		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 
 				InputMethodManager.HIDE_IMPLICIT_ONLY);
 	}
+
+	/**
+	 * Get Current Supported Database
+	 * @return
+	 */
+	public static String getCurrentSupportedDatabase() {
+		return getContext(DB_CURRENT);
+	}
+
+	/**
+	 * Set current supported database
+	 * @param supportPath
+	 */
+	public static void setCurrentSupportedDatabase(String supportPath) {
+		setContext(DB_CURRENT, supportPath);
+	}
 	
 	/**	Context					*/
 	public static Context 				m_Ctx;
@@ -3705,6 +3721,7 @@ public final class Env {
 	 */
 	private static final String		DB_VERSION 			= "#DB_Version";
 	private static final String		DB_NAME_KEY 		= "#DB_Name";
+	private static final String		DB_CURRENT			= "#CurrentDB";
 	private static final String		DOC_DIRECTORY_KEY 	= "#DOC_Name";
 	private static final String		TMP_DIRECTORY_KEY 	= "#TMP_Name";
 	private static final String		ATT_DIRECTORY_KEY 	= "#ATT_Name";

@@ -1,1 +1,1 @@
-include ':Spin-Suite-App', ':Spin-Suite-Base'
+include ':Spin-Suite-App', ':Spin-Suite-Base', ':Device-Management', ':Printing', ':Database'
