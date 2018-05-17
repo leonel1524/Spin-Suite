@@ -17,34 +17,48 @@
  *************************************************************************************/
 package org.erpya.printing.honeywell;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.res.AssetManager;
+
 import com.honeywell.mobility.print.LinePrinter;
 import com.honeywell.mobility.print.LinePrinterException;
 
+import org.erpya.device.util.ConfigValue;
+import org.erpya.device.util.Device;
 import org.erpya.device.util.DeviceTypeHandler;
 import org.erpya.device.util.IDevice;
 import org.erpya.device.util.IDeviceType;
+import org.erpya.printing.util.IPrinter;
 import org.erpya.spinsuite.base.exceptions.SpinSuiteException;
+import org.erpya.spinsuite.base.util.LogM;
 import org.erpya.spinsuite.base.util.Util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Honeywell connector
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class HWPrinter extends DeviceTypeHandler {
+public class HoneywellPrinter extends DeviceTypeHandler implements IPrinter {
     /**
      * Standard constructor
-     *
+     * @param context
      * @param deviceType
      * @return void
      * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
      */
-    public HWPrinter(IDeviceType deviceType) {
-        super(deviceType);
+    public HoneywellPrinter(Context context, IDeviceType deviceType) {
+        super(context, deviceType);
+        setBluetoothMode();
     }
 
     /** Class for print */
@@ -52,7 +66,6 @@ public class HWPrinter extends DeviceTypeHandler {
     /** Printer URI */
     private String printerURI = null;
     /** Mandatory Attributes  */
-    public static String MAC_ADDRESS = "#MAC_ADDRESS";
     public static String PRINTER_TYPE = "#PRINTER_TYPE";
     public static String INTERFACE_TYPE = "#INTERFACE_TYPE";
     public static String INTERFACE_BLUETOOTH = "bt";
@@ -73,64 +86,152 @@ public class HWPrinter extends DeviceTypeHandler {
         if(device == null) {
             throw new SpinSuiteException("@Device@ @NotFound@");
         }
-        //
-        Map<String, Object> attributes = device.getDeviceTypeConfig();
-        if(attributes == null) {
-            return null;
-        }
         //  Get Values
-        String macAddress = (String) attributes.get(MAC_ADDRESS);
-        String interfaceType = (String) attributes.get(INTERFACE_TYPE);
+        ConfigValue interfaceType = device.getConfigValue(INTERFACE_TYPE);
         //  Validate
-        if(Util.isEmpty(macAddress)
-                || Util.isEmpty(interfaceType)) {
+        if(Util.isEmpty(device.getAddress())
+                || interfaceType == null
+                || interfaceType.isEmpty()) {
             return null;
         }
         //  Get
         // The printer address should be a Bluetooth MAC address.
-        if (macAddress.contains(":") == false && macAddress.length() == 12) {
+        if (device.getAddress().contains(":") == false
+                && device.getAddress().length() == 12) {
             // If the MAC address only contains hex digits without the
             // ":" delimiter, then add ":" to the MAC address string.
             char[] cAddr = new char[17];
 
             for (int i = 0, j = 0; i < 12; i += 2) {
-                macAddress.getChars(i, i + 2, cAddr, j);
+                device.getAddress().getChars(i, i + 2, cAddr, j);
                 j += 2;
                 if (j < 17) {
                     cAddr[j++] = ':';
                 }
             }
 
-            macAddress = new String(cAddr);
+            device.setAddress(new String(cAddr));
         }
         //
-        printerURI = interfaceType + "://" + macAddress;
+        printerURI = interfaceType.getValueAsString() + "://" + device.getAddress();
         //  Default return
         return printerURI;
     }
 
+    /**
+     * Set Bluetooth Mode
+     */
+    public void setBluetoothMode() {
+        getDeviceType().addConfigValue(INTERFACE_TYPE, INTERFACE_BLUETOOTH);
+    }
+
+    /**
+     * Set serial mode
+     */
+    public void setSerialMode() {
+        getDeviceType().addConfigValue(INTERFACE_TYPE, INTERFACE_SERIAL);
+    }
+
     @Override
-    public List<IDevice> getDeviceList() {
-        return null;
+    public List<IDevice> getAvailableDeviceList() {
+        List<IDevice> deviceList = new ArrayList<IDevice>();
+        ConfigValue connectionType = getDeviceType().getConfigValue(INTERFACE_TYPE);
+        //  Validate
+        if(connectionType == null
+                || connectionType.isEmpty()) {
+            return deviceList;
+        }
+        //  Validate Connection
+        //  For Bluetooth
+        if(connectionType.getValueAsString().equals(INTERFACE_BLUETOOTH)) {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+            //  Get list
+            for(BluetoothDevice bluetooth : pairedDevices) {
+                LogM.log(getContext(), "", Level.SEVERE,  "E" + bluetooth.getBluetoothClass());
+                Device bluetoothDevice = new Device(getDeviceType());
+                //  Set values
+                bluetoothDevice.setName(bluetooth.getName());
+                bluetoothDevice.setDeviceId(bluetooth.getAddress());
+                bluetoothDevice.setAddress(bluetooth.getAddress());
+                bluetoothDevice.setAvalilable(true);
+                bluetoothDevice.addConfigValue(JSON_ATTRIBUE_FILE_VALUES, readAssetFile());
+                bluetoothDevice.addConfigValue(PRINTER_TYPE, "PR2");
+                bluetoothDevice.addConfigValue(INTERFACE_TYPE, INTERFACE_BLUETOOTH);
+                deviceList.add(bluetoothDevice);
+                addDevice(bluetoothDevice);
+            }
+        }
+        return deviceList;
     }
 
     @Override
     public boolean isAvailable() throws Exception {
-        return false;
+        return true;
     }
+
+    /**
+     * Read JSON file
+     */
+    private String readAssetFile() {
+        String jsonAttribute = "";
+        InputStream input = null;
+        ByteArrayOutputStream output = null;
+        AssetManager assetManager = getContext().getAssets();
+        int initialBufferSize;
+
+        try {
+            input = assetManager.open("printer_profiles.JSON");
+            initialBufferSize = 8000;
+            output = new ByteArrayOutputStream(initialBufferSize);
+
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = input.read(buf)) > 0) {
+                output.write(buf, 0, len);
+            }
+            jsonAttribute = output.toString();
+            input.close();
+            input = null;
+            output.flush();
+            output.close();
+            output = null;
+        } catch (Exception ex) {
+            LogM.log(getContext(), getClass().getName(), Level.WARNING, "Error reading asset file: ");
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                    input = null;
+                }
+                //
+                if (output != null) {
+                    output.close();
+                    output = null;
+                }
+            } catch (IOException e){
+                //
+            }
+        }
+        //
+        return jsonAttribute;
+    }
+
 
     @Override
     public Object connect() throws Exception {
-        String uri = getPrinterURI();
-        Map<String, Object> attributes = getCurrentDevice().getDeviceTypeConfig();
-        if(attributes == null) {
-            return null;
-        }
-        String jsonAttributeValues = (String) attributes.get(JSON_ATTRIBUE_FILE_VALUES);
-        String printerId = (String) attributes.get(PRINTER_TYPE);
+        ConfigValue jsonAttributeValues = getCurrentDevice().getConfigValue(JSON_ATTRIBUE_FILE_VALUES);
+        ConfigValue printerType = getCurrentDevice().getConfigValue(PRINTER_TYPE);
         LinePrinter.ExtraSettings exSettings = new LinePrinter.ExtraSettings();
-        exSettings.setContext(null);
-        linePrinter = new LinePrinter(jsonAttributeValues, printerId, printerURI, exSettings);
+        exSettings.setContext(getContext());
+        //  Validate
+        if(jsonAttributeValues == null
+                || jsonAttributeValues.isEmpty()
+                || printerType == null
+                || printerType.isEmpty()) {
+            throw new SpinSuiteException("No Property value");
+        }
+        linePrinter = new LinePrinter(jsonAttributeValues.getValueAsString(), printerType.getValueAsString(), getPrinterURI(), exSettings);
         // Registers to listen for the print progress events.
         //lp.addPrintProgressListener(progressListener);
 
@@ -194,11 +295,12 @@ public class HWPrinter extends DeviceTypeHandler {
         return null;
     }
 
-    /**
-     * Add a new line
-     * @param lineQty
-     * @throws Exception
-     */
+    @Override
+    public void printLine(String line) throws Exception {
+        write(line);
+    }
+
+    @Override
     public void addLine(int lineQty) throws Exception {
         linePrinter.newLine(lineQty);
     }

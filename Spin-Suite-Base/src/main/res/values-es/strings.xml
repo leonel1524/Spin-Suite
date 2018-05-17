@@ -59,7 +59,7 @@
 	<string name="Url_Server">URL (Servidor)</string>
 	<string name="SynchronizingEnding">Sincronización Finalizada</string>
 	<!-- About -->
-	<string name="app_description" >Spin-Suite es una aplicación cuidadosamente diseñada como una solución offline "100%" Android. La misma hereda del Diccionario de Aplicación de ADempiere su forma dinámica, Ventanas, Procesos, Roles y Accesos.</string>
+	<string name="app_description" >Spin-Suite es una aplicación cuidadosamente diseñada como una solución offline Android. La misma hereda del Diccionario de Aplicación de ADempiere su forma dinámica, Ventanas, Procesos, Roles y Accesos.</string>
 	<string name="app_version_name" >Nombre de Versión</string>
 	<string name="app_version_code" >Código de Version</string>
 	<string name="app_permissions" >Permisos</string>

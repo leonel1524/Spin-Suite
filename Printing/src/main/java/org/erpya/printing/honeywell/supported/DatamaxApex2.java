@@ -15,71 +15,65 @@
  * Contributor: Carlos Parada cparada@erpya.com                                       *
  * See: www.erpya.com                                                                 *
  *************************************************************************************/
-package org.erpya.device.util;
+package org.erpya.printing.honeywell.supported;
 
+import org.erpya.device.util.ConfigValue;
+import org.erpya.device.util.IDeviceType;
+import org.erpya.printing.honeywell.HoneywellPrinter;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * DeviceManager Interface for add new device to list
+ * Available Device for printing
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
  */
-public interface IDeviceType {
+public class DatamaxApex2 implements IDeviceType {
 
-    /** Device Type List    */
-    public String TYPE_PRINTER = "PRT";
-    public String TYPE_BARCODE_SCAN = "BCS";
-    public String TYPE_RFID_SCAN = "RFI";
-    public String TYPE_CUSTOM = "CUS";
+    /** Device Type Configuration   */
+    private Map<String, ConfigValue> deviceTypeConfig = new HashMap<>();
 
-    /**
-     * Get Id configured for DeviceManager Type, example:
-     * <li>ID::#PR1</li>
-     * <li>Name::Printer</li>
-     * @return
-     */
-    public String getDeviceTypeId();
+    @Override
+    public String getDeviceTypeId() {
+        return "PR2";
+    }
 
-    /**
-     * Get Name of Device
-     * @return
-     */
-    public String getName();
+    @Override
+    public String getName() {
+        return "Datamax O'neil Apex 2";
+    }
 
-    /**
-     * Get Device Type for classification
-     * <li>TYPE_PRINTER</li>
-     * <li>TYPE_BARCODE_SCAN</li>
-     * <li>TYPE_RFID_SCAN</li>
-     * <li>TYPE_CUSTOM</li>
-     * @return
-     */
-    public String getType();
+    @Override
+    public String getType() {
+        return TYPE_PRINTER;
+    }
 
-    /**
-     * Get DeviceManager Config for use, example:
-     * <li>Coonection Type::Bluetooh</li>
-     * <li>Page::A4</li>
-     * @return
-     */
-    public Map<String, ConfigValue> getDeviceTypeConfig();
+    @Override
+    public Map<String, ConfigValue> getDeviceTypeConfig() {
+        return deviceTypeConfig;
+    }
 
-    /**
-     * Get a Configuration Value
-     * @param key
-     * @return
-     */
-    public ConfigValue getConfigValue(String key);
+    @Override
+    public ConfigValue getConfigValue(String key) {
+        return deviceTypeConfig.get(key);
+    }
 
-    /**
-     * Add device config value
-     * @param key
-     * @param value
-     */
-    public void addConfigValue(String key, Object value);
+    @Override
+    public void addConfigValue(String key, Object value) {
+        deviceTypeConfig.put(key, new ConfigValue(value));
+    }
 
-    /**
-     * Get DeviceManager Handler class (Used for connect with device)
-     * @return
-     */
-    public String getHandlerClass();
+    @Override
+    public String getHandlerClass() {
+        return HoneywellPrinter.class.getName();
+    }
+
+    @Override
+    public String toString() {
+        return "DatamaxApex2{" +
+                "getDeviceTypeId=" + getDeviceTypeId() +
+                ", getName=" + getName() +
+                ", getType=" + getType() +
+                '}';
+    }
 }

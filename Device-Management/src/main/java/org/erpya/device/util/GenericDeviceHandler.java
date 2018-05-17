@@ -16,22 +16,29 @@
  *****************************************************************************/
 package org.erpya.device.util;
 
+import android.content.Context;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
 /**
  * Generic implementation of Device Type Handler
- * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
+ * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
 public class GenericDeviceHandler extends DeviceTypeHandler {
 
-	public GenericDeviceHandler(IDeviceType device) {
-		super(device);
+	public GenericDeviceHandler(Context context, IDeviceType device) {
+		super(context, device);
 	}
 
 	@Override
 	public List<IDevice> getDeviceList() {
+		return null;
+	}
+
+	@Override
+	public List<IDevice> getAvailableDeviceList() {
 		return null;
 	}
 

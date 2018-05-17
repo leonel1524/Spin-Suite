@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.erpya.spinsuite.base.util.Env;
 import org.erpya.spinsuite.base.util.LogM;
+import org.erpya.spinsuite.base.util.Util;
 
 /**
  * Device Manager class is used for register each device to handle
@@ -44,11 +46,23 @@ public class DeviceManager {
 
 	/** Instance for it */
 	private static DeviceManager instance = null;
+	/** Context */
+	private final String CONTEXT_DEFAULT_DEVICE_HANDLER = "#DeviceTypeHandler|";
     /**	Logger							*/
     protected transient LogM log = new LogM(getContext(), this.getClass());
 
     /**
      * Get instance for it (Create new instance if it does not exist)
+     * @return
+     */
+    public static DeviceManager getInstance() {
+        getInstance(Env.getContext());
+        //  Default return
+        return instance;
+    }
+
+    /**
+     * Get instance with context
      * @param context
      * @return
      */
@@ -62,8 +76,10 @@ public class DeviceManager {
 
     /** Context */
 	private Context context;
-	/**	DeviceManager List	*/
+	/**	DeviceManager Map	*/
 	private Map<String, IDeviceType> deviceTypeMap = new HashMap<String, IDeviceType>();
+    /**	Handler Map	*/
+    private Map<String, DeviceTypeHandler> handlerMap = new HashMap<String, DeviceTypeHandler>();
 
     /**
      * Get Android Context
@@ -102,7 +118,7 @@ public class DeviceManager {
 	 * @param deviceTypeId
 	 * @return MADDeviceConfig
 	 */
-	public Map<String, Object> getDeviceTypeConfig(String deviceTypeId) {
+	public Map<String, ConfigValue> getDeviceTypeConfig(String deviceTypeId) {
 		IDeviceType device = deviceTypeMap.get(deviceTypeId);
 		if(device == null)
 			return null;
@@ -116,35 +132,85 @@ public class DeviceManager {
 	 * @return
 	 * @return DeviceTypeManagement
 	 */
-	public DeviceTypeHandler getDeviceHandler(String deviceId) {
-	    IDeviceType device = deviceTypeMap.get(deviceId);
-	    if(device == null) {
+	public DeviceTypeHandler getDeviceHandler(String deviceTypeId) {
+	    IDeviceType deviceType = deviceTypeMap.get(deviceTypeId);
+	    if(deviceType == null) {
 	        return null;
         }
-		//	Get class from parent
-		Class<?> clazz = getHandlerClass(device.getHandlerClass());
-		//	Not yet implemented
-		if (clazz == null) {
-			log.log(Level.INFO, "Using GenericDeviceHandler for " + device.getName());
-			//	
-			GenericDeviceHandler gdh = new GenericDeviceHandler(device);
-			return gdh;
-		}
-		//	
-		Constructor<?> constructor = null;
-		try {
-			constructor = clazz.getDeclaredConstructor(new Class[]{IDeviceType.class});
-			//	new instance
-			return (DeviceTypeHandler)constructor.newInstance(new Object[] {this});
-		} catch (Exception e) {
-			String msg = e.getMessage();
-			if (msg == null)
-				msg = e.toString();
-			log.warning("No transaction Constructor for " + clazz + " (" + msg + ")");
-		}
 		//	default return
-		return null;
+		return getDeviceHandler(deviceType);
 	}
+
+    /**
+     * Get Default device handler from type
+     * @param type
+     * @return configured device or first on searched
+     */
+    public DeviceTypeHandler getDefaultDeviceHandler(String type) {
+        if(Util.isEmpty(type)) {
+            return null;
+        }
+        //
+        DeviceTypeHandler handler = null;
+        //  Get ID from context
+        String deviceTypeId = Env.getContext(CONTEXT_DEFAULT_DEVICE_HANDLER + "|" + type);
+        if(!Util.isEmpty(deviceTypeId)) {
+            handler = getDeviceHandler(deviceTypeId);
+        }
+        //  Validate
+        if(handler == null) {
+            List<IDeviceType> deviceList = getDeviceTypeList();
+            if(deviceList != null) {
+                for(IDeviceType deviceType : deviceList) {
+                    if(deviceType.getType().equals(type)) {
+                        Env.setContext(CONTEXT_DEFAULT_DEVICE_HANDLER + "|" + type, deviceType.getDeviceTypeId());
+                        return getDeviceHandler(deviceType);
+                    }
+                }
+            }
+        }
+        //  Default Return
+        Env.setContext(CONTEXT_DEFAULT_DEVICE_HANDLER + "|" + type, (String) null);
+        return null;
+    }
+
+    /**
+     * Get Device Type Handler
+     * @param deviceType
+     * @return
+     */
+	public DeviceTypeHandler getDeviceHandler(IDeviceType deviceType) {
+	    DeviceTypeHandler handler = handlerMap.get(deviceType.getDeviceTypeId());
+	    //  Get
+        if(handler != null) {
+            return handler;
+        }
+        //	Get class from parent
+        Class<?> clazz = getHandlerClass(deviceType.getHandlerClass());
+        //	Not yet implemented
+        if (clazz == null) {
+            log.log(Level.INFO, "Using GenericDeviceHandler for " + deviceType.getName());
+            //
+            handler = new GenericDeviceHandler(context, deviceType);
+        } else {
+            //
+            Constructor<?> constructor = null;
+            try {
+                constructor = clazz.getDeclaredConstructor(new Class[]{Context.class, IDeviceType.class});
+                //	new instance
+                handler = (DeviceTypeHandler)constructor.newInstance(new Object[] {context, deviceType});
+            } catch (Exception e) {
+                String msg = e.getMessage();
+                if (msg == null)
+                    msg = e.toString();
+                log.warning("No transaction Constructor for " + clazz + " (" + msg + ")");
+            }
+        }
+        //  Save on map
+        handlerMap.put(deviceType.getDeviceTypeId(), handler);
+        //
+        return handler;
+    }
 
     /**
      * Get Class from device type, used for handler

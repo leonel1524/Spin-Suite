@@ -15,71 +15,23 @@
  * Contributor: Carlos Parada cparada@erpya.com                                       *
  * See: www.erpya.com                                                                 *
  *************************************************************************************/
-package org.erpya.device.util;
-
-import java.util.Map;
+package org.erpya.printing.util;
 
 /**
- * DeviceManager Interface for add new device to list
+ * Device Interface for handle printers
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
  */
-public interface IDeviceType {
-
-    /** Device Type List    */
-    public String TYPE_PRINTER = "PRT";
-    public String TYPE_BARCODE_SCAN = "BCS";
-    public String TYPE_RFID_SCAN = "RFI";
-    public String TYPE_CUSTOM = "CUS";
+public interface IPrinter {
 
     /**
-     * Get Id configured for DeviceManager Type, example:
-     * <li>ID::#PR1</li>
-     * <li>Name::Printer</li>
-     * @return
+     * Print Line
      */
-    public String getDeviceTypeId();
+    public void printLine(String line) throws Exception ;
+
 
     /**
-     * Get Name of Device
-     * @return
+     * add lines
+     * @param lineQuantity
      */
-    public String getName();
-
-    /**
-     * Get Device Type for classification
-     * <li>TYPE_PRINTER</li>
-     * <li>TYPE_BARCODE_SCAN</li>
-     * <li>TYPE_RFID_SCAN</li>
-     * <li>TYPE_CUSTOM</li>
-     * @return
-     */
-    public String getType();
-
-    /**
-     * Get DeviceManager Config for use, example:
-     * <li>Coonection Type::Bluetooh</li>
-     * <li>Page::A4</li>
-     * @return
-     */
-    public Map<String, ConfigValue> getDeviceTypeConfig();
-
-    /**
-     * Get a Configuration Value
-     * @param key
-     * @return
-     */
-    public ConfigValue getConfigValue(String key);
-
-    /**
-     * Add device config value
-     * @param key
-     * @param value
-     */
-    public void addConfigValue(String key, Object value);
-
-    /**
-     * Get DeviceManager Handler class (Used for connect with device)
-     * @return
-     */
-    public String getHandlerClass();
+    public void addLine(int lineQuantity) throws Exception ;
 }

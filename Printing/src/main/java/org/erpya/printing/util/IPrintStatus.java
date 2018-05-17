@@ -15,82 +15,15 @@
  * Contributor: Carlos Parada cparada@erpya.com                                       *
  * See: www.erpya.com                                                                 *
  *************************************************************************************/
-package org.erpya.device.util;
-
-import java.util.Map;
+package org.erpya.printing.util;
 
 /**
- * Device Interface for add new device
- * @author yamel, ysenih@erpya.com , http://www.erpya.com
+ * Interface for publish result
  */
-public interface IDevice extends IDeviceType {
-
-    /**
-     * Get Name of Device
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Set Name of Device
-     * @param name
-     */
-    public void setName(String name);
-
-    /**
-     * Get Device Type ID for classification
-     * @return
-     */
-    public String getDeviceTypeId();
-
-    /**
-     * Get Device ID
-     * @return
-     */
-    public String getDeviceId();
-
-    /**
-     * Set Device ID
-     * @param deviceId
-     */
-    public void setDeviceId(String deviceId);
-
-    /**
-     * Set Device Type ID
-     * @param deviceTypeId
-     */
-    public void setDeviceTypeId(String deviceTypeId);
-
-    /**
-     * Get DeviceManager Config for use, example:
-     * <li>Coonection Type::Bluetooh</li>
-     * <li>Page::A4</li>
-     * @return
-     */
-    public Map<String, ConfigValue> getDeviceConfig();
-
-    /**
-     * Verify if it is available
-     * @return
-     */
-    public boolean isAvailable();
-
-    /**
-     * Set Available Status
-     * @param isAvailable
-     */
-    public void setAvalilable(boolean isAvailable);
-
-    /**
-     * Get MAC Address
-     * @return
-     */
-    public String getAddress();
-
-
-    /**
-     * Set MAC Address
-     * @param address
-     */
-    public void setAddress(String address);
+public interface IPrintStatus {
+	
+	/**
+	 * Used for publish print status
+	 */
+	public void publishStatus(String message);
 }

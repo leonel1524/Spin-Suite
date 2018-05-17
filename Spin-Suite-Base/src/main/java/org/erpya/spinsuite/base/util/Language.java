@@ -379,7 +379,7 @@ public class Language {
 //	public static Language getLoginLanguage ()
 //	{
 //		// return s_loginLanguage; // See bug [2946164]
-//		return Env.getLanguage(Env.getCtx());
+//		return Env.getLanguage(Env.getContext());
 //	}   //  getLanguage
 
 	/**

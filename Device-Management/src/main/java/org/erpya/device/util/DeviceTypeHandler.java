@@ -17,14 +17,21 @@
  *************************************************************************************/
 package org.erpya.device.util;
 
+import android.content.Context;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.erpya.device.event.DeviceEvent;
 import org.erpya.device.event.DeviceEventListener;
 import org.erpya.spinsuite.base.exceptions.SpinSuiteException;
+import org.erpya.spinsuite.base.util.Env;
+import org.erpya.spinsuite.base.util.Util;
 
 
 /**
@@ -37,14 +44,16 @@ public abstract class DeviceTypeHandler {
 	/**
 	 * Standard constructor
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
+	 * @param context
 	 * @param deviceType
 	 * @return void
 	 */
-	public DeviceTypeHandler(IDeviceType deviceType) {
+	public DeviceTypeHandler(Context context, IDeviceType deviceType) {
 		if(deviceType == null)
 			throw new SpinSuiteException("@AD_Device_ID@ @NotFound@");
 		//	Set DeviceManager
 		this.deviceType = deviceType;
+		this.context = context;
 	}
 	
 	/**	Device Type */
@@ -52,10 +61,24 @@ public abstract class DeviceTypeHandler {
 	/** Device  */
 	private IDevice currentDevice = null;
 	/**	Is Open			*/
-	private boolean 	isConnected = false;
+	private boolean isConnected = false;
+	/**	Context	*/
+	private Context context = null;
 	/**	Event Listener	*/
 	private List<DeviceEventListener> listeners = new ArrayList<DeviceEventListener>();
-	
+	/** Device Map  */
+    private Map<String, IDevice> deviceMap = new HashMap<String, IDevice>();
+    /** Context */
+    private final String CONTEXT_DEFAULT_DEVICE = "#Device|";
+
+	/**
+	 * Get Context
+	 * @return
+	 */
+	public Context getContext() {
+		return context;
+	}
+
 	/**
 	 * Get DeviceManager
 	 * @return
@@ -67,10 +90,23 @@ public abstract class DeviceTypeHandler {
 
     /**
      * Get Current Device
+     * @param reload reload device
+     * @return
+     */
+    protected IDevice getCurrentDevice(boolean reload) {
+        if(currentDevice == null
+                || reload) {
+            currentDevice = getDefaultDevice();
+        }
+        return currentDevice;
+    }
+
+    /**
+     * Get Current device configured
      * @return
      */
     public IDevice getCurrentDevice() {
-        return currentDevice;
+        return getCurrentDevice(false);
     }
 
     /**
@@ -80,40 +116,70 @@ public abstract class DeviceTypeHandler {
     public void setCurrentDevice(IDevice device) {
         currentDevice = device;
     }
-	
-	/**
-	 * Get Available devices with optional Where Clause
-	 * @param onlyAvailable
-	 * @return
-	 * @return List<MADDevice>
-	 */
-	public List<IDevice> getDeviceList(boolean onlyAvailable) {
-		List<IDevice> devices = getDeviceList();
-		List<IDevice> availables = new ArrayList<IDevice>();
-		//  For all
-		if(!onlyAvailable) {
-            return devices;
+
+    /**
+     * Add Device to list
+     * @param device
+     */
+    protected void addDevice(IDevice device) {
+        if(device == null) {
+            return;
         }
-		if(devices == null) {
-			return null;
-		}
-		//	Iterate
-		for(IDevice device : devices) {
-		    if(!device.isAvailable()) {
-		        continue;
+        deviceMap.put(device.getDeviceId(), device);
+    }
+
+    /**
+     * Get Device from ID if exist
+     * @param deviceId
+     * @return
+     */
+    public IDevice getDevice(String deviceId) {
+        return deviceMap.get(deviceId);
+    }
+
+    /**
+     * Get Device List from cache map
+     * @return
+     */
+    public List<IDevice> getDeviceList() {
+        //	List
+        if(deviceMap.isEmpty()) {
+            getAvailableDeviceList();
+        }
+        return new ArrayList<IDevice>(deviceMap.values());
+    }
+
+    /**
+     * Get Default device selected previously
+     * @return
+     */
+    public IDevice getDefaultDevice() {
+        //  Get ID from context
+        String deviceId = Env.getContext(CONTEXT_DEFAULT_DEVICE + "|" + getDeviceType().getDeviceTypeId());
+        IDevice device = null;
+        if(!Util.isEmpty(deviceId)) {
+			device = getDevice(deviceId);
+        }
+        //
+        if(device == null){
+            List<IDevice> deviceList = getDeviceList();
+            if(deviceList != null) {
+				for(IDevice deviceSearched : deviceList) {
+					Env.setContext(CONTEXT_DEFAULT_DEVICE + "|" + getDeviceType().getDeviceTypeId(), deviceSearched.getDeviceId());
+					return deviceSearched;
+				}
             }
-            //  Add
-            availables.add(device);
-		}
-		//	Convert to array
-		return availables;
-	}
+        }
+        //  Device not found
+        Env.setContext(CONTEXT_DEFAULT_DEVICE + "|" + getDeviceType().getDeviceTypeId(), (String) null);
+        return device;
+    }
 
 	/**
 	 * Get Device List connected to hardware
 	 * @return
 	 */
-	public abstract List<IDevice> getDeviceList();
+	public abstract List<IDevice> getAvailableDeviceList();
 	
 	/**
 	 * Add Listener
@@ -221,4 +287,12 @@ public abstract class DeviceTypeHandler {
      * @return
      */
 	public abstract String getErrorMsg(String error);
+
+    @Override
+    public String toString() {
+        return "DeviceTypeHandler{" +
+                "deviceType=" + deviceType +
+                ", currentDevice=" + currentDevice +
+                '}';
+    }
 }

@@ -201,10 +201,7 @@ public abstract class PO {
      * @return BigDecimal
      */
     public BigDecimal getValueAsBigDecimal(String key) {
-        BigDecimal bd = (BigDecimal)getValueAsObject(key);
-        if (bd == null)
-            return Env.ZERO;
-        return bd;
+        return ValueUtil.getValueAsBigDecimal(attributes.get(key));
     }
 
     /**

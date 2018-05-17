@@ -34,3 +34,16 @@ dependencies {
     implementation project(path: ':Device-Management')
     implementation files('libs/hsm-android-print.jar')
 }
+
+task deleteJar(type: Delete) {
+    delete 'libs/spin-suite-printing.jar'
+}
+
+task createJar(type: Copy) {
+    from 'build/intermediates/intermediate-jars/release/'
+    into 'libs/'
+    include 'classes.jar'
+    rename('classes.jar', 'spin-suite-printing.jar')
+}
+
+createJar.dependsOn(deleteJar, build)

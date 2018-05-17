@@ -38,4 +38,5 @@ dependencies {
     implementation project(path: ':Spin-Suite-Base')
     implementation project(path: ':Database')
     implementation project(path: ':Printing')
+    implementation project(path: ':Device-Management')
 }

@@ -3,11 +3,10 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -28,3 +27,16 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+task deleteJar(type: Delete) {
+    delete 'libs/spin-suite-base.jar'
+}
+
+task createJar(type: Copy) {
+    from 'build/intermediates/intermediate-jars/release/'
+    into 'libs/'
+    include 'classes.jar'
+    rename('classes.jar', 'spin-suite-base.jar')
+}
+
+createJar.dependsOn(deleteJar, build)

@@ -18,7 +18,6 @@ package org.erpya.spinsuite.base.util;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,21 +28,16 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.inputmethod.InputMethodManager;
-
-import org.erpya.spinsuite.base.R;
 
 /**
  * @author Yamel Senih
@@ -58,36 +52,36 @@ public final class Env {
 	 * @return
 	 * @return Context
 	 */
-	public static Context getCtx() {
-		return m_Ctx;
+	public static Context getContext() {
+		return context;
 	}
 	
 	/**
 	 * Get Instance
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
-	 * @param p_Ctx
+	 * @param context
 	 * @param reload
 	 * @return
 	 * @return Env
 	 */
-	public static Env getInstance(Context p_Ctx, boolean reload) {
-		if(m_Instance == null
+	public static Env getInstance(Context context, boolean reload) {
+		if(instance == null
 				|| reload) {
-			m_Instance = new Env(p_Ctx);
+			instance = new Env(context);
 		}
 		//	Default Return
-		return m_Instance;
+		return instance;
 	}
 	
 	/**
 	 * Get Instance
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
-	 * @param p_Ctx
+	 * @param context
 	 * @return
 	 * @return Env
 	 */
-	public static Env getInstance(Context p_Ctx) {
-		return getInstance(p_Ctx, false);
+	public static Env getInstance(Context context) {
+		return getInstance(context, false);
 	}
 	
 	/**
@@ -206,7 +200,7 @@ public final class Env {
 	 * @param p_Ctx
 	 */
 	private Env(Context p_Ctx) {
-		m_Ctx = p_Ctx;
+		context = p_Ctx;
 	}
 	
 	/**
@@ -227,7 +221,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isEnvLoad() {
-		return isEnvLoad(getCtx());
+		return isEnvLoad(getContext());
 	}
 	
 	/**
@@ -248,7 +242,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isLoadedActivity() {
-		return isLoadedActivity(getCtx());
+		return isLoadedActivity(getContext());
 	}
 	
 	/**
@@ -269,7 +263,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isLogin() {
-		return isLogin(getCtx());
+		return isLogin(getContext());
 	}
 	
 	/**
@@ -290,7 +284,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setIsEnvLoad(boolean value) {
-		setIsEnvLoad(getCtx(), value);
+		setIsEnvLoad(getContext(), value);
 	}
 	
 	/**
@@ -311,7 +305,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setIsLoadedActivity(boolean value) {
-		setIsLoadedActivity(getCtx(), value);
+		setIsLoadedActivity(getContext(), value);
 	}
 	
 	/**
@@ -332,7 +326,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setIsLogin(boolean value) {
-		setIsLogin(getCtx(), value);
+		setIsLogin(getContext(), value);
 	}
 	
 	/**
@@ -361,7 +355,7 @@ public final class Env {
 	 * @return void
 	 */
 	/*public static void loadRoleAccess() {
-		loadRoleAccess(getCtx(), false);
+		loadRoleAccess(getContext(), false);
 	}*/
 	
     /**
@@ -394,7 +388,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void loadContext() {
-		loadContext(getCtx());
+		loadContext(getContext());
 	}
 	
 	/**
@@ -419,7 +413,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAccessLoaded(int m_AD_Role_ID, boolean loaded) {
-		setAccessLoaded(getCtx(), loaded);
+		setAccessLoaded(getContext(), loaded);
 	}
 	
 	/**
@@ -440,7 +434,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAccessLoaded(boolean loaded) {
-		setAccessLoaded(getCtx(), loaded);
+		setAccessLoaded(getContext(), loaded);
 	}
 	
 	/**
@@ -466,7 +460,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isAccessLoaded(int m_AD_Role_ID) {
-		return isAccessLoaded(getCtx(), m_AD_Role_ID);
+		return isAccessLoaded(getContext(), m_AD_Role_ID);
 	}
 	
 	/**
@@ -487,7 +481,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isAccessLoaded() {
-		return isAccessLoaded(getCtx());
+		return isAccessLoaded(getContext());
 	}
 	
 	/**
@@ -574,7 +568,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void loadRoleAccess(int m_AD_Role_ID) {
-		loadRoleAccess(getCtx(), m_AD_Role_ID);
+		loadRoleAccess(getContext(), m_AD_Role_ID);
 	}
 	
 	/**
@@ -599,7 +593,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getProcessAccess(int m_AD_Role_ID, int m_AD_Process_ID) {
-		return getProcessAccess(getCtx(), m_AD_Role_ID, m_AD_Process_ID);
+		return getProcessAccess(getContext(), m_AD_Role_ID, m_AD_Process_ID);
 	}
 	
 	/**
@@ -622,7 +616,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getProcessAccess(int m_AD_Process_ID) {
-		return getProcessAccess(getCtx(), m_AD_Process_ID);
+		return getProcessAccess(getContext(), m_AD_Process_ID);
 	}
 	
 	
@@ -648,7 +642,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getWindowsAccess(int m_AD_Role_ID, int m_SPS_Window_ID) {
-		return getWindowsAccess(getCtx(), m_AD_Role_ID, m_SPS_Window_ID);
+		return getWindowsAccess(getContext(), m_AD_Role_ID, m_SPS_Window_ID);
 	}
 	
 	/**
@@ -675,7 +669,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getDocumentAccess(int m_AD_Role_ID, int m_C_DocType_ID, String m_DocAction) {
-		return getDocumentAccess(getCtx(), m_AD_Role_ID, m_C_DocType_ID, m_DocAction);
+		return getDocumentAccess(getContext(), m_AD_Role_ID, m_C_DocType_ID, m_DocAction);
 	}
 	
 	/**
@@ -700,7 +694,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getDocumentAccess(int m_C_DocType_ID, String m_DocAction) {
-		return getDocumentAccess(getCtx(), m_C_DocType_ID, m_DocAction);
+		return getDocumentAccess(getContext(), m_C_DocType_ID, m_DocAction);
 	}
 	
 	/**
@@ -723,7 +717,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getWindowsAccess(int m_SPS_Window_ID) {
-		return getWindowsAccess(getCtx(), m_SPS_Window_ID);
+		return getWindowsAccess(getContext(), m_SPS_Window_ID);
 	}
 	
 	/**
@@ -744,7 +738,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int cacheReset() {
-		return cacheReset(getCtx());
+		return cacheReset(getContext());
 	}
 	
 	/**
@@ -841,7 +835,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void removeContext(String context) {
-		removeContext(getCtx(), context);
+		removeContext(getContext(), context);
 	}
 	
 	/**
@@ -871,7 +865,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext (String context, String value) {
-		setContext (getCtx(), context, value);
+		setContext (getContext(), context, value);
 	}
 	
 	/**
@@ -898,7 +892,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContextObject(String context, Object value) {
-		setContextObject(getCtx(), context, value);
+		setContextObject(getContext(), context, value);
 	}
 	
 	/**
@@ -930,7 +924,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContextObject(int m_ActivityNo, int TabNo, String context, Object value) {
-		setContextObject(getCtx(), m_ActivityNo, TabNo, context, value);
+		setContextObject(getContext(), m_ActivityNo, TabNo, context, value);
 	}
 	
 	
@@ -965,7 +959,7 @@ public final class Env {
 	 * @return Object
 	 */
 	public static Object getContextObject(String context, Class<?> clazz) {
-		return getContextObject(getCtx(), context, clazz);
+		return getContextObject(getContext(), context, clazz);
 	}
 	
 	/**
@@ -998,7 +992,7 @@ public final class Env {
 	 * @return Object
 	 */
 	public static Object getContextObject(int m_ActivityNo, int TabNo, String context, Class<?> clazz) {
-		return getContextObject(getCtx(), m_ActivityNo, TabNo, context, clazz);
+		return getContextObject(getContext(), m_ActivityNo, TabNo, context, clazz);
 	}
 	
 	/**
@@ -1040,7 +1034,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext (String context, long value) {
-		setContext (getCtx(), context, value);
+		setContext (getContext(), context, value);
 	}
 	
 	/**
@@ -1051,7 +1045,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext (String context, int value) {
-		setContext (getCtx(), context, value);
+		setContext (getContext(), context, value);
 	}
 	
 	
@@ -1086,7 +1080,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext (int m_ActivityNo, int TabNo, String context, String value) {
-		setContext(getCtx(), m_ActivityNo, TabNo, context, value);
+		setContext(getContext(), m_ActivityNo, TabNo, context, value);
 	}
 	
 	/**
@@ -1118,7 +1112,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContextArray (int m_ActivityNo, int TabNo, String context, int[] value) {
-		setContextArray(getCtx(), m_ActivityNo, TabNo, context, value);
+		setContextArray(getContext(), m_ActivityNo, TabNo, context, value);
 	}
 	
 	/**
@@ -1150,7 +1144,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContextArray (int m_ActivityNo, int TabNo, String context, String[] value) {
-		setContextArray(getCtx(), m_ActivityNo, TabNo, context, value);
+		setContextArray(getContext(), m_ActivityNo, TabNo, context, value);
 	}
 	
 	/**	
@@ -1182,7 +1176,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(int m_ActivityNo, int TabNo, String context, boolean value) {
-		setContext(getCtx(), m_ActivityNo, TabNo, context, value);
+		setContext(getContext(), m_ActivityNo, TabNo, context, value);
 	}
 	
 	/**
@@ -1210,7 +1204,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(int m_ActivityNo, String context, boolean value) {
-		setContext(getCtx(), m_ActivityNo, context, value);
+		setContext(getContext(), m_ActivityNo, context, value);
 	}
 	
 	/**
@@ -1240,7 +1234,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(int m_ActivityNo, int TabNo, String context, int value) {
-		setContext(getCtx(), m_ActivityNo, TabNo, context, value);
+		setContext(getContext(), m_ActivityNo, TabNo, context, value);
 	}
 	
 	/**
@@ -1268,7 +1262,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(int m_ActivityNo, String context, int value) {
-		setContext(getCtx(), m_ActivityNo, context, value);
+		setContext(getContext(), m_ActivityNo, context, value);
 	}
 	
 	
@@ -1302,7 +1296,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getContextAsInt(int m_ActivityNo, String context) {
-		return getContextAsInt(getCtx(), m_ActivityNo, context);
+		return getContextAsInt(getContext(), m_ActivityNo, context);
 	}
 	
 	/**
@@ -1338,7 +1332,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getContextAsInt(int m_ActivityNo, String context, boolean onlyWindow) {
-		return getContextAsInt(getCtx(), m_ActivityNo, context, onlyWindow);
+		return getContextAsInt(getContext(), m_ActivityNo, context, onlyWindow);
 	}
 	
 	/**
@@ -1372,7 +1366,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getContextAsInt(int WindowNo, int TabNo, String context) {
-		return getContextAsInt (getCtx(), WindowNo, TabNo, context);
+		return getContextAsInt (getContext(), WindowNo, TabNo, context);
 	}
 	
 	/**
@@ -1393,7 +1387,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setISOTrx (boolean isSOTrx) {
-		setISOTrx(getCtx(), isSOTrx);
+		setISOTrx(getContext(), isSOTrx);
 	}
 	
 	/**
@@ -1417,7 +1411,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getContext(String context) {
-		return getContext(getCtx(), context);
+		return getContext(getContext(), context);
 	}
 	
 	/**
@@ -1445,7 +1439,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getContextDateFormat(String context, String fromFormat, String toFormat) {
-		return getContextDateFormat(getCtx(), context, fromFormat, toFormat);
+		return getContextDateFormat(getContext(), context, fromFormat, toFormat);
 	}
 	
 	/**
@@ -1541,7 +1535,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getContextAsBoolean (String context) {
-		return getContextAsBoolean (getCtx(), context);
+		return getContextAsBoolean (getContext(), context);
 	}
 	
 	/**
@@ -1576,7 +1570,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getContextAsBoolean(int m_ActivityNo, int TabNo, String context) {
-		return getContextAsBoolean (getCtx(), m_ActivityNo, TabNo, context);
+		return getContextAsBoolean (getContext(), m_ActivityNo, TabNo, context);
 	}
 	
 	/**
@@ -1607,7 +1601,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getContextAsBoolean(int m_ActivityNo, String context) {
-		return getContextAsBoolean(getCtx(), m_ActivityNo, context);
+		return getContextAsBoolean(getContext(), m_ActivityNo, context);
 	}
 	
 	/**
@@ -1628,7 +1622,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(String context, boolean value) {
-		setContext(getCtx(), context, value);
+		setContext(getContext(), context, value);
 	}
 
 	/**
@@ -1653,7 +1647,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(int m_ActivityNo, String context, String value) {
-		setContext(getCtx(), m_ActivityNo, context, value);
+		setContext(getContext(), m_ActivityNo, context, value);
 	}
 	
 	/**
@@ -1690,7 +1684,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getContext(int m_ActivityNo, String context, boolean onlyWindow) {
-		return getContext(getCtx(), m_ActivityNo, context, onlyWindow);
+		return getContext(getContext(), m_ActivityNo, context, onlyWindow);
 	}
 	
 	/**
@@ -1714,7 +1708,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getContext(int m_ActivityNo, String context) {
-		return getContext(getCtx(), m_ActivityNo, context);
+		return getContext(getContext(), m_ActivityNo, context);
 	}
 
 	/**
@@ -1749,7 +1743,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getContext(int m_ActivityNo, int TabNo, String context) {
-		return getContext(getCtx(), m_ActivityNo, TabNo, context);
+		return getContext(getContext(), m_ActivityNo, TabNo, context);
 	}
 	
 	/**
@@ -1765,13 +1759,12 @@ public final class Env {
 	public static String[] getContextAsArray(Context ctx, String context) {
 		LogM.log(ctx, "Env", Level.INFO, "getContext=" + context);
 		SharedPreferences pf = PreferenceManager.getDefaultSharedPreferences(ctx);
-		Set<String> set = pf.getStringSet(context, null);
+		String set = pf.getString(context, null);
 		//	Default
 		if(set == null)
 			return null;
 		//	Default
-		String [] array = new String[set.size()];
-		set.toArray(array);
+		String [] array = set.split("");
 		return array;
 	}	//	getContext
 	
@@ -1783,7 +1776,7 @@ public final class Env {
 	 * @return String[]
 	 */
 	public static String[] getContextAsArray(String context) {
-		return getContextAsArray(getCtx(), context);
+		return getContextAsArray(getContext(), context);
 	}
 	
 	
@@ -1822,7 +1815,7 @@ public final class Env {
 	 * @return int[]
 	 */
 	public static int[] getContextAsIntArray(String context) {
-		return getContextAsIntArray(getCtx(), context);
+		return getContextAsIntArray(getContext(), context);
 	}
 	
 	/**
@@ -1849,7 +1842,7 @@ public final class Env {
 	 * @return String[]
 	 */
 	public static String[] getContextAsArray(int m_ActivityNo, int TabNo, String context) {
-		return getContextAsArray(getCtx(), m_ActivityNo, TabNo, context);
+		return getContextAsArray(getContext(), m_ActivityNo, TabNo, context);
 	}
 	
 	/**
@@ -1876,7 +1869,7 @@ public final class Env {
 	 * @return int[]
 	 */
 	public static int[] getContextAsIntArray(int m_ActivityNo, int TabNo, String context) {
-		return getContextAsIntArray(getCtx(), m_ActivityNo, TabNo, context);
+		return getContextAsIntArray(getContext(), m_ActivityNo, TabNo, context);
 	}
 	
 	/**
@@ -1891,11 +1884,10 @@ public final class Env {
 		LogM.log(ctx, "Env", Level.INFO, "setContext(" + context+", " + value);
 		Editor ep = getEditor(ctx);
 		if(value == null) {
-			ep.putStringSet(context, null);
+			ep.putString(context, null);
 		} else {
 			//	Set Array
-			Set<String> set = new HashSet<String>(Arrays.asList(value));
-			ep.putStringSet(context, set);
+			ep.putString(context, Arrays.toString(value));
 		}
 		//	Commit
 		ep.commit();
@@ -1910,7 +1902,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(String context, String[] value) {
-		setContext(getCtx(), context, value);
+		setContext(getContext(), context, value);
 	}
 	
 	/**
@@ -1945,7 +1937,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(String context, int[] value) {
-		setContext (getCtx(), context, value);
+		setContext (getContext(), context, value);
 	}
 	
 
@@ -1978,7 +1970,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getContext(int m_ActivityNo, int TabNo, String context, boolean onlyTab) {
-		return getContext(getCtx(), m_ActivityNo, TabNo, context, onlyTab);
+		return getContext(getContext(), m_ActivityNo, TabNo, context, onlyTab);
 	}
 	
 	/**
@@ -2017,7 +2009,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getContext(int m_ActivityNo, int TabNo, String context, boolean onlyTab, boolean onlyWindow) {
-		return getContext(getCtx(), m_ActivityNo, TabNo, context, onlyTab, onlyWindow);
+		return getContext(getContext(), m_ActivityNo, TabNo, context, onlyTab, onlyWindow);
 	}
 
 	/**
@@ -2070,7 +2062,7 @@ public final class Env {
 	 * @return long
 	 */
 	public static long getContextAsLong(String context) {
-		return getContextAsLong(getCtx(), context);
+		return getContextAsLong(getContext(), context);
 	}
 	
 	/**
@@ -2081,7 +2073,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getContextAsInt(String context) {
-		return getContextAsInt(getCtx(), context);
+		return getContextAsInt(getContext(), context);
 	}
 	
 	/**
@@ -2101,7 +2093,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isSOTrx () {
-		return getContextAsBoolean(getCtx(), "IsSOTrx");
+		return getContextAsBoolean(getContext(), "IsSOTrx");
 	}
 	
 	/**
@@ -2120,7 +2112,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getAD_Client_ID() {
-		return getAD_Client_ID(getCtx());
+		return getAD_Client_ID(getContext());
 	}
 	
 	/**
@@ -2139,7 +2131,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getAD_Org_ID() {
-		return getAD_Org_ID(getCtx());
+		return getAD_Org_ID(getContext());
 	}
 	
 	/**
@@ -2158,7 +2150,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getAD_User_ID () {
-		return getAD_User_ID(getCtx());
+		return getAD_User_ID(getContext());
 	}
 	
 	/**
@@ -2177,7 +2169,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getAD_Role_ID() {
-		return getAD_Role_ID(getCtx());
+		return getAD_Role_ID(getContext());
 	}	//	getAD_Role_ID
 
 	/**
@@ -2198,7 +2190,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getM_Warehouse_ID() {
-		return getM_Warehouse_ID(getCtx());
+		return getM_Warehouse_ID(getContext());
 	}
 	
 	/**
@@ -2219,7 +2211,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAD_User_ID(int m_AD_User_ID) {
-		setAD_User_ID(getCtx(), m_AD_User_ID);
+		setAD_User_ID(getContext(), m_AD_User_ID);
 	}
 	
 	/**
@@ -2240,7 +2232,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAD_Client_ID(int m_AD_Client_ID) {
-		setAD_Client_ID(getCtx(), m_AD_Client_ID);
+		setAD_Client_ID(getContext(), m_AD_Client_ID);
 	}
 	
 	/**
@@ -2261,7 +2253,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAD_Org_ID(int m_AD_Org_ID) {
-		setAD_Org_ID(getCtx(), m_AD_Org_ID);
+		setAD_Org_ID(getContext(), m_AD_Org_ID);
 	}
 	
 	/**
@@ -2282,7 +2274,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAD_Role_ID(int m_AD_Role_ID) {
-		setAD_Role_ID(getCtx(), m_AD_Role_ID);
+		setAD_Role_ID(getContext(), m_AD_Role_ID);
 	}
 	
 	/**
@@ -2303,7 +2295,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setM_Warehouse_ID(int m_M_Warehouse_ID) {
-		setM_Warehouse_ID(getCtx(), m_M_Warehouse_ID);
+		setM_Warehouse_ID(getContext(), m_M_Warehouse_ID);
 	}
 	
 	/**
@@ -2324,7 +2316,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setSavePass(boolean isSavePass) {
-		setSavePass(getCtx(), isSavePass);
+		setSavePass(getContext(), isSavePass);
 	}
 	
 	/**
@@ -2345,7 +2337,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setLoginPasscode(int passcode) {
-		setLoginPasscode(getCtx(), passcode);
+		setLoginPasscode(getContext(), passcode);
 	}
 	
 	/**
@@ -2380,7 +2372,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean validLoginPasscode(int passcode) {
-		return validLoginPasscode(getCtx(), passcode);
+		return validLoginPasscode(getContext(), passcode);
 	}
 	
 	/**
@@ -2401,7 +2393,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getLoginPasscode() {
-		return getLoginPasscode(getCtx());
+		return getLoginPasscode(getContext());
 	}
 	
 	/**
@@ -2411,7 +2403,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setRequestPass(boolean isAutoLogin) {
-		setRequestPass(getCtx(), isAutoLogin);
+		setRequestPass(getContext(), isAutoLogin);
 	}
 	
 	/**
@@ -2432,7 +2424,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isRequestPass() {
-		return isRequestPass(getCtx());
+		return isRequestPass(getContext());
 	}
 	
 	/**
@@ -2453,7 +2445,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setDB_PathName(String value) {
-		setDB_PathName(getCtx(), value);
+		setDB_PathName(getContext(), value);
 	}
 	
 	/**
@@ -2474,7 +2466,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getDB_PathName() {
-		return getDB_PathName(getCtx());
+		return getDB_PathName(getContext());
 	}
 	
 	/**
@@ -2495,7 +2487,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setDoc_DirectoryPathName(String value) {
-		setDoc_DirectoryPathName(getCtx(), value);
+		setDoc_DirectoryPathName(getContext(), value);
 	}
 	
 	/**
@@ -2516,7 +2508,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getDoc_DirectoryPathName() {
-		return getDoc_DirectoryPathName(getCtx());
+		return getDoc_DirectoryPathName(getContext());
 	}
 	
 	/**
@@ -2537,7 +2529,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setTmp_DirectoryPathName(String value) {
-		setTmp_DirectoryPathName(getCtx(), value);
+		setTmp_DirectoryPathName(getContext(), value);
 	}
 	
 	/**
@@ -2558,7 +2550,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAtt_DirectoryPathName(String value) {
-		setAtt_DirectoryPathName(getCtx(), value);
+		setAtt_DirectoryPathName(getContext(), value);
 	}
 	
 	/**
@@ -2612,7 +2604,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setBC_DirectoryPathName(String value) {
-		setBC_DirectoryPathName(getCtx(), value);
+		setBC_DirectoryPathName(getContext(), value);
 	}
 	
 	/**
@@ -2622,7 +2614,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getAtt_DirectoryPathName() {
-		return getAtt_DirectoryPathName(getCtx());
+		return getAtt_DirectoryPathName(getContext());
 	}
 	
 	/**
@@ -2643,7 +2635,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getTmp_DirectoryPathName() {
-		return getTmp_DirectoryPathName(getCtx());
+		return getTmp_DirectoryPathName(getContext());
 	}
 	
 	/**
@@ -2664,7 +2656,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getDB_Version() {
-		return getDB_Version(getCtx());
+		return getDB_Version(getContext());
 	}
 	
 	/**
@@ -2690,7 +2682,7 @@ public final class Env {
 	 * @return int[]
 	 */
 	public static int[] getTabRecord_ID(int m_ActivityNo, int TabNo) {
-		return getTabRecord_ID(getCtx(), m_ActivityNo, TabNo);
+		return getTabRecord_ID(getContext(), m_ActivityNo, TabNo);
 	}
 	
 	/**
@@ -2715,7 +2707,7 @@ public final class Env {
 	 * @return String[]
 	 */
 	public static String[] getTabKeyColumns(int m_ActivityNo, int TabNo) {
-		return getTabKeyColumns(getCtx(), m_ActivityNo, TabNo);
+		return getTabKeyColumns(getContext(), m_ActivityNo, TabNo);
 	}
 	
 
@@ -2741,7 +2733,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setTabRecord_ID(int m_ActivityNo, int TabNo, int[] record_ID) {
-		setTabRecord_ID(getCtx(), m_ActivityNo, TabNo, record_ID);
+		setTabRecord_ID(getContext(), m_ActivityNo, TabNo, record_ID);
 	}
 	
 	/**
@@ -2766,7 +2758,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setTabKeyColumns(int m_ActivityNo, int TabNo, String[] keyColumns) {
-		setTabKeyColumns(getCtx(), m_ActivityNo, TabNo, keyColumns);
+		setTabKeyColumns(getContext(), m_ActivityNo, TabNo, keyColumns);
 	}
 	
 	/**
@@ -2789,7 +2781,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setCurrentTab(int m_ActivityNo, int tabNo) {
-		setCurrentTab(getCtx(), m_ActivityNo, tabNo);
+		setCurrentTab(getContext(), m_ActivityNo, tabNo);
 	}
 	
 	/**
@@ -2812,7 +2804,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getCurrentTab(int m_ActivityNo) {
-		return getCurrentTab(getCtx(), m_ActivityNo);
+		return getCurrentTab(getContext(), m_ActivityNo);
 	}
 	
 	/**
@@ -2837,7 +2829,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isCurrentTab(int m_ActivityNo, int tabNo) {
-		return isCurrentTab(getCtx(), m_ActivityNo, tabNo);
+		return isCurrentTab(getContext(), m_ActivityNo, tabNo);
 	}
 	
 	/**
@@ -2861,7 +2853,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setDB_Version(int value) {
-		setDB_Version(getCtx(), value);
+		setDB_Version(getContext(), value);
 	}
 	
 	/**
@@ -2886,7 +2878,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String parseContext(String whereClause, boolean ignoreUnparsable) {
-		return parseContext(getCtx(), whereClause, ignoreUnparsable);
+		return parseContext(getContext(), whereClause, ignoreUnparsable);
 	}
 	
 	
@@ -3171,7 +3163,7 @@ public final class Env {
 			
 			int j = inStr.indexOf(p_Separator);				// next @
 			if (j < 0) {
-				LogM.log(getCtx(), "Env", Level.INFO, "No second tag: " + inStr);
+				LogM.log(getContext(), "Env", Level.INFO, "No second tag: " + inStr);
 				return null;								//	no second tag
 			}
 			//	
@@ -3183,7 +3175,7 @@ public final class Env {
 			i = inStr.indexOf(p_Separator);
 		}
 		//	
-		LogM.log(getCtx(), "Env", Level.FINE, "getArrayFromString(" + inStr + ")");
+		LogM.log(getContext(), "Env", Level.FINE, "getArrayFromString(" + inStr + ")");
 		//	
 		String array[] = new String[list.size()];
 		list.toArray(array);
@@ -3203,7 +3195,7 @@ public final class Env {
 	 */
 //	public static String parseContext(int m_ActivityNo, int m_TabNo, 
 //			String whereClause, boolean ignoreUnparsable,String defaultUnparseable) {
-//		return parseContext(getCtx(), m_ActivityNo, m_TabNo, 
+//		return parseContext(getContext(), m_ActivityNo, m_TabNo,
 //				whereClause, ignoreUnparsable, defaultUnparseable);
 //	}
 	
@@ -3225,7 +3217,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getSOLanguage() {
-		return getSOLanguage(getCtx());
+		return getSOLanguage(getContext());
 	}
 	
 	/**
@@ -3246,7 +3238,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAD_Language(String language) {
-		setAD_Language(getCtx(), language);
+		setAD_Language(getContext(), language);
 	}
 	
 	/**
@@ -3267,7 +3259,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getAD_Language() {
-		return getAD_Language(getCtx());
+		return getAD_Language(getContext());
 	}
 	
 	/**
@@ -3291,7 +3283,7 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean isBaseLanguage() {
-		return isBaseLanguage(getCtx());
+		return isBaseLanguage(getContext());
 	}
 	
 	/**
@@ -3318,7 +3310,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void changeLanguage(String language, DisplayMetrics metrics) {
-		changeLanguage(getCtx(), language, metrics);
+		changeLanguage(getContext(), language, metrics);
 	}
 	
 	/**
@@ -3342,7 +3334,7 @@ public final class Env {
 	 * @return Locale
 	 */
 	public static Locale getLocate() {
-		return getLocate(getCtx());
+		return getLocate(getContext());
 	}
 	
 	/**
@@ -3363,7 +3355,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void changeLanguage(String language) {
-		changeLanguage(getCtx(), language);
+		changeLanguage(getContext(), language);
 	}
 	
 	/**
@@ -3395,7 +3387,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setDateFormat(String javaDatePattern) {
-		setDateFormat(getCtx(), javaDatePattern);
+		setDateFormat(getContext(), javaDatePattern);
 	}
 
 	/**
@@ -3445,7 +3437,7 @@ public final class Env {
 	 * @return SimpleDateFormat
 	 */
 	public static SimpleDateFormat getDateFormat() {
-		return getDateFormat(getCtx());
+		return getDateFormat(getContext());
 	}
 
 	/**
@@ -3469,7 +3461,7 @@ public final class Env {
 	 * @return SimpleDateFormat
 	 */
 	public static SimpleDateFormat getDateTimeFormat() {
-		return getDateTimeFormat(getCtx());
+		return getDateTimeFormat(getContext());
 	}
 	
 	/**
@@ -3490,7 +3482,7 @@ public final class Env {
 	 * @return SimpleDateFormat
 	 */
 	public static SimpleDateFormat getTimeFormat() {
-		return getTimeFormat(getCtx());
+		return getTimeFormat(getContext());
 	}
 	
 	/**
@@ -3517,7 +3509,7 @@ public final class Env {
 	 * @return int
 	 */
 	public static int getActivityNo() {
-		return getActivityNo(getCtx());
+		return getActivityNo(getContext());
 	}
 	
 	/**
@@ -3536,7 +3528,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void resetActivityNo() {
-		resetActivityNo(getCtx());
+		resetActivityNo(getContext());
 	}
 	
 	/**
@@ -3557,7 +3549,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setAppBaseDirectory(String path) {
-		setAppBaseDirectory(getCtx(), path);
+		setAppBaseDirectory(getContext(), path);
 	}
 	
 	/**
@@ -3578,7 +3570,7 @@ public final class Env {
 	 * @return String
 	 */
 	public static String getAppBaseDirectory() {
-		return getAppBaseDirectory(getCtx());
+		return getAppBaseDirectory(getContext());
 	}
 	
 	/**
@@ -3618,16 +3610,16 @@ public final class Env {
 	 * @param p_Text
 	 * @return void
 	 */
-	public static void setClipboardText(Context p_Ctx, String p_Text) {
-	    if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
-	        android.text.ClipboardManager clipB = (android.text.ClipboardManager) p_Ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-	        clipB.setText(p_Text);
-	    } else {
-	        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) p_Ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-	        android.content.ClipData clip = android.content.ClipData.newPlainText("", p_Text);
-	        clipboard.setPrimaryClip(clip);
-	    }
-	}
+//	public static void setClipboardText(Context p_Ctx, String p_Text) {
+//	    if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+//	        android.text.ClipboardManager clipB = (android.text.ClipboardManager) p_Ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+//	        clipB.setText(p_Text);
+//	    } else {
+//	        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) p_Ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+//	        android.content.ClipData clip = android.content.ClipData.newPlainText("", p_Text);
+//	        clipboard.setPrimaryClip(clip);
+//	    }
+//	}
 	
 	/**
 	 * Hide Keyboard
@@ -3669,11 +3661,11 @@ public final class Env {
 	}
 	
 	/**	Context					*/
-	public static Context 				m_Ctx;
+	public static Context context;
 	/**	Share Preferences		*/
 	public static SharedPreferences 	m_ShareP;
 	/**	Env Instance			*/
-	public static Env					m_Instance;
+	public static Env instance;
 	
 	/**************************************************************************
 	 *  Application Context

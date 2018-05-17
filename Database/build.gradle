@@ -42,3 +42,16 @@ dependencies {
     implementation 'com.couchbase.lite:couchbase-lite-android-ee:2.0.0'
     implementation project(path: ':Spin-Suite-Base')
 }
+
+task deleteJar(type: Delete) {
+    delete 'libs/spin-suite-database.jar'
+}
+
+task createJar(type: Copy) {
+    from 'build/intermediates/intermediate-jars/release/'
+    into 'libs/'
+    include 'classes.jar'
+    rename('classes.jar', 'spin-suite-database.jar')
+}
+
+createJar.dependsOn(deleteJar, build)

@@ -33,3 +33,16 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(path: ':Spin-Suite-Base')
 }
+
+task deleteJar(type: Delete) {
+    delete 'libs/spin-suite-device-management.jar'
+}
+
+task createJar(type: Copy) {
+    from 'build/intermediates/intermediate-jars/release/'
+    into 'libs/'
+    include 'classes.jar'
+    rename('classes.jar', 'spin-suite-device-management.jar')
+}
+
+createJar.dependsOn(deleteJar, build)
