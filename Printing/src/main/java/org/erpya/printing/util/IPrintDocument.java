@@ -23,32 +23,32 @@ import java.util.List;
  * Interface for printing document
  */
 public interface IPrintDocument {
-	
+
 	/**
 	 * Get header to print
 	 * @return String
 	 */
 	public String getHeader();
-	
+
 	/**
 	 * Get Footer document
 	 * @return String
 	 */
 	public String getFooter();
-	
-	
+
+
 	/**
 	 * Get description to print
 	 * @return String
 	 */
 	public String getDescription();
-	
+
 	/**
 	 * Get Additional fields
 	 * @return List<String>
 	 */
 	public List<String> getFields();
-	
+
 	/**
 	 * Get head Space (Example for 3 space)
 	 * |------------------|
@@ -62,7 +62,7 @@ public interface IPrintDocument {
 	 * @return int
 	 */
 	public int getHeadSpace();
-	
+
 	/**
 	 * Get footer Space (Example for 3 space)
 	 * |------------------|
@@ -75,13 +75,13 @@ public interface IPrintDocument {
 	 * @return int
 	 */
 	public int getFooterSpace();
-	
+
 	/**
 	 * Get Line Spacing
 	 * @return int
 	 */
 	public int getLineSpacing();
-    
+
 	/**
 	 * Get footer Space (Example for 3 space)
 	 * |------------------|
@@ -93,20 +93,19 @@ public interface IPrintDocument {
 	 * @return int
 	 */
 	public int getPageFooterSpace();
-	
+
 	/**
 	 * Get Lines of document
 	 * @author <a href="mailto:yamelsenih@gmail.com">Yamel Senih</a> 16 may. 2018, 7:43:59 p. m.
 	 * @return
-	 * @return List<IPrintLine>
+	 * @return List<PrintLine>
 	 */
 	public List<IPrintLine> getPrintLines();
-	
-	
+
+
 	/**
 	 * Validate this document can be printed
 	 * @return boolean
 	 */
 	public boolean isAllowsPrint();
-	
 }

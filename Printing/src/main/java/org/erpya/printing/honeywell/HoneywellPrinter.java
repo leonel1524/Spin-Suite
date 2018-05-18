@@ -319,8 +319,12 @@ public class HoneywellPrinter extends DeviceTypeHandler implements IPrinter {
      * @param value
      * @throws Exception
      */
-    public void setBold(boolean value) throws Exception {
-        linePrinter.setBold(value);
+    public void setBold(boolean value) {
+        try {
+            linePrinter.setBold(value);
+        } catch (LinePrinterException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

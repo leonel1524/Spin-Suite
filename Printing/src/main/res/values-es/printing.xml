@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Printing_Opening_Connection">Conectando...</string>
+    <string name="Printing_Closing_Connection">Cerrando Conexión</string>
+    <string name="Printing_Sending_Text">Enviando Texto</string>
+    <string name="Printing_Sending_Document">Enviando Documento</string>
+    <string name="Printing_Sending_Header">Enviando Encabezado</string>
+    <string name="Printing_Sending_Line">Enviando Línea</string>
+    <string name="Printing_Sending_Image">Enviando Imagen</string>
+    <string name="Printing_Sending_Footer">Enviando Pie de Página</string>
+    <string name="Printing_Finished">Impresión Finalizada</string>
+    <string name="Printing_Connection_Error">Error de Conexión</string>
+    <string name="Printing_Error">Error Imprimiendo</string>
+    <string name="Printing_Generic_Error">Error</string>
+</resources>

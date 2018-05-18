@@ -33,5 +33,11 @@ public interface IPrinter {
      * add lines
      * @param lineQuantity
      */
-    public void addLine(int lineQuantity) throws Exception ;
+    public void addLine(int lineQuantity) throws Exception;
+
+    /**
+     * Se if is printed a bold font for next printing
+     * @param isBold
+     */
+    public void setBold(boolean isBold);
 }

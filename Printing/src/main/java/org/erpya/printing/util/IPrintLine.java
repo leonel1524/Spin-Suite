@@ -21,13 +21,13 @@ package org.erpya.printing.util;
  * Interface for printing document line
  */
 public interface IPrintLine {
-	
+
 	/**
 	 * Get header to print
 	 * @return String
 	 */
 	public String getLine();
-	
+
 	/**
 	 * Validate if it a Simple text to print
 	 * @return boolean

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Printing_Opening_Connection">Opening Connection</string>
+    <string name="Printing_Closing_Connection">Closing Connection</string>
+    <string name="Printing_Sending_Text">Sending Text</string>
+    <string name="Printing_Sending_Document">Sending Document</string>
+    <string name="Printing_Sending_Header">Sending Header</string>
+    <string name="Printing_Sending_Line">Sending Line</string>
+    <string name="Printing_Sending_Image">Sending Image</string>
+    <string name="Printing_Sending_Footer">Sending Footer</string>
+    <string name="Printing_Finished">Printing Finished</string>
+    <string name="Printing_Connection_Error">Connection Error</string>
+    <string name="Printing_Error">Printing Error</string>
+    <string name="Printing_Generic_Error">Error</string>
+</resources>
