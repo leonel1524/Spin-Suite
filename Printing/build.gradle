@@ -4,15 +4,12 @@ android {
     compileSdkVersion 27
 
 
-
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -22,9 +19,13 @@ android {
         }
     }
 
+    dexOptions {
+        preDexLibraries = false
+    }
 }
 
 dependencies {
+    implementation 'com.android.support:multidex:1.0.3'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'

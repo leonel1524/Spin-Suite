@@ -1750,8 +1750,6 @@ public final class Env {
 	 * Get Context As Array
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com 18/10/2014, 15:15:20
 	 * @param ctx
-	 * @param m_ActivityNo
-	 * @param TabNo
 	 * @param context
 	 * @return
 	 * @return String[]
@@ -1896,7 +1894,6 @@ public final class Env {
 	/**
 	 * Set Context Array
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
-	 * @param ctx
 	 * @param context
 	 * @param value
 	 * @return void
@@ -2323,7 +2320,6 @@ public final class Env {
 	 * Set Request Password
 	 * @author Yamel Senih 31/07/2012, 12:25:21
 	 * @param ctx
-	 * @param isSavePass
 	 * @return void
 	 */
 	public static void setRequestPass(Context ctx, boolean isAutoLogin) {
@@ -2766,7 +2762,6 @@ public final class Env {
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com 03/02/2014, 21:54:11
 	 * @param ctx
 	 * @param m_ActivityNo
-	 * @param tab
 	 * @return void
 	 */
 	public static void setCurrentTab(Context ctx, int m_ActivityNo, int tabNo) {
@@ -2890,7 +2885,6 @@ public final class Env {
 	 *  @param ctx context
 	 *	@param m_ActivityNo	Number of Window
 	 *	@param whereClause Message to be parsed
-	 *  @param onlyWindow if true, no defaults are used
 	 * 	@param ignoreUnparsable if true, unsuccessful @return parsed String or "" if not successful and ignoreUnparsable
 	 *	@return parsed context 
 	 */
@@ -2943,203 +2937,6 @@ public final class Env {
 		//	
 		return outStr.toString();
 	}	//	parseContext
-	
-	/**
-	 * Parse Lookup Value
-	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
-	 * @param ctx
-	 * @param p_InfoLookup
-	 * @param p_Value
-	 * @param p_Separator
-	 * @param p_ArrayValues
-	 * @return
-	 * @return String
-	 */
-	/*public static String parseLookup(Context ctx, InfoLookup p_InfoLookup, String p_Value, String p_Separator) {
-		//	Valid Null
-		if(p_Value == null) {
-			return null;
-		}
-		//	
-		ArrayList<IdentifierValueWrapper> list = new ArrayList<IdentifierValueWrapper>();
-		String prevSeparator = InfoLookup.TABLE_SEARCH_SEPARATOR;
-		int tokenIndex = p_Value.indexOf(prevSeparator);
-		IdentifierValueWrapper [] p_ArrayValues = null;
-		//	Valid Not Token
-		if(tokenIndex == -1) {
-			return null;
-		}
-		int indexColumn = 0;
-		//int displayType = 0;
-		int lastIndexColumn = 0;
-		String value = null;
-		StringBuffer valueBuffer = new StringBuffer();
-		int position = 0;
-		boolean isFirst = true;
-		do {
-			tokenIndex = p_Value.indexOf(prevSeparator);
-			indexColumn += prevSeparator.length();
-			lastIndexColumn = p_Value.substring(indexColumn).indexOf(prevSeparator);
-			//	Valid Last Index Column
-			if(lastIndexColumn != -1) {
-				lastIndexColumn += indexColumn;
-			} else {
-				lastIndexColumn = p_Value.length();
-			}
-			//	
-			int displayType = p_InfoLookup.IdentifiesColumn.get(position).getDisplayType();
-			String name = p_InfoLookup.IdentifiesColumn.get(position).getName();
-			//	Get Values
-			value = p_Value.substring(indexColumn, lastIndexColumn);
-			//	
-			if(DisplayType.isDate(displayType)) {
-				if(value != null
-						&& value.trim().length() > 0) {
-					//	For Parse Date
-					SimpleDateFormat sdf = DisplayType.getTimestampFormat_Default();
-					try {
-						Date date = sdf.parse(value);
-						SimpleDateFormat dateFormat = DisplayType.getDateFormat(ctx, displayType);
-						//	Set TimeZone
-						dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-						value = dateFormat.format(date);
-					} catch (ParseException e) {
-						LogM.log(ctx, Env.class, Level.SEVERE, "Parse Error", e);
-					}
-				}
-			} else if(DisplayType.isBigDecimal(displayType)){
-				BigDecimal number = DisplayType.getValidNumber(DisplayType.getNumber(value, displayType));
-				//	Set Format
-				DecimalFormat m_DecimalFormat = DisplayType.getNumberFormat(ctx, displayType);
-				value = m_DecimalFormat.format(number);
-			}
-			//	Refresh Index
-			p_Value = p_Value.substring(lastIndexColumn);
-			tokenIndex = p_Value.indexOf(prevSeparator);
-			//	For Encrypted Values
-			if(value != null
-					&& 
-					((value.startsWith(SecureInterface.ENCRYPTEDVALUE_START) 
-							&& value.endsWith(SecureInterface.ENCRYPTEDVALUE_END))
-					|| (value.startsWith(SecureInterface.CLEARVALUE_START) 
-							&& value.endsWith(SecureInterface.CLEARVALUE_END)))) {
-				value = "*******";
-			}
-			//	Add Value
-			list.add(new IdentifierValueWrapper(displayType, name, value));
-			//	Clear Values
-			indexColumn = 0;
-			displayType = 0;
-			lastIndexColumn = 0;
-			position++;
-			//	
-			if(isFirst) {
-				isFirst = false;
-			} else {
-				valueBuffer
-					.append(p_Separator);
-			}
-			//	Add Value
-			valueBuffer.append(value);
-			//	
-		} while (tokenIndex != -1);
-		//	Convert to Array
-		p_ArrayValues = new IdentifierValueWrapper[list.size()];
-		list.toArray(p_ArrayValues);
-		//	Return
-		return valueBuffer.toString();
-	}*/
-	
-	/**
-	 * Parse Lookup to array
-	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
-	 * @param ctx
-	 * @param p_Value
-	 * @return
-	 * @return IdentifierValueWrapper[]
-	 */
-	/*public static IdentifierValueWrapper[] parseLookupArray(Context ctx, InfoLookup p_InfoLookup, String p_Value) {
-		//	Valid Null
-		if(p_Value == null) {
-			return null;
-		}
-		//	
-		ArrayList<IdentifierValueWrapper> list = new ArrayList<IdentifierValueWrapper>();
-		String prevSeparator = InfoLookup.TABLE_SEARCH_SEPARATOR;
-		int tokenIndex = p_Value.indexOf(prevSeparator);
-		IdentifierValueWrapper [] p_ArrayValues = null;
-		//	Valid Not Token
-		if(tokenIndex == -1) {
-			return null;
-		}
-		int indexColumn = 0;
-		//int displayType = 0;
-		int lastIndexColumn = 0;
-		String value = null;
-		int position = 0;
-		do {
-			tokenIndex = p_Value.indexOf(prevSeparator);
-			indexColumn += prevSeparator.length();
-			lastIndexColumn = p_Value.substring(indexColumn).indexOf(prevSeparator);
-			//	Valid Last Index Column
-			if(lastIndexColumn != -1) {
-				lastIndexColumn += indexColumn;
-			} else {
-				lastIndexColumn = p_Value.length();
-			}
-			//	
-			int displayType = p_InfoLookup.IdentifiesColumn.get(position).getDisplayType();
-			String name = p_InfoLookup.IdentifiesColumn.get(position).getName();
-			//	Get Values
-			value = p_Value.substring(indexColumn, lastIndexColumn);
-			if(value != null
-					&& value.trim().length() > 0) {
-				//	
-				if(DisplayType.isDate(displayType)) {
-					//	For Parse Date
-					SimpleDateFormat sdf = DisplayType.getTimestampFormat_Default();
-					try {
-						Date date = sdf.parse(value);
-						SimpleDateFormat dateFormat = DisplayType.getDateFormat(ctx, displayType);
-						//	Set TimeZone
-						dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-						value = dateFormat.format(date);
-					} catch (ParseException e) {
-						LogM.log(ctx, Env.class, Level.SEVERE, "Parse Error", e);
-					}
-				} else if(DisplayType.isBigDecimal(displayType)){
-					BigDecimal number = DisplayType.getValidNumber(DisplayType.getNumber(value, displayType));
-					//	Set Format
-					DecimalFormat m_DecimalFormat = DisplayType.getNumberFormat(ctx, displayType);
-					value = m_DecimalFormat.format(number);
-				}
-			}
-			//	Refresh Index
-			p_Value = p_Value.substring(lastIndexColumn);
-			tokenIndex = p_Value.indexOf(prevSeparator);
-			if(value != null
-					&& 
-					((value.startsWith(SecureInterface.ENCRYPTEDVALUE_START) 
-							&& value.endsWith(SecureInterface.ENCRYPTEDVALUE_END))
-					|| (value.startsWith(SecureInterface.CLEARVALUE_START) 
-							&& value.endsWith(SecureInterface.CLEARVALUE_END)))) {
-				value = "*******";
-			}
-			//	Add Value
-			list.add(new IdentifierValueWrapper(displayType, name, value));
-			//	Clear Values
-			indexColumn = 0;
-			displayType = 0;
-			lastIndexColumn = 0;
-			position++;
-			//	
-		} while (tokenIndex != -1);
-		//	Convert to Array
-		p_ArrayValues = new IdentifierValueWrapper[list.size()];
-		list.toArray(p_ArrayValues);
-		//	Return
-		return p_ArrayValues;
-	}*/
 	
 	/**
 	 * Get Array from string
@@ -3624,11 +3421,11 @@ public final class Env {
 	/**
 	 * Hide Keyboard
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
-	 * @param p_Ctx
+	 * @param context
 	 * @return void
 	 */
-	public static void hideKeyBoad(Context p_Ctx) {
-		InputMethodManager imm = (InputMethodManager) p_Ctx.getSystemService(Activity.INPUT_METHOD_SERVICE);
+	public static void hideKeyBoad(Context context) {
+		InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 	}
 	

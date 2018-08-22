@@ -219,6 +219,14 @@ public class POInfoColumn implements IPOInfoColumn {
         return isAllowCopy;
     }
 
+    /**
+     * Get Context
+     * @return
+     */
+    public Context getContext() {
+        return context;
+    }
+
     @Override
     public String toString() {
         return "POInfoColumn{" +
