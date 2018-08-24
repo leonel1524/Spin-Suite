@@ -1,0 +1,170 @@
+/*************************************************************************************
+ * Product: Spin-Suite (Mobile Suite)                       		                 *
+ * This program is free software; you can redistribute it and/or modify it    		 *
+ * under the terms version 2 or later of the GNU General Public License as published *
+ * by the Free Software Foundation. This program is distributed in the hope   		 *
+ * that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 		 *
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.           		 *
+ * See the GNU General Public License for more details.                       		 *
+ * You should have received a copy of the GNU General Public License along    		 *
+ * with this program; if not, write to the Free Software Foundation, Inc.,    		 *
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.                     		 *
+ * For the text or an alternative of this public license, you may reach us    		 *
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, S.A. All Rights Reserved. *
+ * Contributor(s): Yamel Senih www.erpya.com				  		                 *
+ *************************************************************************************/
+package org.erpya.component.factory;
+
+import android.content.Context;
+
+import org.erpya.component.field.Field;
+import org.erpya.component.field.FieldDateTime;
+import org.erpya.component.field.FieldNumber;
+import org.erpya.component.field.FieldText;
+import org.erpya.base.exceptions.SpinSuiteException;
+import org.erpya.base.model.InfoField;
+
+/**
+ * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
+ * Factory for InfoField class, static class for generate InfoField
+ */
+public class FieldFactory {
+
+    /**
+     * Standard Contructor for it,
+     * @param context is mandatory
+     */
+    private FieldFactory(Context context) {
+        fieldDefinition = new InfoField(context);
+    }
+
+    /**
+     * Create Field
+     * @param context
+     * @return
+     */
+    public static FieldFactory createField(Context context) {
+        return new FieldFactory(context);
+    }
+
+    /** Internal Info Field */
+    private InfoField fieldDefinition;
+
+    /**
+     * Get Field Definition
+     * @return
+     */
+    public InfoField getFieldDefinition() {
+        return fieldDefinition;
+    }
+
+    /**
+     * Set Display Type
+     * @param displayType
+     * @return
+     */
+    public FieldFactory withDisplayType(int displayType) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_DisplayType, displayType);
+        return this;
+    }
+
+    /**
+     * Set column name
+     * @param columnName
+     * @return
+     */
+    public FieldFactory withColumnName(String columnName) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_ColumnName, columnName);
+        return this;
+    }
+
+    /**
+     * Set name or label
+     * @param name
+     * @return
+     */
+    public FieldFactory withName(String name) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_Name, name);
+        return this;
+    }
+
+    /**
+     * Set Desctiption
+     * @param description
+     * @return
+     */
+    public FieldFactory withDescription(String description) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_Description, description);
+        return this;
+    }
+
+    /**
+     * Set Help
+     * @param help
+     * @return
+     */
+    public FieldFactory withHelp(String help) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_Help, help);
+        return this;
+    }
+
+    /**
+     * Set read only
+     * @param isReadOnly
+     * @return
+     */
+    public FieldFactory withReadOnly(boolean isReadOnly) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_IsReadOnly, isReadOnly);
+        return this;
+    }
+
+    /**
+     * Set Is Updateable
+     * @param isUpdateable
+     * @return
+     */
+    public FieldFactory withUpdateable(boolean isUpdateable) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_IsUpdateable, isUpdateable);
+        return this;
+    }
+
+    /**
+     * Set always updateable
+     * @param isAlwaysUpdateable
+     * @return
+     */
+    public FieldFactory withAlwaysUpdateable(boolean isAlwaysUpdateable) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_IsAlwaysUpdateable, isAlwaysUpdateable);
+        return this;
+    }
+
+    /**
+     * Set mandatory
+     * @param isMandatory
+     * @return
+     */
+    public FieldFactory withMandatory(boolean isMandatory) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_IsMandatory, isMandatory);
+        return this;
+    }
+
+    /**
+     * get Field component from factory
+     * @return
+     */
+    public Field getFieldComponent() {
+        Field fieldLoaded = null;
+        //  For Text
+        if(fieldDefinition.isText()) {
+            fieldLoaded = new FieldText(fieldDefinition);
+        } else if(fieldDefinition.isNumeric()) {
+            fieldLoaded = new FieldNumber(fieldDefinition);
+        } else if(fieldDefinition.isDate()) {
+            fieldLoaded = new FieldDateTime(fieldDefinition);
+        } else {
+            throw new SpinSuiteException("Unsupported Type" + fieldDefinition.getDisplayType());
+        }
+        //
+        return fieldLoaded;
+    }
+}
