@@ -13,7 +13,7 @@
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, S.A. All Rights Reserved. *
  * Contributor(s): Yamel Senih www.erpya.com				  		                 *
  *************************************************************************************/
-package org.erpya.database.support;
+package org.erpya.base.database.connetor;
 
 import android.content.Context;
 import android.util.Log;
@@ -37,9 +37,9 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
 
-import org.erpya.spinsuite.base.db.DBSupport;
-import org.erpya.spinsuite.base.util.Condition;
-import org.erpya.spinsuite.base.util.Criteria;
+import org.erpya.base.db.DBSupport;
+import org.erpya.base.util.Condition;
+import org.erpya.base.util.Criteria;
 
 import java.net.URI;
 import java.util.ArrayList;
