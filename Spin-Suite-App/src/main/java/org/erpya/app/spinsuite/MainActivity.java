@@ -8,8 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import org.erpya.base.database.support.CouchDBLite_2_0_Support;
 import org.erpya.component.factory.FieldFactory;
-import org.erpya.database.connetor.CouchDBLite_2_0_Support;
 import org.erpya.base.util.DisplayType;
 import org.erpya.base.util.Env;
 
