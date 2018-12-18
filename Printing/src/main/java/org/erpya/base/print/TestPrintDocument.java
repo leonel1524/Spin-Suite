@@ -19,12 +19,13 @@ package org.erpya.base.print;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import org.erpya.print.util.IPrintDocument;
-import org.erpya.print.util.IPrintLine;
-import org.erpya.print.util.IPrintStatus;
+import org.erpya.base.print.util.IPrintDocument;
+import org.erpya.base.print.util.IPrintLine;
+import org.erpya.base.print.util.IPrintStatus;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDeviceType;
+import org.erpya.base.print.util.IPrinter;
 import org.erpya.base.util.LogM;
 
 import java.util.List;
@@ -96,7 +97,7 @@ public class TestPrintDocument {
                 publishProgress(IPrintStatus.OPENING_CONNECTION);
                 log.fine("Connecting...");
                 handler.connect();
-                org.erpya.print.util.IPrinter printer = ((org.erpya.print.util.IPrinter) handler);
+                IPrinter printer = ((IPrinter) handler);
                 int lineSpacing = document.getLineSpacing();
                 if(lineSpacing <= 0) {
                     lineSpacing = 1;

@@ -24,7 +24,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import org.erpya.base.arduino.TestArduinoSendMessage;
+import org.erpya.base.arduino.supported.UNO;
+import org.erpya.base.arduino.util.IArduinoStatus;
 import org.erpya.base.database.support.CouchDBLite_2_0_Support;
+import org.erpya.base.device.util.DeviceManager;
+import org.erpya.base.device.util.DeviceTypeHandler;
+import org.erpya.base.device.util.IDeviceType;
 import org.erpya.component.factory.FieldFactory;
 import org.erpya.base.util.DisplayType;
 import org.erpya.base.util.Env;
@@ -41,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Env.getInstance(getApplicationContext());
         Env.setCurrentSupportedDatabase(CouchDBLite_2_0_Support.class.getName());
         //  Add dynamic
-        ConstraintLayout parent = (ConstraintLayout) (ConstraintLayout) findViewById(R.id.parent);
+        final ConstraintLayout parent = (ConstraintLayout) (ConstraintLayout) findViewById(R.id.parent);
         if(parent != null) {
             parent.addView(FieldFactory
                     .createField(this)
@@ -52,10 +58,24 @@ public class MainActivity extends AppCompatActivity {
                     .withDisplayType(DisplayType.DATE)
                     .getFieldComponent(), 0, parent.getLayoutParams());
         }
+        DeviceManager
+                .getInstance()
+                .addDeviceType(new UNO());
+
+        final TestArduinoSendMessage test = new TestArduinoSendMessage(new IArduinoStatus() {
+            @Override
+            public void publishStatus(String message) {
+                Snackbar.make(parent, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction(message, null).show();
+            }
+        }, getApplicationContext());
+
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                test.sendMessage("Hola");
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

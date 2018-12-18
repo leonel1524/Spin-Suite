@@ -14,29 +14,65 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.base.print.util;
+package org.erpya.base.arduino.supported;
+
+import org.erpya.base.arduino.ArduinoBluetoothHandler;
+import org.erpya.base.device.util.ConfigValue;
+import org.erpya.base.device.util.IDeviceType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Device Interface for handle printers
+ * Available Device for Bluetooth communication
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
  */
-public interface IPrinter {
+public class UNO implements IDeviceType {
 
-    /**
-     * Print Line
-     */
-    public void printLine(String line) throws Exception;
+    /** Device Type Configuration   */
+    private Map<String, ConfigValue> deviceTypeConfig = new HashMap<>();
 
+    @Override
+    public String getDeviceTypeId() {
+        return "UNO";
+    }
 
-    /**
-     * add lines
-     * @param lineQuantity
-     */
-    public void addLine(int lineQuantity) throws Exception;
+    @Override
+    public String getName() {
+        return "Arduino UNO";
+    }
 
-    /**
-     * Se if is printed a bold font for next printing
-     * @param isBold
-     */
-    public void setBold(boolean isBold);
+    @Override
+    public String getType() {
+        return TYPE_ARDUINO;
+    }
+
+    @Override
+    public Map<String, ConfigValue> getDeviceTypeConfig() {
+        return deviceTypeConfig;
+    }
+
+    @Override
+    public ConfigValue getConfigValue(String key) {
+        return deviceTypeConfig.get(key);
+    }
+
+    @Override
+    public void addConfigValue(String key, Object value) {
+        deviceTypeConfig.put(key, new ConfigValue(value));
+    }
+
+    @Override
+    public String getHandlerClass() {
+        return ArduinoBluetoothHandler.class.getName();
+    }
+
+    @Override
+    public String toString() {
+        return "Arduino UNO{" +
+                "getDeviceTypeId=" + getDeviceTypeId() +
+                ", getName=" + getName() +
+                ", getType=" + getType() +
+                '}';
+    }
 }

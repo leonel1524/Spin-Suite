@@ -44,4 +44,5 @@ dependencies {
     implementation project(path: ':Printing')
     implementation project(path: ':Device-Management')
     implementation project(path: ':Component')
+    implementation project(path: ':Arduino')
 }

@@ -14,29 +14,27 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.base.print.util;
+package org.erpya.base.arduino.util;
 
 /**
- * Device Interface for handle printers
- * @author yamel, ysenih@erpya.com , http://www.erpya.com
+ * Interface used for represent a status of message for Arduino Bluetooth connection
+ *
+ * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
  */
-public interface IPrinter {
+public interface IArduinoStatus {
+    /**	Open Printer connection	*/
+    public final int OPENING_CONNECTION = 0;
+    /**	Close Printer connection	*/
+    public final int CLOSING_CONNECTION = 1;
+    /**	Sending a Text	*/
+    public final int SENDING_TEXT = 2;
+    /**	Connection Error	*/
+    public final int CONNECTION_ERROR = 10;
+    /**	Generic Error	*/
+    public final int ERROR = 12;
 
     /**
-     * Print Line
+     * Used for publish print status
      */
-    public void printLine(String line) throws Exception;
-
-
-    /**
-     * add lines
-     * @param lineQuantity
-     */
-    public void addLine(int lineQuantity) throws Exception;
-
-    /**
-     * Se if is printed a bold font for next printing
-     * @param isBold
-     */
-    public void setBold(boolean isBold);
+    public void publishStatus(String message);
 }

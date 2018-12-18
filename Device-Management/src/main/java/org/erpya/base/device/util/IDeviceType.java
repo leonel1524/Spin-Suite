@@ -29,6 +29,7 @@ public interface IDeviceType {
     public String TYPE_BARCODE_SCAN = "BCS";
     public String TYPE_RFID_SCAN = "RFI";
     public String TYPE_CUSTOM = "CUS";
+    public String TYPE_ARDUINO = "ARD";
 
     /**
      * Get Id configured for DeviceManager Type, example:

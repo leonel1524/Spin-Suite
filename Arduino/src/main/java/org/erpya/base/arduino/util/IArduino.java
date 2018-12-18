@@ -14,29 +14,24 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.base.print.util;
+package org.erpya.base.arduino.util;
 
 /**
- * Device Interface for handle printers
- * @author yamel, ysenih@erpya.com , http://www.erpya.com
+ * Arduino connection interface
+ * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public interface IPrinter {
+public interface IArduino {
+    /** Mandatory Attributes  */
+    public static final String ARDUINO_TYPE_KEY = "#ARDUINO_TYPE";
+    public static final String INTERFACE_TYPE_KEY = "#INTERFACE_TYPE";
+    /**Values   */
+    public static final String ARDUINO_UNO = "UNO";
+    public static final String INTERFACE_BLUETOOTH = "BLU";
+    public static final String INTERFACE_WIRELESS = "WRL";
 
     /**
-     * Print Line
+     * Send a message
      */
-    public void printLine(String line) throws Exception;
+    public void sendMessage(String message) throws Exception;
 
-
-    /**
-     * add lines
-     * @param lineQuantity
-     */
-    public void addLine(int lineQuantity) throws Exception;
-
-    /**
-     * Se if is printed a bold font for next printing
-     * @param isBold
-     */
-    public void setBold(boolean isBold);
 }

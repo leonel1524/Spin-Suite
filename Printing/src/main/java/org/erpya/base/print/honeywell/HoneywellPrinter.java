@@ -29,7 +29,7 @@ import org.erpya.base.device.util.Device;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDevice;
 import org.erpya.base.device.util.IDeviceType;
-import org.erpya.print.util.IPrinter;
+import org.erpya.base.print.util.IPrinter;
 import org.erpya.base.exceptions.SpinSuiteException;
 import org.erpya.base.util.LogM;
 import org.erpya.base.util.Util;
