@@ -1,0 +1,248 @@
+package org.erpya.app.spinsuite.arduino;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import org.erpya.app.spinsuite.R;
+import org.erpya.base.arduino.util.IArduino;
+import org.erpya.base.arduino.util.IArduinoStatus;
+import org.erpya.base.device.util.DeviceManager;
+import org.erpya.base.device.util.DeviceTypeHandler;
+import org.erpya.base.device.util.IDevice;
+import org.erpya.base.device.util.IDeviceType;
+import org.erpya.base.util.LogM;
+import org.erpya.base.util.Util;
+
+/**
+ * An activity representing a single Device detail screen. This
+ * activity is only used on narrow width devices. On tablet-size devices,
+ * item details are presented side-by-side with a list of items
+ * in a {@link DeviceListActivity}.
+ */
+public class DeviceDetailActivity extends AppCompatActivity {
+
+    private IArduinoStatus listener;
+    private String result = null;
+    private DeviceTypeHandler handler = null;
+    private LogM log = null;
+    private ProgressDialog progress;
+    private String currentDeviceId;
+    private Context context;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_device_detail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
+        currentDeviceId = getIntent().getStringExtra(DeviceDetailFragment.ARG_ITEM_ID);
+        loadDevice();
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                connect();
+            }
+        });
+
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        // savedInstanceState is non-null when there is fragment state
+        // saved from previous configurations of this activity
+        // (e.g. when rotating the screen from portrait to landscape).
+        // In this case, the fragment will automatically be re-added
+        // to its container so we don't need to manually add it.
+        // For more information, see the Fragments API guide at:
+        //
+        // http://developer.android.com/guide/components/fragments.html
+        //
+        if (savedInstanceState == null) {
+            // Create the detail fragment and add it to the activity
+            // using a fragment transaction.
+            Bundle arguments = new Bundle();
+            arguments.putString(DeviceDetailFragment.ARG_ITEM_ID,
+                    currentDeviceId);
+            DeviceDetailFragment fragment = new DeviceDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.device_detail_container, fragment)
+                    .commit();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        diconnect();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            // This ID represents the Home or Up button. In the case of this
+            // activity, the Up button is shown. For
+            // more details, see the Navigation pattern on Android Design:
+            //
+            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+            //
+            navigateUpTo(new Intent(this, DeviceListActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Show message
+     * @param message
+     */
+    private void showMessage(String message) {
+        Toast.makeText(getApplicationContext(), message,Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Load device for connect
+     */
+    private void loadDevice() {
+        context = getApplicationContext();
+        handler = DeviceManager
+                .getInstance()
+                .getDefaultDeviceHandler(IDeviceType.TYPE_ARDUINO);
+        //  Set current device
+        handler.setCurrentDevice(currentDeviceId);
+        log = new LogM(getApplicationContext(), this.getClass());
+    }
+
+    /**
+     * Connect to device
+     */
+    private void connect() {
+        new ConnectionTask().execute();
+    }
+
+    /**
+     * Disconnect
+     */
+    private void diconnect() {
+        if(handler != null) {
+            try {
+                handler.close();
+            } catch (Exception e) {
+                log.error(e.getLocalizedMessage());
+            }
+        }
+    }
+
+    /**
+     * This class demonstrates printing in a background thread and updates
+     * the UI in the UI thread.
+     */
+    public class ConnectionTask extends AsyncTask<String, Integer, String> {
+
+
+        /**
+         * Runs on the UI thread before doInBackground(Params...).
+         */
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(DeviceDetailActivity.this, "Connecting...", "Please wait!!!");  //show a progress dialog
+        }
+
+        /**
+         * This method runs on a background thread. The specified parameters
+         * are the parameters passed to the execute method by the caller of
+         * this task. This method can call publishProgress to publish updates
+         * on the UI thread.
+         */
+        @Override
+        protected String doInBackground(String... args) {
+            try {
+                String deviceId = null;
+                if(args != null
+                        && args.length > 0
+                        && !Util.isEmpty(args[0])) {
+                    deviceId = args[0];
+                }
+                //	Connect
+                publishProgress(IArduinoStatus.OPENING_CONNECTION);
+                log.fine("Connecting...");
+                if(!Util.isEmpty(deviceId)) {
+                    handler.setCurrentDevice(deviceId);
+                }
+                //  Connect
+                handler.connect();
+                log.fine("Document Sent");
+            } catch (Exception e) {
+                result = e.getLocalizedMessage();
+                publishProgress(IArduinoStatus.ERROR);
+                log.severe("Printing Error " + e.getLocalizedMessage());
+            } finally {
+                publishProgress(IArduinoStatus.CLOSING_CONNECTION);
+                log.fine("Closing Connection");
+            }
+            // The result string will be passed to the onPostExecute method
+            // for display in the the Progress and Status text box.
+            return result;
+        }
+
+        /**
+         * Runs on the UI thread after publishProgress is invoked. The
+         * specified values are the values passed to publishProgress.
+         */
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            if(listener == null) {
+                return;
+            }
+            // Access the values array.
+            int progress = values[0];
+
+            switch (progress) {
+                case IArduinoStatus.OPENING_CONNECTION:
+                    listener.publishStatus(context.getResources().getString(R.string.Printing_Opening_Connection));
+                    break;
+                case IArduinoStatus.CLOSING_CONNECTION:
+                    listener.publishStatus(context.getResources().getString(R.string.Printing_Closing_Connection));
+                    break;
+                case IArduinoStatus.SENDING_TEXT:
+                    listener.publishStatus(context.getResources().getString(R.string.Printing_Sending_Text));
+                    break;
+                case IArduinoStatus.CONNECTION_ERROR:
+                    listener.publishStatus(context.getResources().getString(R.string.Printing_Connection_Error) + ": " + result);
+                    break;
+                case IArduinoStatus.ERROR:
+                    listener.publishStatus(context.getResources().getString(R.string.Printing_Generic_Error) + ": " + result);
+                    break;
+            }
+        }
+
+        /**
+         * Runs on the UI thread after doInBackground method. The specified
+         * result parameter is the value returned by doInBackground.
+         */
+        @Override
+        protected void onPostExecute(String result) {
+            // Displays the result (number of bytes sent to the printer or
+            // exception message) in the Progress and Status text box.
+            if (result != null) {
+                showMessage(result);
+            }
+            progress.dismiss();
+        }
+    }
+}

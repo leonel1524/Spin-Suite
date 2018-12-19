@@ -28,6 +28,8 @@ public interface IArduino {
     public static final String ARDUINO_UNO = "UNO";
     public static final String INTERFACE_BLUETOOTH = "BLU";
     public static final String INTERFACE_WIRELESS = "WRL";
+    public static final char START_CHARACTER = 1;
+    public static final char END_CHARACTER = 2;
 
     /**
      * Send a message

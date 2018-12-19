@@ -30,6 +30,7 @@ import org.erpya.base.device.util.IDevice;
 import org.erpya.base.device.util.IDeviceType;
 import org.erpya.base.util.Env;
 import org.erpya.base.util.LogM;
+import org.erpya.base.util.Util;
 import org.erpya.base.util.ValueUtil;
 
 import java.io.IOException;
@@ -120,11 +121,11 @@ public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArdui
             BluetoothDevice bluetoothDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(bluetooth.getAddress());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
                 bluetoothSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(deviceUUID);
+                BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+                bluetoothSocket.connect();//start connection
+                setIsConnected(true);
             }
-            BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-            bluetoothSocket.connect();//start connection
         }
-        setIsConnected(true);
         //
         return bluetoothSocket;
     }
@@ -197,6 +198,8 @@ public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArdui
 
     @Override
     public void sendMessage(String message) throws Exception {
-        write(message);
+        if(!Util.isEmpty(message)) {
+            write(START_CHARACTER + message + END_CHARACTER);
+        }
     }
 }

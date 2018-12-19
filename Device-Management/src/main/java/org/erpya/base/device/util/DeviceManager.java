@@ -41,10 +41,12 @@ public class DeviceManager {
      */
 	public DeviceManager(Context context) {
 		this.context = context;
+        deviceTypeMap = new HashMap<String, IDeviceType>();
+        handlerMap = new HashMap<String, DeviceTypeHandler>();
 	}
 
 	/** Instance for it */
-	private static DeviceManager instance = null;
+	private static DeviceManager instance;
 	/** Context */
 	private final String CONTEXT_DEFAULT_DEVICE_HANDLER = "#DeviceTypeHandler|";
     /**	Logger							*/
@@ -76,9 +78,9 @@ public class DeviceManager {
     /** Context */
 	private Context context;
 	/**	DeviceManager Map	*/
-	private Map<String, IDeviceType> deviceTypeMap = new HashMap<String, IDeviceType>();
+	private Map<String, IDeviceType> deviceTypeMap;
     /**	Handler Map	*/
-    private Map<String, DeviceTypeHandler> handlerMap = new HashMap<String, DeviceTypeHandler>();
+    private Map<String, DeviceTypeHandler> handlerMap;
 
     /**
      * Get Android Context
@@ -170,7 +172,7 @@ public class DeviceManager {
         }
         //  Default Return
         Env.setContext(CONTEXT_DEFAULT_DEVICE_HANDLER + "|" + type, (String) null);
-        return null;
+        return handler;
     }
 
     /**

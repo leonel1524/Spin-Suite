@@ -116,6 +116,14 @@ public abstract class DeviceTypeHandler {
         currentDevice = device;
     }
 
+	/**
+	 * Set current device from ID
+	 * @param deviceId
+	 */
+	public void setCurrentDevice(String deviceId) {
+    	setCurrentDevice(getDevice(deviceId));
+	}
+
     /**
      * Add Device to list
      * @param device
