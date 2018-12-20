@@ -4,18 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.erpya.app.spinsuite.R;
-
+import org.erpya.base.device.util.DeviceManager;
+import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.util.Env;
 
 import java.util.List;
@@ -46,11 +47,12 @@ public class DeviceListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final View recyclerView = findViewById(R.id.device_list);
+        assert recyclerView != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                setupRecyclerView((RecyclerView) recyclerView);
             }
         });
 
@@ -62,8 +64,6 @@ public class DeviceListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.device_list);
-        assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
     }
 
@@ -121,6 +121,13 @@ public class DeviceListActivity extends AppCompatActivity {
 
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
+            DeviceTypeHandler device = DeviceManager.getInstance().getDeviceHandler(mValues.get(position).id);
+            boolean isConnected = device != null && device.isConnected();
+            if(isConnected) {
+                holder.mIsConnected.setVisibility(View.VISIBLE);
+            } else {
+                holder.mIsConnected.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
@@ -131,9 +138,11 @@ public class DeviceListActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
+            final ImageView mIsConnected;
 
             ViewHolder(View view) {
                 super(view);
+                mIsConnected = (ImageView) view.findViewById(R.id.isConnected);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
                 mContentView = (TextView) view.findViewById(R.id.deviceName);
             }

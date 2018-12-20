@@ -1,8 +1,8 @@
 /*************************************************************************************
- * Product: Spin-Suite (Mobile Suite)                       		                 *
+ * Product: Spin-Suite (Mobile Suite)                                                *
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
- * Contributor(s): Yamel Senih ysenih@erpya.com				  		                 *
- * Contributor(s): Carlos Parada cparada@erpya.com				  		             *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
+ * Contributor(s): Carlos Parada cparada@erpya.com                                   *
  * This program is free software: you can redistribute it and/or modify              *
  * it under the terms of the GNU General Public License as published by              *
  * the Free Software Foundation, either version 3 of the License, or                 *
@@ -22,18 +22,19 @@ package org.erpya.base.arduino.util;
  */
 public interface IArduino {
     /** Mandatory Attributes  */
-    public static final String ARDUINO_TYPE_KEY = "#ARDUINO_TYPE";
-    public static final String INTERFACE_TYPE_KEY = "#INTERFACE_TYPE";
+    String ARDUINO_TYPE_KEY = "#ARDUINO_TYPE";
+    String INTERFACE_TYPE_KEY = "#INTERFACE_TYPE";
     /**Values   */
-    public static final String ARDUINO_UNO = "UNO";
-    public static final String INTERFACE_BLUETOOTH = "BLU";
-    public static final String INTERFACE_WIRELESS = "WRL";
-    public static final char START_CHARACTER = 1;
-    public static final char END_CHARACTER = 2;
+    String ARDUINO_UNO = "UNO";
+    String INTERFACE_BLUETOOTH = "BLU";
+    char STX_CHARACTER = 2;
+    char ETX_CHARACTER = 3;
+    /** Value Separator */
+    char SEPARATOR = '|';
 
     /**
      * Send a message
      */
-    public void sendMessage(String message) throws Exception;
+    void sendMessage(String message) throws Exception;
 
 }

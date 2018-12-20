@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Arduino_Opening_Connection">Opening Connection</string>
+    <string name="Arduino_Connected">Connected at</string>
+    <string name="Arduino_Closing_Connection">Closing Connection</string>
+    <string name="Arduino_Sending_Text">Sending Text</string>
+    <string name="Arduino_Finished">Arduino Finished</string>
+    <string name="Arduino_Connection_Error">Connection Error</string>
+    <string name="Arduino_Error">Arduino Error</string>
+    <string name="Arduino_Generic_Error">Error</string>
+</resources>

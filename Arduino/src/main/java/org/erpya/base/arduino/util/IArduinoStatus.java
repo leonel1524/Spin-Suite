@@ -32,7 +32,8 @@ public interface IArduinoStatus {
     public final int CONNECTION_ERROR = 10;
     /**	Generic Error	*/
     public final int ERROR = 12;
-
+    /**	Close Printer connection	*/
+    public final int CONNECTED = 3;
     /**
      * Used for publish print status
      */

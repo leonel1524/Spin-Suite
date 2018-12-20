@@ -15,11 +15,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.erpya.app.spinsuite.R;
-import org.erpya.base.arduino.util.IArduino;
+import org.erpya.base.arduino.util.IArduinoCommand;
 import org.erpya.base.arduino.util.IArduinoStatus;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
-import org.erpya.base.device.util.IDevice;
 import org.erpya.base.device.util.IDeviceType;
 import org.erpya.base.util.LogM;
 import org.erpya.base.util.Util;
@@ -46,13 +45,22 @@ public class DeviceDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
+        //  Set device ID
         currentDeviceId = getIntent().getStringExtra(DeviceDetailFragment.ARG_ITEM_ID);
         loadDevice();
+        //
+        listener = new IArduinoStatus() {
+            @Override
+            public void publishStatus(String message) {
+                Toast.makeText(getApplicationContext(), message,Toast.LENGTH_LONG).show();
+            }
+        };
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                connect();
+                sendCommands();
             }
         });
 
@@ -85,10 +93,21 @@ public class DeviceDetailActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        diconnect();
+    /**
+     * Send Arduino commands
+     */
+    private void sendCommands() {
+        if(handler != null
+                && handler.isConnected()) {
+            IArduinoCommand commandHandler = (IArduinoCommand) handler;
+            try {
+                commandHandler.sendCommand(IArduinoCommand.WIFI_INFO);
+                commandHandler.sendCommand(IArduinoCommand.WIFI_IP, "192.168.1.1");
+                commandHandler.sendCommand(IArduinoCommand.WIFI_SSID, "Spin-Group");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -112,7 +131,8 @@ public class DeviceDetailActivity extends AppCompatActivity {
      * @param message
      */
     private void showMessage(String message) {
-        Toast.makeText(getApplicationContext(), message,Toast.LENGTH_LONG).show();
+        Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 
     /**
@@ -126,13 +146,14 @@ public class DeviceDetailActivity extends AppCompatActivity {
         //  Set current device
         handler.setCurrentDevice(currentDeviceId);
         log = new LogM(getApplicationContext(), this.getClass());
+        connect();
     }
 
     /**
      * Connect to device
      */
     private void connect() {
-        new ConnectionTask().execute();
+        new ConnectionTask().execute(currentDeviceId);
     }
 
     /**
@@ -178,22 +199,23 @@ public class DeviceDetailActivity extends AppCompatActivity {
                         && !Util.isEmpty(args[0])) {
                     deviceId = args[0];
                 }
-                //	Connect
-                publishProgress(IArduinoStatus.OPENING_CONNECTION);
                 log.fine("Connecting...");
                 if(!Util.isEmpty(deviceId)) {
                     handler.setCurrentDevice(deviceId);
                 }
-                //  Connect
-                handler.connect();
-                log.fine("Document Sent");
+                //
+                if(!handler.isConnected()) {
+                    //	Connect
+                    publishProgress(IArduinoStatus.OPENING_CONNECTION);
+                    //  Connect
+                    handler.connect();
+                    publishProgress(IArduinoStatus.CONNECTED);
+                    result = context.getResources().getString(R.string.Arduino_Connected) + " " + handler.getCurrentDevice().getAddress();
+                }
             } catch (Exception e) {
                 result = e.getLocalizedMessage();
                 publishProgress(IArduinoStatus.ERROR);
                 log.severe("Printing Error " + e.getLocalizedMessage());
-            } finally {
-                publishProgress(IArduinoStatus.CLOSING_CONNECTION);
-                log.fine("Closing Connection");
             }
             // The result string will be passed to the onPostExecute method
             // for display in the the Progress and Status text box.
@@ -214,19 +236,22 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
             switch (progress) {
                 case IArduinoStatus.OPENING_CONNECTION:
-                    listener.publishStatus(context.getResources().getString(R.string.Printing_Opening_Connection));
+                    listener.publishStatus(context.getResources().getString(R.string.Arduino_Opening_Connection));
                     break;
                 case IArduinoStatus.CLOSING_CONNECTION:
-                    listener.publishStatus(context.getResources().getString(R.string.Printing_Closing_Connection));
+                    listener.publishStatus(context.getResources().getString(R.string.Arduino_Closing_Connection));
+                    break;
+                case IArduinoStatus.CONNECTED:
+                    listener.publishStatus(context.getResources().getString(R.string.Arduino_Connected) + " " + handler.getCurrentDevice().getAddress());
                     break;
                 case IArduinoStatus.SENDING_TEXT:
-                    listener.publishStatus(context.getResources().getString(R.string.Printing_Sending_Text));
+                    listener.publishStatus(context.getResources().getString(R.string.Arduino_Sending_Text));
                     break;
                 case IArduinoStatus.CONNECTION_ERROR:
-                    listener.publishStatus(context.getResources().getString(R.string.Printing_Connection_Error) + ": " + result);
+                    listener.publishStatus(context.getResources().getString(R.string.Arduino_Connection_Error));
                     break;
                 case IArduinoStatus.ERROR:
-                    listener.publishStatus(context.getResources().getString(R.string.Printing_Generic_Error) + ": " + result);
+                    listener.publishStatus(context.getResources().getString(R.string.Arduino_Generic_Error));
                     break;
             }
         }

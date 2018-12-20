@@ -23,6 +23,7 @@ import android.content.Context;
 import android.os.Build;
 
 import org.erpya.base.arduino.util.IArduino;
+import org.erpya.base.arduino.util.IArduinoCommand;
 import org.erpya.base.device.util.ConfigValue;
 import org.erpya.base.device.util.Device;
 import org.erpya.base.device.util.DeviceTypeHandler;
@@ -46,7 +47,7 @@ import java.util.logging.Level;
  * Arduino connector
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArduino {
+public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArduino, IArduinoCommand {
 
     /**
      * Standard constructor
@@ -199,7 +200,27 @@ public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArdui
     @Override
     public void sendMessage(String message) throws Exception {
         if(!Util.isEmpty(message)) {
-            write(START_CHARACTER + message + END_CHARACTER);
+            write(STX_CHARACTER + message + ETX_CHARACTER);
         }
+    }
+
+    @Override
+    public void sendCommand(int command, String message) throws Exception {
+        if(Util.isEmpty(message)) {
+            sendCommand(command);
+        } else {
+            sendMessage(command + String.valueOf(SEPARATOR) + message);
+        }
+    }
+
+    @Override
+    public void sendCommand(int command) throws Exception {
+        sendMessage(String.valueOf(command));
+    }
+
+    //  TODO: supported it
+    @Override
+    public String getResult() {
+        return null;
     }
 }
