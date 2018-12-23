@@ -15,8 +15,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.erpya.app.spinsuite.R;
-import org.erpya.base.arduino.util.IArduinoCommand;
+import org.erpya.base.arduino.util.ISendCommand;
 import org.erpya.base.arduino.util.IArduinoStatus;
+import org.erpya.base.arduino.util.WIFICommand;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDeviceType;
@@ -99,11 +100,15 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private void sendCommands() {
         if(handler != null
                 && handler.isConnected()) {
-            IArduinoCommand commandHandler = (IArduinoCommand) handler;
             try {
-                commandHandler.sendCommand(IArduinoCommand.WIFI_INFO);
-                commandHandler.sendCommand(IArduinoCommand.WIFI_IP, "192.168.1.1");
-                commandHandler.sendCommand(IArduinoCommand.WIFI_SSID, "Spin-Group");
+                WIFICommand.getInstance()
+                        .withSendCommand((ISendCommand) handler)
+                        .withSSID("Spin-Group")
+                        .withPSK("Test")
+                        .send();
+                WIFICommand.getInstance()
+                        .withSendCommand((ISendCommand) handler)
+                        .request();
             } catch (Exception e) {
                 e.printStackTrace();
             }

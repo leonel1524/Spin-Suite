@@ -22,8 +22,8 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.Build;
 
-import org.erpya.base.arduino.util.IArduino;
-import org.erpya.base.arduino.util.IArduinoCommand;
+import org.erpya.base.arduino.util.ICommand;
+import org.erpya.base.arduino.util.ISendCommand;
 import org.erpya.base.device.util.ConfigValue;
 import org.erpya.base.device.util.Device;
 import org.erpya.base.device.util.DeviceTypeHandler;
@@ -47,7 +47,14 @@ import java.util.logging.Level;
  * Arduino connector
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArduino, IArduinoCommand {
+public class ArduinoBluetoothHandler extends DeviceTypeHandler implements ISendCommand {
+
+    /** Mandatory Attributes  */
+    String ARDUINO_TYPE_KEY = "#ARDUINO_TYPE";
+    String INTERFACE_TYPE_KEY = "#INTERFACE_TYPE";
+    /**Values   */
+    String ARDUINO_UNO = "UNO";
+    String INTERFACE_BLUETOOTH = "BLU";
 
     /**
      * Standard constructor
@@ -157,10 +164,7 @@ public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArdui
                 if(valueToWrite == null) {
                     continue;
                 }
-                //  Verify type
-                if(valueToWrite instanceof String) {
-                    outputStream.write(ValueUtil.getValueAsString(valueToWrite).getBytes());
-                }
+                outputStream.write(ValueUtil.getValueAsString(valueToWrite).getBytes());
             }
         }
         return null;
@@ -198,29 +202,25 @@ public class ArduinoBluetoothHandler extends DeviceTypeHandler implements IArdui
     }
 
     @Override
-    public void sendMessage(String message) throws Exception {
-        if(!Util.isEmpty(message)) {
-            write(STX_CHARACTER + message + ETX_CHARACTER);
-        }
+    public void initCommand(int command) throws Exception {
+        write(ICommand.SOH_CHARACTER + String.valueOf(command));
     }
 
     @Override
-    public void sendCommand(int command, String message) throws Exception {
+    public void sendValue(String message) throws Exception {
         if(Util.isEmpty(message)) {
-            sendCommand(command);
-        } else {
-            sendMessage(command + String.valueOf(SEPARATOR) + message);
+            message = "";
         }
+        write(ICommand.STX_CHARACTER + message + ICommand.ETX_CHARACTER);
     }
 
     @Override
-    public void sendCommand(int command) throws Exception {
-        sendMessage(String.valueOf(command));
+    public void endCommand() throws Exception {
+        write(ICommand.EOT_CHARACTER);
     }
 
-    //  TODO: supported it
     @Override
-    public String getResult() {
-        return null;
+    public void requestCommand(int command) throws Exception {
+        write(ICommand.SOH_CHARACTER + String.valueOf(command) + ICommand.EOT_CHARACTER);
     }
 }

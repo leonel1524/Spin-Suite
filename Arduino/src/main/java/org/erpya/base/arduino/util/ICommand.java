@@ -2,7 +2,6 @@
  * Product: Spin-Suite (Mobile Suite)                                                *
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
  * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
- * Contributor(s): Carlos Parada cparada@erpya.com                                   *
  * This program is free software: you can redistribute it and/or modify              *
  * it under the terms of the GNU General Public License as published by              *
  * the Free Software Foundation, either version 3 of the License, or                 *
@@ -16,25 +15,37 @@
  ************************************************************************************/
 package org.erpya.base.arduino.util;
 
-/**
- * Arduino connection interface
- * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
- */
-public interface IArduino {
-    /** Mandatory Attributes  */
-    String ARDUINO_TYPE_KEY = "#ARDUINO_TYPE";
-    String INTERFACE_TYPE_KEY = "#INTERFACE_TYPE";
-    /**Values   */
-    String ARDUINO_UNO = "UNO";
-    String INTERFACE_BLUETOOTH = "BLU";
+public interface ICommand {
+    /** Start of Header */
+    char SOH_CHARACTER = 1;
+    /** Start of Text   */
     char STX_CHARACTER = 2;
+    /** End of Text */
     char ETX_CHARACTER = 3;
-    /** Value Separator */
-    char SEPARATOR = '|';
+    /** End of Transmission */
+    char EOT_CHARACTER = 4;
+    /** Supported commands  */
+    int MESSAGE = 0;
+    /** Maintenance commands    */
+    int RESET_DEVICE = 1;
+    int CLEAR_EEPROM = 2;
+    int DEVICE_INFO = 3;
+    /** Wireless setup / info   */
+    int WIFI = 4;
+    /** MQTT setup / info   */
+    int MQTT = 5;
 
     /**
-     * Send a message
+     * Method used for send command, can be used for send complete command or parse received command
+     * @return
+     * @throws Exception
      */
-    void sendMessage(String message) throws Exception;
+    boolean send() throws Exception;
 
+    /**
+     * Request info from Arduino
+     * @return
+     * @throws Exception
+     */
+    boolean request() throws Exception;
 }
