@@ -33,16 +33,22 @@ public interface ISendCommand {
 
     /**
      * Send a command with additional info
-     * Example 1: send WIFI ssid
-     * Complete Stream: Spin-GroupETX|
-     * Example 2: send WIFI ssid + psk
-     * Complete Stream: Spin-GroupETX|testPassword|
-     * Example 3: send MQTT broker info
-     * Complete Stream: test.mosquitto.orgETX|
-     * @param message
+     * Example: send REMOTE_SETUP ssid
+     * Complete Stream: STX + SSID + | + Spin-Group + ETX
+     * @param key
+     * @param value
      * @throws Exception
      */
-    void sendValue(String message) throws Exception;
+    void sendValue(String key, String value) throws Exception;
+
+    /**
+     * Send a value without key
+     * Example: send REMOTE_SETUP ssid
+     * Complete Stream: STX + Spin-Group + ETX
+     * @param value
+     * @throws Exception
+     */
+    void sendValue(String value) throws Exception;
 
     /**
      * End command transmission
@@ -54,5 +60,12 @@ public interface ISendCommand {
      * @param command
      * @throws Exception
      */
-    void requestCommand(int command) throws Exception;
+    void requestValue(int command) throws Exception;
+
+    /**
+     * Request for get info from device
+     * @param command
+     * @throws Exception
+     */
+    void requestValue(int command, String key) throws Exception;
 }

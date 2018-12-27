@@ -13,47 +13,66 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.base.arduino.util;
+package org.erpya.base.arduino.setup;
 
-public interface ICommand {
-    /** Start of Header */
-    char SOH_CHARACTER = 1;
-    /** Start of Text   */
-    char STX_CHARACTER = 2;
-    /** End of Text */
-    char ETX_CHARACTER = 3;
-    /** End of Transmission */
-    char EOT_CHARACTER = 4;
-    /** Value Separator */
-    char VALUE_SEPARATOR = '|';
-    /** Supported commands  */
-    int MESSAGE = 0;
-    /** Maintenance commands    */
-    int RESET_DEVICE = 1;
-    int CLEAR_EEPROM = 2;
-    int DEVICE_INFO = 3;
-    /** Wireless setup / info   */
-    int REMOTE_SETUP = 4;
+/**
+ * This class have WIFI attributes for setup
+ */
+public class WIFIAttribute extends SetupAttribute {
+
+
+    public WIFIAttribute() {
+        super();
+    }
 
     /**
-     * Method used for send command, can be used for send complete command or parse received command
-     * @return
-     * @throws Exception
+     * Constructor for default values
+     * @param ssid
+     * @param psk
      */
-    boolean send() throws Exception;
+    public WIFIAttribute(String ssid, String psk) {
+        this();
+        withSSID(ssid);
+        withPSK(psk);
+    }
+
+    /** Key Commands    */
+    public static final String SSID_KEY = "SSID";
+    public static final String PSK_KEY = "PSK";
 
     /**
-     * Request info from Arduino
+     * Set SSID
+     * @param ssid
      * @return
-     * @throws Exception
      */
-    boolean request() throws Exception;
+    public WIFIAttribute withSSID(String ssid) {
+        addAttribute(SSID_KEY, ssid);
+        return this;
+    }
 
     /**
-     * Request info from Arduino
-     * @param key
+     * Set Psk
+     * @param psk
      * @return
-     * @throws Exception
      */
-    boolean request(String key) throws Exception;
+    public WIFIAttribute withPSK(String psk) {
+        addAttribute(PSK_KEY, psk);
+        return this;
+    }
+
+    /**
+     * Get SSID
+     * @return
+     */
+    public String getSSID() {
+        return getAttribute(SSID_KEY);
+    }
+
+    /**
+     * Get PSK
+     * @return
+     */
+    public String getPSK() {
+        return getAttribute(PSK_KEY);
+    }
 }

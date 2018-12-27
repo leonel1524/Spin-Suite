@@ -13,47 +13,47 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.base.arduino.util;
+package org.erpya.base.arduino.setup;
 
-public interface ICommand {
-    /** Start of Header */
-    char SOH_CHARACTER = 1;
-    /** Start of Text   */
-    char STX_CHARACTER = 2;
-    /** End of Text */
-    char ETX_CHARACTER = 3;
-    /** End of Transmission */
-    char EOT_CHARACTER = 4;
-    /** Value Separator */
-    char VALUE_SEPARATOR = '|';
-    /** Supported commands  */
-    int MESSAGE = 0;
-    /** Maintenance commands    */
-    int RESET_DEVICE = 1;
-    int CLEAR_EEPROM = 2;
-    int DEVICE_INFO = 3;
-    /** Wireless setup / info   */
-    int REMOTE_SETUP = 4;
+import java.util.HashMap;
+
+/**
+ * Contract for setup attributes
+ */
+public class SetupAttribute {
 
     /**
-     * Method used for send command, can be used for send complete command or parse received command
-     * @return
-     * @throws Exception
+     * Constructor
      */
-    boolean send() throws Exception;
+    public SetupAttribute() {
+        attributes = new HashMap<>();
+    }
+    /** Attributes  */
+    private HashMap<String, String> attributes;
 
     /**
-     * Request info from Arduino
+     * Get Attributes added
      * @return
-     * @throws Exception
      */
-    boolean request() throws Exception;
+    public HashMap<String, String> getAttributes() {
+        return attributes;
+    }
 
     /**
-     * Request info from Arduino
+     * Add Attribute
+     * @param key
+     * @param value
+     */
+    public void addAttribute(String key, String value) {
+        attributes.put(key, value);
+    }
+
+    /**
+     * Get attribute from key
      * @param key
      * @return
-     * @throws Exception
      */
-    boolean request(String key) throws Exception;
+    public String getAttribute(String key) {
+        return attributes.get(key);
+    }
 }

@@ -1,28 +1,32 @@
 package org.erpya.app.spinsuite.arduino;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import org.erpya.app.spinsuite.R;
-import org.erpya.base.arduino.util.ISendCommand;
+import org.erpya.base.arduino.setup.ArduinoSetup;
+import org.erpya.base.arduino.setup.WIFIAttribute;
 import org.erpya.base.arduino.util.IArduinoStatus;
-import org.erpya.base.arduino.util.WIFICommand;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDeviceType;
 import org.erpya.base.util.LogM;
 import org.erpya.base.util.Util;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * An activity representing a single Device detail screen. This
@@ -39,6 +43,8 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private ProgressDialog progress;
     private String currentDeviceId;
     private Context context;
+    private Handler eventHandler;
+    ArduinoSetup commandThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,14 +107,9 @@ public class DeviceDetailActivity extends AppCompatActivity {
         if(handler != null
                 && handler.isConnected()) {
             try {
-                WIFICommand.getInstance()
-                        .withSendCommand((ISendCommand) handler)
-                        .withSSID("Spin-Group")
-                        .withPSK("Test")
-                        .send();
-                WIFICommand.getInstance()
-                        .withSendCommand((ISendCommand) handler)
-                        .request();
+                WIFIAttribute attribute = new WIFIAttribute("Spin-Group", "Epale");
+                commandThread.withAttribute(attribute).send();
+                commandThread.request();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -143,7 +144,21 @@ public class DeviceDetailActivity extends AppCompatActivity {
     /**
      * Load device for connect
      */
+    @SuppressLint("HandlerLeak")
     private void loadDevice() {
+        eventHandler = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                if(msg.what == ArduinoSetup.MESSAGE_READED){
+                    String readMessage = null;
+                    try {
+                        readMessage = new String((byte[]) msg.obj, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(getApplicationContext(), readMessage,Toast.LENGTH_LONG).show();
+                }
+            }
+        };
         context = getApplicationContext();
         handler = DeviceManager
                 .getInstance()
@@ -159,6 +174,8 @@ public class DeviceDetailActivity extends AppCompatActivity {
      */
     private void connect() {
         new ConnectionTask().execute(currentDeviceId);
+        commandThread = new ArduinoSetup(handler, eventHandler);
+        commandThread.start();
     }
 
     /**

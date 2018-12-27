@@ -207,11 +207,20 @@ public class ArduinoBluetoothHandler extends DeviceTypeHandler implements ISendC
     }
 
     @Override
-    public void sendValue(String message) throws Exception {
-        if(Util.isEmpty(message)) {
-            message = "";
+    public void sendValue(String key, String value) throws Exception {
+        if(Util.isEmpty(value)
+                && Util.isEmpty(key)) {
+            return;
         }
-        write(ICommand.STX_CHARACTER + message + ICommand.ETX_CHARACTER);
+        write(ICommand.STX_CHARACTER + key + ICommand.VALUE_SEPARATOR + value + ICommand.ETX_CHARACTER);
+    }
+
+    @Override
+    public void sendValue(String value) throws Exception {
+        if(Util.isEmpty(value)) {
+            value = "";
+        }
+        write(ICommand.STX_CHARACTER + value + ICommand.ETX_CHARACTER);
     }
 
     @Override
@@ -220,7 +229,12 @@ public class ArduinoBluetoothHandler extends DeviceTypeHandler implements ISendC
     }
 
     @Override
-    public void requestCommand(int command) throws Exception {
+    public void requestValue(int command) throws Exception {
         write(ICommand.SOH_CHARACTER + String.valueOf(command) + ICommand.EOT_CHARACTER);
+    }
+
+    @Override
+    public void requestValue(int command, String key) throws Exception {
+        write(ICommand.SOH_CHARACTER + key + ICommand.VALUE_SEPARATOR + String.valueOf(command) + ICommand.EOT_CHARACTER);
     }
 }
