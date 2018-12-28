@@ -46,6 +46,7 @@
 	<string name="PickNumber">Seleccione un Número</string>
 	<string name="PickContact">Seleccione un Contacto</string>
 	<string name="PickMails">Seleccione los Correos</string>
+	<string name="WIFIDetail">Detalle de WIFI</string>
 	<!-- Synchronization -->
 	<string name="Sync_InitSyncManual">Sincronización Manual</string>
 	<string name="Sync_SynchronzeButtom">Sincronizar</string>

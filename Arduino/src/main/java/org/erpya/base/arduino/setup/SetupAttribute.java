@@ -15,6 +15,8 @@
  ************************************************************************************/
 package org.erpya.base.arduino.setup;
 
+import org.erpya.base.util.Util;
+
 import java.util.HashMap;
 
 /**
@@ -45,7 +47,14 @@ public class SetupAttribute {
      * @param value
      */
     public void addAttribute(String key, String value) {
-        attributes.put(key, value);
+        if(Util.isEmpty(key)) {
+            return;
+        }
+        if(Util.isEmpty(value)) {
+            attributes.remove(key);
+        } else {
+            attributes.put(key, value);
+        }
     }
 
     /**

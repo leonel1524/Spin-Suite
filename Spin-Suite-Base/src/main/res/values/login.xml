@@ -19,6 +19,7 @@
 <resources>
     <string name="User">User</string>
     <string name="Pass">Password</string>
+	<string name="SSID">Network SSID</string>
     <string name="ConfigConn">Config Connection</string>
     <string name="NameSpace">Name Space</string>
     <string name="AD_Client_ID">Client</string>

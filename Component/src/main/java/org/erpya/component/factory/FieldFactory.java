@@ -150,6 +150,16 @@ public class FieldFactory {
     }
 
     /**
+     * Set Encrypted
+     * @param isEncrypted
+     * @return
+     */
+    public FieldFactory withEncrypted(boolean isEncrypted) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_IsEncrypted, isEncrypted);
+        return this;
+    }
+
+    /**
      * get Field component from factory
      * @return
      */

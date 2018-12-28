@@ -46,6 +46,7 @@
 	<string name="PickNumber">Pick a Number</string>
 	<string name="PickContact">Pick a Contact</string>
 	<string name="PickMails">Pick the Mails</string>
+	<string name="WIFIDetail">WIFI Detail</string>
 	
 	<!-- Synchronization -->
 	<string name="Sync_InitSyncManual">Manual Synchronization</string>

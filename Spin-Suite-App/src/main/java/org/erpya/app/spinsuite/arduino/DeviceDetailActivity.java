@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import org.erpya.app.spinsuite.R;
 import org.erpya.base.arduino.setup.ArduinoSetup;
+import org.erpya.base.arduino.setup.SetupAttribute;
 import org.erpya.base.arduino.setup.WIFIAttribute;
 import org.erpya.base.arduino.util.IArduinoStatus;
 import org.erpya.base.device.util.DeviceManager;
@@ -25,8 +26,6 @@ import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDeviceType;
 import org.erpya.base.util.LogM;
 import org.erpya.base.util.Util;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * An activity representing a single Device detail screen. This
@@ -44,7 +43,8 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private String currentDeviceId;
     private Context context;
     private Handler eventHandler;
-    ArduinoSetup commandThread;
+    private ArduinoSetup commandThread;
+    private DeviceDetailFragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
         listener = new IArduinoStatus() {
             @Override
             public void publishStatus(String message) {
-                Toast.makeText(getApplicationContext(), message,Toast.LENGTH_LONG).show();
+                //
             }
         };
 
@@ -92,10 +92,10 @@ public class DeviceDetailActivity extends AppCompatActivity {
             Bundle arguments = new Bundle();
             arguments.putString(DeviceDetailFragment.ARG_ITEM_ID,
                     currentDeviceId);
-            DeviceDetailFragment fragment = new DeviceDetailFragment();
-            fragment.setArguments(arguments);
+            currentFragment = new DeviceDetailFragment();
+            currentFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.device_detail_container, fragment)
+                    .add(R.id.device_detail_container, currentFragment)
                     .commit();
         }
     }
@@ -106,10 +106,21 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private void sendCommands() {
         if(handler != null
                 && handler.isConnected()) {
+            //  Validate values
             try {
-                WIFIAttribute attribute = new WIFIAttribute("Spin-Group", "Epale");
-                commandThread.withAttribute(attribute).send();
-                commandThread.request();
+                if(currentFragment != null) {
+                    WIFIAttribute attribute = currentFragment.getWIFIAttribute();
+                    if(attribute == null) {
+                        showMessage(getString(R.string.msg_ValidError));
+                        return;
+                    }
+                    if(Util.isEmpty(attribute.getSSID())) {
+                        showMessage(getString(R.string.msg_ValidError) + " - " + getString(R.string.SSID));
+                        return;
+                    }
+                    //
+                    commandThread.withAttribute(attribute).send();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -148,14 +159,12 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private void loadDevice() {
         eventHandler = new Handler() {
             public void handleMessage(android.os.Message msg) {
-                if(msg.what == ArduinoSetup.MESSAGE_READED){
-                    String readMessage = null;
-                    try {
-                        readMessage = new String((byte[]) msg.obj, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                if(msg.what == ArduinoSetup.MESSAGE_READED) {
+                    SetupAttribute attribute = (SetupAttribute) msg.obj;
+                    WIFIAttribute wifiAttribute = new WIFIAttribute(attribute);
+                    if(currentFragment != null) {
+                        currentFragment.setWIFIAttribute(wifiAttribute);
                     }
-                    Toast.makeText(getApplicationContext(), readMessage,Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -174,8 +183,19 @@ public class DeviceDetailActivity extends AppCompatActivity {
      */
     private void connect() {
         new ConnectionTask().execute(currentDeviceId);
+    }
+
+    /**
+     * After connect with device
+     */
+    private void afterConnect() {
         commandThread = new ArduinoSetup(handler, eventHandler);
         commandThread.start();
+        try {
+            commandThread.request(WIFIAttribute.SSID_KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -290,6 +310,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 showMessage(result);
             }
             progress.dismiss();
+            afterConnect();
         }
     }
 }

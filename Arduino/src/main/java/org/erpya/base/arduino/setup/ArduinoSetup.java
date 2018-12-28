@@ -37,6 +37,7 @@ public class ArduinoSetup extends Thread implements ICommand {
     public ArduinoSetup(DeviceTypeHandler deviceHandler, Handler eventHandler) {
         this.deviceHandler = deviceHandler;
         this.eventHandler = eventHandler;
+        commandReaded = new StringBuffer();
     }
 
     /** Send command    */
@@ -45,6 +46,8 @@ public class ArduinoSetup extends Thread implements ICommand {
     private SetupAttribute attribute;
     // #defines for identifying shared types between calling functions
     public final static int MESSAGE_READED = 1;
+    /** Complete Command    */
+    private StringBuffer commandReaded;
 
     /**
      * Add Attributes for send
@@ -66,13 +69,14 @@ public class ArduinoSetup extends Thread implements ICommand {
             return false;
         }
         //  for others
-        ISendCommand sendCommand = (ISendCommand) deviceHandler;
-        sendCommand.initCommand(ICommand.REMOTE_SETUP);
-        for(String key: attribute.getAttributes().keySet()) {
-            sendCommand.sendValue(key, attribute.getAttribute(key));
+        if(attribute.getAttributes().size() > 0) {
+            ISendCommand sendCommand = (ISendCommand) deviceHandler;
+            sendCommand.initCommand(ICommand.REMOTE_SETUP);
+            for(String key: attribute.getAttributes().keySet()) {
+                sendCommand.sendValue(key, attribute.getAttribute(key));
+            }
+            sendCommand.endCommand();
         }
-        sendCommand.endCommand();
-
         return true;
     }
 
@@ -104,8 +108,6 @@ public class ArduinoSetup extends Thread implements ICommand {
      * Run thread
      */
     public void run() {
-        byte[] buffer = new byte[1024];  // buffer store for the stream
-        int bytes; // bytes returned from read()
         // Keep listening to the InputStream until an exception occurs
         while (true) {
             InputStream inputStream = deviceHandler.getInputStream();
@@ -114,14 +116,88 @@ public class ArduinoSetup extends Thread implements ICommand {
                 continue;
             }
             try {
-                // Read from the InputStream
-                bytes = inputStream.read(buffer);
-                // Send the obtained bytes to the UI activity
-                eventHandler.obtainMessage(MESSAGE_READED, bytes, -1, buffer)
-                        .sendToTarget();
+                boolean read = false;
+                if(inputStream.available() > 0) {
+                    Thread.sleep(1000);
+                    do {
+                        int bit = inputStream.read();
+                        if(bit == ICommand.SOH_CHARACTER
+                                && !read) {
+                            read = true;
+                            commandReaded = new StringBuffer();
+                        }
+                        if(read) {
+                            commandReaded.append((char)bit);
+                        }
+                        if(bit == ICommand.EOT_CHARACTER) {
+                            read = false;
+                            if(commandReaded.length() > 0) {
+                                String command = commandReaded.toString();
+                                if(command.contains(String.valueOf(ICommand.SOH_CHARACTER))
+                                        && command.contains(String.valueOf(ICommand.EOT_CHARACTER))) {
+                                    // Send the obtained bytes to the UI activity
+                                    eventHandler.obtainMessage(MESSAGE_READED, getAttributesFromCommand(command))
+                                            .sendToTarget();
+                                    commandReaded = new StringBuffer();
+                                }
+                            }
+                        }
+                    } while(inputStream.available() > 0);
+                }
             } catch (Exception e) {
                 break;
             }
         }
+    }
+
+    /**
+     * Convert command to Setup Attribute
+     * @param command
+     * @return
+     */
+    private SetupAttribute getAttributesFromCommand(String command) {
+        SetupAttribute attributes = new SetupAttribute();
+        if (!hasValue(command)) {
+            return attributes;
+        }
+        //
+        String token;
+        String evaluateCommand = new String(command);
+        int startTokenIndex = evaluateCommand.indexOf(ICommand.STX_CHARACTER);
+        while (startTokenIndex != -1) {
+            evaluateCommand = evaluateCommand.substring(startTokenIndex + 1, evaluateCommand.length());    // from first STX_CHARACTER
+            //
+            int endTokenIndex = evaluateCommand.indexOf(ICommand.ETX_CHARACTER);                        // next ETX_CHARACTER
+            if (endTokenIndex < 0) {
+                System.err.println("No second tag: " + evaluateCommand);
+            }
+            //	Get individual command
+            token = evaluateCommand.substring(0, endTokenIndex);
+            //
+            if (token.contains(String.valueOf(ICommand.VALUE_SEPARATOR))) {
+                String key = token.substring(0, token.indexOf(VALUE_SEPARATOR));
+                String value = token.substring(token.indexOf(ICommand.VALUE_SEPARATOR) + 1, token.length());
+                //  Add to command
+                attributes.addAttribute(key, value);
+            }
+            //
+            evaluateCommand = evaluateCommand.substring(endTokenIndex + 1, evaluateCommand.length());    // from second STX_CHARACTER
+            startTokenIndex = evaluateCommand.indexOf(ICommand.STX_CHARACTER);
+        }
+        //  Default
+        return attributes;
+    }
+
+    /**
+     * Verify if it command has value
+     * @param command
+     * @return
+     */
+    private boolean hasValue(String command) {
+        if(Util.isEmpty(command)) {
+            return false;
+        }
+        //
+        return command.indexOf(ICommand.STX_CHARACTER) > 0;
     }
 }

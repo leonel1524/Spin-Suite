@@ -26,6 +26,16 @@ public class WIFIAttribute extends SetupAttribute {
     }
 
     /**
+     * From default attribute
+     * @param attribute
+     */
+    public WIFIAttribute(SetupAttribute attribute) {
+        this();
+        withSSID(attribute.getAttribute(SSID_KEY));
+        withPSK(attribute.getAttribute(PSK_KEY));
+    }
+
+    /**
      * Constructor for default values
      * @param ssid
      * @param psk

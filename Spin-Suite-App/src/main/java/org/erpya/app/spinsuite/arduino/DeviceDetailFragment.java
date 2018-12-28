@@ -1,15 +1,22 @@
 package org.erpya.app.spinsuite.arduino;
 
 import android.app.Activity;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.erpya.app.spinsuite.R;
+import org.erpya.base.arduino.setup.WIFIAttribute;
+import org.erpya.base.util.DisplayType;
+import org.erpya.base.util.Util;
+import org.erpya.component.factory.FieldFactory;
+import org.erpya.component.field.Field;
 
 /**
  * A fragment representing a single Device detail screen.
@@ -28,6 +35,7 @@ public class DeviceDetailFragment extends Fragment {
      * The dummy deviceName this fragment is presenting.
      */
     private ArduinoDeviceContent.DeviceItem mItem;
+    private LinearLayout parent;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -57,13 +65,96 @@ public class DeviceDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.device_detail, container, false);
-
-        // Show the dummy deviceName as text in a TextView.
+        View rootView = inflater.inflate(R.layout.device_initial_setup, container, false);
+        parent = rootView.findViewById(R.id.parent);
+        if(parent != null) {
+            ViewGroup.LayoutParams layoutParams = parent.getLayoutParams();
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            //  Add SSID
+            parent.addView(FieldFactory
+                    .createField(getContext())
+                    .withColumnName("SSID")
+                    .withName(getString(R.string.SSID))
+                    .withReadOnly(false)
+                    .withUpdateable(true)
+                    .withMandatory(true)
+                    .withDisplayType(DisplayType.STRING)
+                    .getFieldComponent(), layoutParams);
+            //  Add PSK
+            parent.addView(FieldFactory
+                    .createField(getContext())
+                    .withColumnName("PSK")
+                    .withName(getString(R.string.Pass))
+                    .withReadOnly(false)
+                    .withUpdateable(true)
+                    .withMandatory(true)
+                    .withEncrypted(true)
+                    .withDisplayType(DisplayType.STRING)
+                    .getFieldComponent(), layoutParams);
+        }
+        //
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.device_detail)).setText(mItem.details);
         }
-
         return rootView;
+    }
+
+    /**
+     * Get WIFI Attribute
+     * @return
+     */
+    public WIFIAttribute getWIFIAttribute() {
+        if(parent == null) {
+            return null;
+        }
+        String ssid = null;
+        String psk = null;
+        int count = parent.getChildCount();
+        for(int i = 0; i < count; i++) {
+            View view = parent.getChildAt(i);
+            if(view instanceof Field) {
+                Field field = (Field) view;
+                if(field.getFieldDefinition() != null) {
+                    if(!Util.isEmpty(field.getFieldDefinition().getColumnName())) {
+                        Object value = field.getValue();
+                        if(value != null) {
+                            if(field.getFieldDefinition().getColumnName().equals("SSID")) {
+                                ssid = (String) value;
+                            } else if(field.getFieldDefinition().getColumnName().equals("PSK")) {
+                                psk = (String) value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //
+        return new WIFIAttribute(ssid, psk);
+    }
+
+    /**
+     * Set WIFI Attribute
+     * @param attrinute
+     */
+    public void setWIFIAttribute(WIFIAttribute attrinute) {
+        if(parent == null) {
+            return;
+        }
+        int count = parent.getChildCount();
+        for(int i = 0; i < count; i++) {
+            View view = parent.getChildAt(i);
+            if(view instanceof Field) {
+                Field field = (Field) view;
+                if(field.getFieldDefinition() != null) {
+                    if(!Util.isEmpty(field.getFieldDefinition().getColumnName())) {
+                        if(field.getFieldDefinition().getColumnName().equals("SSID")) {
+                            field.setValue(attrinute.getSSID());
+                        } else if(field.getFieldDefinition().getColumnName().equals("PSK")) {
+                            field.setValue(attrinute.getPSK());
+                        }
+                    }
+                }
+            }
+        }
     }
 }
