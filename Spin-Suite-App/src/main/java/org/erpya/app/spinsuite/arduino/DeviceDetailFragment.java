@@ -134,9 +134,9 @@ public class DeviceDetailFragment extends Fragment {
 
     /**
      * Set WIFI Attribute
-     * @param attrinute
+     * @param attribute
      */
-    public void setWIFIAttribute(WIFIAttribute attrinute) {
+    public void setWIFIAttribute(WIFIAttribute attribute) {
         if(parent == null) {
             return;
         }
@@ -148,9 +148,9 @@ public class DeviceDetailFragment extends Fragment {
                 if(field.getFieldDefinition() != null) {
                     if(!Util.isEmpty(field.getFieldDefinition().getColumnName())) {
                         if(field.getFieldDefinition().getColumnName().equals("SSID")) {
-                            field.setValue(attrinute.getSSID());
+                            field.setValue(attribute.getSSID());
                         } else if(field.getFieldDefinition().getColumnName().equals("PSK")) {
-                            field.setValue(attrinute.getPSK());
+                            field.setValue(attribute.getPSK());
                         }
                     }
                 }

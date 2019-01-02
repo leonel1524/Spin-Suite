@@ -32,6 +32,8 @@ public class SetupAttribute {
     }
     /** Attributes  */
     private HashMap<String, String> attributes;
+    /** Key Commands    */
+    public static final String DEVICE_NAME_KEY = "DeviceName";
 
     /**
      * Get Attributes added
@@ -64,5 +66,23 @@ public class SetupAttribute {
      */
     public String getAttribute(String key) {
         return attributes.get(key);
+    }
+
+    /**
+     * Set Device Name
+     * @param deviceName
+     * @return
+     */
+    public SetupAttribute withDeviceName(String deviceName) {
+        addAttribute(DEVICE_NAME_KEY, deviceName);
+        return this;
+    }
+
+    /**
+     * Get Device name
+     * @return
+     */
+    public String getDeviceName() {
+        return getAttribute(DEVICE_NAME_KEY);
     }
 }

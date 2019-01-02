@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import org.erpya.app.spinsuite.R;
 import org.erpya.base.arduino.setup.ArduinoSetup;
@@ -118,8 +117,10 @@ public class DeviceDetailActivity extends AppCompatActivity {
                         showMessage(getString(R.string.msg_ValidError) + " - " + getString(R.string.SSID));
                         return;
                     }
+                    //  Add device Name
+                    attribute.withDeviceName(currentDeviceId);
                     //
-                    commandThread.withAttribute(attribute).send();
+                    commandThread.withAttribute(attribute.withTestWifi(true)).send();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
