@@ -16,7 +16,6 @@
  ************************************************************************************/
 package org.erpya.app.spinsuite;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -24,8 +23,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import org.erpya.app.spinsuite.arduino.DeviceListActivity;
-import org.erpya.base.arduino.supported.UNO;
 import org.erpya.base.database.support.CouchDBLite_2_0_Support;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.component.factory.FieldFactory;
@@ -55,16 +52,13 @@ public class MainActivity extends AppCompatActivity {
                     .withDisplayType(DisplayType.DATE)
                     .getFieldComponent(), 0, parent.getLayoutParams());
         }
-        DeviceManager
-                .getInstance(getApplicationContext())
-                .addDeviceType(new UNO());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
+//                startActivity(intent);
             }
         });
     }

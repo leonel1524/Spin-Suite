@@ -41,19 +41,4 @@ public interface ICommand {
      * @throws Exception
      */
     boolean send() throws Exception;
-
-    /**
-     * Request info from Arduino
-     * @return
-     * @throws Exception
-     */
-    boolean request() throws Exception;
-
-    /**
-     * Request info from Arduino
-     * @param key
-     * @return
-     * @throws Exception
-     */
-    boolean request(String key) throws Exception;
 }

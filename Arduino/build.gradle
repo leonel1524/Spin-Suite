@@ -2,10 +2,8 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 27
-
-
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -25,8 +23,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation project(path: ':Spin-Suite-Base')
     implementation project(path: ':Device-Management')
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -43,3 +39,5 @@ task createJar(type: Copy) {
     include 'classes.jar'
     rename('classes.jar', 'spin-suite-arduino.jar')
 }
+
+createJar.dependsOn(deleteJar, build)

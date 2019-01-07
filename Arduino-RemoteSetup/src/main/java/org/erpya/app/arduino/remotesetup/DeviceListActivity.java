@@ -1,4 +1,4 @@
-package org.erpya.app.spinsuite.arduino;
+package org.erpya.app.arduino.remotesetup;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.erpya.app.spinsuite.R;
+import org.erpya.app.arduino.initialsetup.AddDeviceWizard;
+import org.erpya.base.arduino.supported.UNO;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.util.Env;
@@ -41,7 +42,11 @@ public class DeviceListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
-
+        Env.getInstance(getApplicationContext());
+        DeviceManager
+                .getInstance(getApplicationContext())
+                .addDeviceType(new UNO());
+        //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
@@ -69,6 +74,8 @@ public class DeviceListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, ArduinoDeviceContent.getInstance(Env.getContext()).getItemList(), mTwoPane));
+        Intent intent = new Intent(getApplicationContext(), AddDeviceWizard.class);
+        startActivity(intent);
     }
 
     public static class SimpleItemRecyclerViewAdapter

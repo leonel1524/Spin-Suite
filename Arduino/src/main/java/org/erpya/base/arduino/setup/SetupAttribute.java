@@ -52,11 +52,7 @@ public class SetupAttribute {
         if(Util.isEmpty(key)) {
             return;
         }
-        if(Util.isEmpty(value)) {
-            attributes.remove(key);
-        } else {
-            attributes.put(key, value);
-        }
+        attributes.put(key, value);
     }
 
     /**

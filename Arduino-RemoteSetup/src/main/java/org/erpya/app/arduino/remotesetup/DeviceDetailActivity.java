@@ -1,4 +1,4 @@
-package org.erpya.app.spinsuite.arduino;
+package org.erpya.app.arduino.remotesetup;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import org.erpya.app.spinsuite.R;
 import org.erpya.base.arduino.setup.ArduinoSetup;
 import org.erpya.base.arduino.setup.SetupAttribute;
 import org.erpya.base.arduino.setup.WIFIAttribute;
@@ -23,6 +22,7 @@ import org.erpya.base.arduino.util.IArduinoStatus;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDeviceType;
+import org.erpya.base.util.Env;
 import org.erpya.base.util.LogM;
 import org.erpya.base.util.Util;
 
@@ -48,6 +48,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Env.getInstance(getApplicationContext());
         setContentView(R.layout.activity_device_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
@@ -117,10 +118,10 @@ public class DeviceDetailActivity extends AppCompatActivity {
                         showMessage(getString(R.string.msg_ValidError) + " - " + getString(R.string.SSID));
                         return;
                     }
-                    //  Add device Name
-                    attribute.withDeviceName(currentDeviceId);
                     //
-                    commandThread.withAttribute(attribute.withTestWifi(true)).send();
+                    commandThread.withAttribute(attribute).send();
+
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -171,7 +172,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
         };
         context = getApplicationContext();
         handler = DeviceManager
-                .getInstance()
+                .getInstance(context)
                 .getDefaultDeviceHandler(IDeviceType.TYPE_ARDUINO);
         //  Set current device
         handler.setCurrentDevice(currentDeviceId);
@@ -193,7 +194,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
         commandThread = new ArduinoSetup(handler, eventHandler);
         commandThread.start();
         try {
-            commandThread.request(WIFIAttribute.SSID_KEY);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -37,13 +37,14 @@
 	<string name="Action_Next">Siguiente</string>
 	<string name="Action_Skip">Ignorar</string>
 	<string name="Action_Finish">Finalizar</string>
-	<string name="Action_Syncronization">Sincronización</string>
+	<string name="Action_Synchronization">Sincronización</string>
 	<string name="Action_SyncNoForced">Sincronización Normal</string>
 	<string name="Action_SyncForced">Sincronización Forzada</string>
 	<string name="Action_SyncRecord">Sincronizar Registro</string>
 	<string name="Action_SyncDeleteBefore">Eliminar Antes de Sincronizar</string>
 	<string name="Action_About">Acerca De</string>
 	<string name="Action_OK">OK</string>
+	<string name="Action_Setting">Configuración</string>
 	
 	<!-- For Standard Search -->
 	<string name="Action_Call">Llamar</string>

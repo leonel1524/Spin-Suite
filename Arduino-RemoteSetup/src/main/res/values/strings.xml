@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Arduino Remote Setup</string>
+    <string name="title_device_list">Devices</string>
+    <string name="title_device_detail">Device Detail</string>
+    <string name="DeviceDefinitionTitle">Device Definition</string>
+    <string name="DeviceDefinitionHelp">Define a name and description for device, it can be used for identify your device on future reference</string>
+    <string name="WIFIInfoTitle">WIFI Info</string>
+    <string name="WIFIInfoHelp">Put here your WIFI information for connect with device and send statics of use and remote control for you</string>
+</resources>

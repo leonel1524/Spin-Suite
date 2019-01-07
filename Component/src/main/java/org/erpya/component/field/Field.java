@@ -19,12 +19,18 @@ package org.erpya.component.field;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.erpya.base.util.Util;
+import org.erpya.base.util.ValueUtil;
 import org.erpya.component.R;
 import org.erpya.base.model.InfoField;
 import org.erpya.base.util.LogM;
+
+import java.math.BigDecimal;
 
 /**
  * Main view for lookup in/out
@@ -269,5 +275,51 @@ public abstract class Field extends LinearLayout {
      */
     public void setEnabled(boolean isEnabled) {
         //  TODO Implement it for all
+    }
+
+    /**
+     * Get Field component
+     * @return
+     */
+    public abstract View getField();
+
+    /**
+     * Validate field
+     * @return
+     */
+    public boolean validateValue() {
+        return validateValue(null);
+    }
+
+    /**
+     * Validate field with a custom error for man datory fields
+     * @return false when field is empty and is mandatory
+     */
+    public boolean validateValue(String customError) {
+        View field = getField();
+        if(field == null) {
+            return false;
+        }
+        //  Validate value
+        boolean isValid = false;
+        if(getValue() != null) {
+            if(getFieldDefinition().isText()) {
+                isValid = !Util.isEmpty(ValueUtil.getValueAsString(getValue()));
+            } else {
+                isValid = true;
+            }
+        }
+        if(getFieldDefinition().isMandatory()
+                && !isValid) {
+            //  For fields
+            if(field.getClass().isAssignableFrom(EditText.class)){
+                EditText castedField = (EditText) field;
+                if(Util.isEmpty(customError)) {
+                    customError = getContext().getString(R.string.msg_FieldRequired);
+                }
+                castedField.setError(customError);
+            }
+        }
+        return isValid;
     }
 }

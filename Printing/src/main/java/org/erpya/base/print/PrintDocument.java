@@ -17,8 +17,8 @@
 
 package org.erpya.base.print;
 
-import org.erpya.print.util.IPrintDocument;
-import org.erpya.print.util.IPrintLine;
+import org.erpya.base.print.util.IPrintDocument;
+import org.erpya.base.print.util.IPrintLine;
 
 import java.util.List;
 

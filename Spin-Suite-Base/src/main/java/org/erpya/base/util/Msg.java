@@ -27,6 +27,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import org.erpya.base.R;
+
 /**
  * @author Yamel Senih
  *
@@ -43,7 +45,7 @@ public class Msg {
 	 */
 	private static void alertMsg(Context ctx, String title, String msg){
 		Builder dialog = new Builder(ctx);
-		dialog.setPositiveButton(ctx.getResources().getString(org.erpya.base.R.string.msg_Acept), new DialogInterface.OnClickListener() {
+		dialog.setPositiveButton(ctx.getResources().getString(R.string.msg_Accept), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
 			}

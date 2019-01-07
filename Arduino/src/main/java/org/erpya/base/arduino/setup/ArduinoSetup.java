@@ -80,30 +80,6 @@ public class ArduinoSetup extends Thread implements ICommand {
         return true;
     }
 
-    @Override
-    public boolean request() throws Exception {
-        if(deviceHandler == null) {
-            return false;
-        }
-        //  for others
-        ISendCommand sendCommand = (ISendCommand) deviceHandler;
-        sendCommand.requestValue(ICommand.REMOTE_SETUP);
-        return true;
-    }
-
-    @Override
-    public boolean request(String key) throws Exception {
-        if(deviceHandler == null
-                || Util.isEmpty(key)) {
-            return false;
-        }
-        //  for others
-        ISendCommand sendCommand = (ISendCommand) deviceHandler;
-        sendCommand.requestValue(ICommand.REMOTE_SETUP, key);
-        //
-        return true;
-    }
-
     /**
      * Run thread
      */

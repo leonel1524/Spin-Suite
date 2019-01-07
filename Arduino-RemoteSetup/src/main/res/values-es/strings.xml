@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Configuración Remota de Arduino</string>
+    <string name="title_device_list">Dispositivos</string>
+    <string name="title_device_detail">Detalle de Dispositivo</string>
+    <string name="DeviceDefinitionTitle">Definición del Dispositivo</string>
+    <string name="DeviceDefinitionHelp">Defina un nombre y descripción para el dispositivo, el nombre podrá ser usado para identificar su dispositivo en una futura referencia</string>
+    <string name="WIFIInfoTitle">Información de WIFI</string>
+    <string name="WIFIInfoHelp">Coloque aquí su informaciónde WIFI para conectar el dispositivo y enviar estadísticas de uso y control remoto</string>
+</resources>

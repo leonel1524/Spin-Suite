@@ -20,7 +20,7 @@
     <string name="msg_ValidError">Error de Validación</string>
     <string name="msg_Ok">OK</string>
     <string name="msg_Ask">Confirmación</string>
-    <string name="msg_Acept">Aceptar</string>
+    <string name="msg_Accept">Aceptar</string>
 	<string name="msg_Cancel">Cancelar</string>
 	<string name="msg_Save">Guardar</string>
 	<string name="msg_UserPassDoNotMatch">Usuario / Contraseña no Coinciden</string>
@@ -143,4 +143,5 @@
 	<string name="msg_PublicKey">Llave Pública</string>
 	<string name="msg_KeyLoaded">Llave Cargada</string>
 	<string name="msg_ReplaceKey">Reemplazar Llave</string>
+	<string name="msg_FieldRequired">Este campo es Requerido</string>
 </resources>

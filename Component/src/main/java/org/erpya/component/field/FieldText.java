@@ -19,6 +19,7 @@ package org.erpya.component.field;
 import android.content.Context;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.EditText;
 
 import org.erpya.base.model.InfoField;
@@ -99,6 +100,11 @@ public class FieldText extends Field {
         super.setEnabled(isEnabled);
         //  For it
         editText.setEnabled(isEnabled);
+    }
+
+    @Override
+    public View getField() {
+        return getEditText();
     }
 
     @Override

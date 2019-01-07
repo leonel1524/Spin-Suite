@@ -57,15 +57,7 @@ public interface ISendCommand {
 
     /**
      * Request for get info from device
-     * @param command
      * @throws Exception
      */
-    void requestValue(int command) throws Exception;
-
-    /**
-     * Request for get info from device
-     * @param command
-     * @throws Exception
-     */
-    void requestValue(int command, String key) throws Exception;
+    void requestValue(String key) throws Exception;
 }

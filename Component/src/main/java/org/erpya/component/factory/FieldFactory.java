@@ -1,8 +1,7 @@
 /*************************************************************************************
- * Product: Spin-Suite (Mobile Suite)                       		                 *
+ * Product: Spin-Suite (Mobile Suite)                                                *
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
- * Contributor(s): Yamel Senih ysenih@erpya.com				  		                 *
- * Contributor(s): Carlos Parada cparada@erpya.com				  		             *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
  * This program is free software: you can redistribute it and/or modify              *
  * it under the terms of the GNU General Public License as published by              *
  * the Free Software Foundation, either version 3 of the License, or                 *
@@ -32,11 +31,19 @@ import org.erpya.base.model.InfoField;
 public class FieldFactory {
 
     /**
-     * Standard Contructor for it,
+     * Standard Constructor for it,
      * @param context is mandatory
      */
     private FieldFactory(Context context) {
         fieldDefinition = new InfoField(context);
+    }
+
+    /**
+     * Provate constructor from Info Field
+     * @param fieldDefinition
+     */
+    private FieldFactory(InfoField fieldDefinition) {
+        this.fieldDefinition = fieldDefinition;
     }
 
     /**
@@ -46,6 +53,15 @@ public class FieldFactory {
      */
     public static FieldFactory createField(Context context) {
         return new FieldFactory(context);
+    }
+
+    /**
+     * Create from Info Field
+     * @param fieldDefinition
+     * @return
+     */
+    public static FieldFactory createField(InfoField fieldDefinition) {
+        return new FieldFactory(fieldDefinition);
     }
 
     /** Internal Info Field */

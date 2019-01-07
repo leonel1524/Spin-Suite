@@ -1,9 +1,8 @@
-package org.erpya.app.spinsuite.arduino;
+package org.erpya.app.arduino.remotesetup;
 
 import android.app.Activity;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +10,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.erpya.app.spinsuite.R;
 import org.erpya.base.arduino.setup.WIFIAttribute;
 import org.erpya.base.util.DisplayType;
-import org.erpya.base.util.Util;
 import org.erpya.component.factory.FieldFactory;
 import org.erpya.component.field.Field;
 
@@ -36,6 +33,9 @@ public class DeviceDetailFragment extends Fragment {
      */
     private ArduinoDeviceContent.DeviceItem mItem;
     private LinearLayout parent;
+    private Field deviceName;
+    private Field deviceSSID;
+    private Field devicePSK;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -70,8 +70,19 @@ public class DeviceDetailFragment extends Fragment {
         if(parent != null) {
             ViewGroup.LayoutParams layoutParams = parent.getLayoutParams();
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            //  Device Name
+            deviceName = FieldFactory
+                    .createField(getContext())
+                    .withColumnName("DeviceName")
+                    .withName(getString(R.string.Name))
+                    .withReadOnly(false)
+                    .withUpdateable(true)
+                    .withMandatory(true)
+                    .withDisplayType(DisplayType.STRING)
+                    .getFieldComponent();
+            parent.addView(deviceName, layoutParams);
             //  Add SSID
-            parent.addView(FieldFactory
+            deviceSSID = FieldFactory
                     .createField(getContext())
                     .withColumnName("SSID")
                     .withName(getString(R.string.SSID))
@@ -79,9 +90,10 @@ public class DeviceDetailFragment extends Fragment {
                     .withUpdateable(true)
                     .withMandatory(true)
                     .withDisplayType(DisplayType.STRING)
-                    .getFieldComponent(), layoutParams);
+                    .getFieldComponent();
+            parent.addView(deviceSSID, layoutParams);
             //  Add PSK
-            parent.addView(FieldFactory
+            devicePSK = FieldFactory
                     .createField(getContext())
                     .withColumnName("PSK")
                     .withName(getString(R.string.Pass))
@@ -90,7 +102,8 @@ public class DeviceDetailFragment extends Fragment {
                     .withMandatory(true)
                     .withEncrypted(true)
                     .withDisplayType(DisplayType.STRING)
-                    .getFieldComponent(), layoutParams);
+                    .getFieldComponent();
+            parent.addView(devicePSK, layoutParams);
         }
         //
         if (mItem != null) {
@@ -107,29 +120,16 @@ public class DeviceDetailFragment extends Fragment {
         if(parent == null) {
             return null;
         }
-        String ssid = null;
-        String psk = null;
-        int count = parent.getChildCount();
-        for(int i = 0; i < count; i++) {
-            View view = parent.getChildAt(i);
-            if(view instanceof Field) {
-                Field field = (Field) view;
-                if(field.getFieldDefinition() != null) {
-                    if(!Util.isEmpty(field.getFieldDefinition().getColumnName())) {
-                        Object value = field.getValue();
-                        if(value != null) {
-                            if(field.getFieldDefinition().getColumnName().equals("SSID")) {
-                                ssid = (String) value;
-                            } else if(field.getFieldDefinition().getColumnName().equals("PSK")) {
-                                psk = (String) value;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        deviceName.validateValue();
+        deviceSSID.validateValue();
+        devicePSK.validateValue();
+        String name = (String) deviceName.getValue();
+        String ssid = (String) deviceSSID.getValue();
+        String psk = (String) devicePSK.getValue();
         //
-        return new WIFIAttribute(ssid, psk);
+        WIFIAttribute attribute = new WIFIAttribute(ssid, psk);
+        attribute.withDeviceName(name);
+        return attribute;
     }
 
     /**
@@ -140,21 +140,8 @@ public class DeviceDetailFragment extends Fragment {
         if(parent == null) {
             return;
         }
-        int count = parent.getChildCount();
-        for(int i = 0; i < count; i++) {
-            View view = parent.getChildAt(i);
-            if(view instanceof Field) {
-                Field field = (Field) view;
-                if(field.getFieldDefinition() != null) {
-                    if(!Util.isEmpty(field.getFieldDefinition().getColumnName())) {
-                        if(field.getFieldDefinition().getColumnName().equals("SSID")) {
-                            field.setValue(attribute.getSSID());
-                        } else if(field.getFieldDefinition().getColumnName().equals("PSK")) {
-                            field.setValue(attribute.getPSK());
-                        }
-                    }
-                }
-            }
-        }
+        deviceName.setValue(attribute.getDeviceName());
+        deviceSSID.setValue(attribute.getSSID());
+        devicePSK.setValue(attribute.getPSK());
     }
 }

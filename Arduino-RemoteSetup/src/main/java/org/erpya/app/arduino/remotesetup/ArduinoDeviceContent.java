@@ -1,4 +1,4 @@
-package org.erpya.app.spinsuite.arduino;
+package org.erpya.app.arduino.remotesetup;
 
 import android.content.Context;
 
@@ -82,7 +82,7 @@ public class ArduinoDeviceContent {
      */
     private ArduinoDeviceContent(Context context) {
         DeviceTypeHandler handler = DeviceManager
-                .getInstance()
+                .getInstance(context)
                 .getDefaultDeviceHandler(IDeviceType.TYPE_ARDUINO);
         deviceItemMap = new HashMap<String, DeviceItem>();
         deviceItemList = new ArrayList<DeviceItem>();
