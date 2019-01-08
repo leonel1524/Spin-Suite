@@ -23,7 +23,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.erpya.base.model.GenericPO;
 import org.erpya.base.model.InfoField;
+import org.erpya.base.model.PO;
 import org.erpya.base.util.Util;
 import org.erpya.component.R;
 import org.erpya.component.base.IWizardStepPage;
@@ -43,6 +45,10 @@ public class WizardStep extends Fragment implements IWizardStepPage {
     private LinearLayout parent;
     private TextView stepName;
     private TextView stepHelp;
+    /** Table Name  */
+    private String tableName;
+    /** Model   */
+    private PO stepModel;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -87,18 +93,26 @@ public class WizardStep extends Fragment implements IWizardStepPage {
         if(parent == null) {
             return false;
         }
+        if(stepModel == null) {
+            stepModel = new GenericPO(getContext(), tableName);
+        }
         int count = parent.getChildCount();
         boolean isValid = true;
         for(int i = 0; i < count; i++) {
             View view = parent.getChildAt(i);
             if(view instanceof Field) {
                 Field field = (Field) view;
+                boolean isValidField = field.validateValue();
                 if(field.getFieldDefinition().isMandatory()
-                        && !field.validateValue()) {
+                        && !isValidField) {
                     isValid = false;
+                } else if(isValidField) {
+                    stepModel.setValue(field.getFieldDefinition().getColumnName(), field.getValue());
                 }
             }
         }
+        //  Save
+        stepModel.saveEx();
         return isValid;
     }
 
@@ -109,6 +123,15 @@ public class WizardStep extends Fragment implements IWizardStepPage {
     public void setFields(List<InfoField> fields) {
         this.fields = fields;
     }
+
+    /**
+     * Set Table Name
+     * @param tableName
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
 
     /**
      * Set name

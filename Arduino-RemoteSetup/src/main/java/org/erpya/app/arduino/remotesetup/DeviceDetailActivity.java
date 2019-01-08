@@ -19,6 +19,8 @@ import org.erpya.base.arduino.setup.ArduinoSetup;
 import org.erpya.base.arduino.setup.SetupAttribute;
 import org.erpya.base.arduino.setup.WIFIAttribute;
 import org.erpya.base.arduino.util.IArduinoStatus;
+import org.erpya.base.database.support.CouchDBLite_2_0_Support;
+import org.erpya.base.db.DBSupport;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDeviceType;
@@ -48,7 +50,6 @@ public class DeviceDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Env.getInstance(getApplicationContext());
         setContentView(R.layout.activity_device_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);

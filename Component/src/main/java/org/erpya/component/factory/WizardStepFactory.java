@@ -58,6 +58,16 @@ public class WizardStepFactory {
     }
 
     /**
+     * Set Table
+     * @param tableName
+     * @return
+     */
+    public WizardStepFactory withTableName(String tableName) {
+        step.setTableName(tableName);
+        return this;
+    }
+
+    /**
      * Set Help
      * @param help
      * @return

@@ -1,8 +1,7 @@
 /*************************************************************************************
- * Product: Spin-Suite (Mobile Suite)                       		                 *
+ * Product: Spin-Suite (Mobile Suite)                                                *
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
- * Contributor(s): Yamel Senih ysenih@erpya.com				  		                 *
- * Contributor(s): Carlos Parada cparada@erpya.com				  		             *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
  * This program is free software: you can redistribute it and/or modify              *
  * it under the terms of the GNU General Public License as published by              *
  * the Free Software Foundation, either version 3 of the License, or                 *
@@ -19,9 +18,11 @@ package org.erpya.base.model;
 import android.content.Context;
 import android.util.Log;
 
+import org.erpya.base.db.DBManager;
 import org.erpya.base.exceptions.SpinSuiteException;
 import org.erpya.base.util.Criteria;
 import org.erpya.base.util.LogM;
+import org.erpya.base.util.Util;
 import org.erpya.base.util.ValueUtil;
 
 import java.math.BigDecimal;
@@ -34,8 +35,6 @@ import java.util.logging.Level;
 /**
  * Persistence Object for data
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
- * <li> FR [  ]
- * @see https://github.com/adempiere/spin-suite/issues/2
  */
 public abstract class PO {
 
@@ -46,7 +45,7 @@ public abstract class PO {
      */
     public PO(Context context, String tableName) {
         this.context = context;
-        this.info = new org.erpya.base.model.POInfo(context, tableName);
+        this.info = new POInfo(context, tableName);
     }
 
     /**
@@ -64,7 +63,7 @@ public abstract class PO {
      */
     public PO(Context context) {
         this.context = context;
-        this.info = new org.erpya.base.model.POInfo(context, getTableName());
+        this.info = new POInfo(context, getTableName());
     }
 
     /** Map for key and values  */
@@ -76,7 +75,7 @@ public abstract class PO {
     /** Parent  */
     private PO parent;
     /** PO Info */
-    private org.erpya.base.model.POInfo info = null;
+    private POInfo info = null;
     /**	Logger							*/
     protected transient LogM log = new LogM(getContext(), this.getClass());
 
@@ -108,14 +107,22 @@ public abstract class PO {
      * @return
      */
     public String getId() {
-        return (String) attributes.get(org.erpya.base.model.POInfo.ID_KEY);
+        return (String) attributes.get(POInfo.ID_KEY);
+    }
+
+    /**
+     * Set ID for entity
+     * @param id
+     */
+    public void setId(String id) {
+        attributes.put(POInfo.ID_KEY, id);
     }
 
     /**
      * Get PO Information
      * @return
      */
-    public org.erpya.base.model.POInfo getInfo() {
+    public POInfo getInfo() {
         return info;
     }
 
@@ -124,7 +131,7 @@ public abstract class PO {
      * @return
      */
     public String getRevision() {
-        return (String) attributes.get(org.erpya.base.model.POInfo.REVISION_KEY);
+        return (String) attributes.get(POInfo.REVISION_KEY);
     }
 
     /**
@@ -132,7 +139,7 @@ public abstract class PO {
      * @return
      */
     public Object getAttachment() {
-        return attributes.get(org.erpya.base.model.POInfo.ATTACHMENT_KEY);
+        return attributes.get(POInfo.ATTACHMENT_KEY);
     }
 
     /**
@@ -364,13 +371,44 @@ public abstract class PO {
     }	//	afterSave
 
     /**
+     * 	Is there a Change to be saved by column key?
+     *	@return true if record changed
+     */
+    public boolean isValueChanged(String key) {
+        if(Util.isEmpty(key)) {
+            return false;
+        }
+        //
+        if(oldAttributes.get(key) == null
+                && attributes.get(key) == null) {
+            return false;
+        }
+        //
+        if(attributes.get(key) == null
+                && oldAttributes.get(key) != null) {
+            return true;
+        }
+        //
+        if(oldAttributes.get(key) == null
+                && attributes.get(key) != null) {
+            return true;
+        }
+        return !attributes.get(key).equals(oldAttributes.get(key));
+    }	//	isValueChanged
+
+    /**
      * 	Is there a Change to be saved?
      *	@return true if record changed
      */
     public boolean isValueChanged() {
-        //  TODO Implement it
+       for(String key : attributes.keySet()) {
+           if(isValueChanged(key)) {
+               return true;
+           }
+       }
+       //   Default false
         return false;
-    }	//	isValueChanged
+    }
 
     /**
      * 	Is new record
@@ -380,15 +418,22 @@ public abstract class PO {
         return true;
     }	//	is_new
 
+    /**
+     * Save model changes
+     * @throws SpinSuiteException
+     */
     public void saveEx() throws SpinSuiteException {
+        if(!isValueChanged()) {
+            return;
+        }
         boolean newRecord = false;
         boolean success = true;
         //  Before Save trigger
         if (!beforeSave(newRecord)) {
-            throw new SpinSuiteException("Error After Save");
+            throw new SpinSuiteException("Error Before Save");
         } else {
             try {
-                org.erpya.base.db.DBManager.getInstance(context).save(this);
+                DBManager.getInstance(context).save(this);
             } catch (Exception e) {
                 LogM.log(getContext(), this.getClass(), Level.SEVERE, "Save Error", e);
                 success = false;
@@ -399,6 +444,9 @@ public abstract class PO {
         if(!afterSave(newRecord, success)) {
             throw new SpinSuiteException("Error After Save");
         }
+        //  If all is ok change old values
+        oldAttributes.clear();
+        oldAttributes.putAll(attributes);
     }
 
     /**
@@ -411,7 +459,7 @@ public abstract class PO {
             return false;
         }
         try {
-            Map<String, Object> attributes = org.erpya.base.db.DBManager.getInstance(getContext()).getMap(criteria);
+            Map<String, Object> attributes = DBManager.getInstance(getContext()).getMap(criteria);
             //  Validate Attributes
             if(attributes == null) {
                 return false;

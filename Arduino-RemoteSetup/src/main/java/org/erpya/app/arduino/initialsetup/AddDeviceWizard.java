@@ -34,6 +34,7 @@ public class AddDeviceWizard extends Wizard {
                 .withTitle(getString(R.string.DeviceDefinitionTitle))
                 .withHelp(getString(R.string.DeviceDefinitionHelp))
                 .withMandatory(true)
+                .withTableName("DeviceDefinition")
                 .withAdditionalField(
                         FieldFactory.createField(getApplicationContext())
                         .withColumnName("DeviceName")
@@ -57,6 +58,7 @@ public class AddDeviceWizard extends Wizard {
         IWizardStep wifiInfoStep = WizardStepFactory.createStep(getApplicationContext())
                 .withTitle(getString(R.string.WIFIInfoTitle))
                 .withHelp(getString(R.string.WIFIInfoHelp))
+                .withTableName("WifiInfo")
                 .withAdditionalField(
                         FieldFactory.createField(getApplicationContext())
                                 .withColumnName("SSID")

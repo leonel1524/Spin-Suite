@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import org.erpya.app.arduino.initialsetup.AddDeviceWizard;
 import org.erpya.base.arduino.supported.UNO;
+import org.erpya.base.database.support.CouchDBLite_2_0_Support;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.util.Env;
@@ -46,6 +47,7 @@ public class DeviceListActivity extends AppCompatActivity {
         DeviceManager
                 .getInstance(getApplicationContext())
                 .addDeviceType(new UNO());
+        Env.setCurrentSupportedDatabase(CouchDBLite_2_0_Support.class.getName());
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

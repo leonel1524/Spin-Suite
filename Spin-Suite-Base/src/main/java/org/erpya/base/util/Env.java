@@ -2795,23 +2795,6 @@ public final class Env {
 	}	//	parseContext
 	
 	/**
-	 *	Parse Context replaces global or Window context @tag@ with actual value.
-	 *
-	 *  @tag@ are ignored otherwise "" is returned
-	 *  @param ctx context
-	 *	@param m_ActivityNo	Number of Window
-	 *	@param whereClause Message to be parsed
-	 *  @param onlyWindow if true, no defaults are used
-	 * 	@param ignoreUnparsable if true, unsuccessful @return parsed String or "" if not successful and ignoreUnparsable
-	 *	@return parsed context 
-	 */
-//	public static String parseContext(int m_ActivityNo, int m_TabNo, 
-//			String whereClause, boolean ignoreUnparsable,String defaultUnparseable) {
-//		return parseContext(getContext(), m_ActivityNo, m_TabNo,
-//				whereClause, ignoreUnparsable, defaultUnparseable);
-//	}
-	
-	/**
 	 * Get Default Language
 	 * @param ctx
 	 * @return
@@ -3195,44 +3178,6 @@ public final class Env {
 		ctx.getTheme().resolveAttribute(att, typedValueAttr, true);
 		//	Return
 		return typedValueAttr;
-	}
-	
-	/**
-	 * Set Text to Clipboard
-	 * @param p_Ctx
-	 * @param p_Text
-	 * @return void
-	 */
-//	public static void setClipboardText(Context p_Ctx, String p_Text) {
-//	    if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
-//	        android.text.ClipboardManager clipB = (android.text.ClipboardManager) p_Ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-//	        clipB.setText(p_Text);
-//	    } else {
-//	        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) p_Ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-//	        android.content.ClipData clip = android.content.ClipData.newPlainText("", p_Text);
-//	        clipboard.setPrimaryClip(clip);
-//	    }
-//	}
-	
-	/**
-	 * Hide Keyboard
-	 * @param context
-	 * @return void
-	 */
-	public static void hideKeyBoad(Context context) {
-//		InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-//		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-	}
-	
-	/**
-	 * Show Keyboard
-	 * @param p_Ctx
-	 * @return void
-	 */
-	public static void showKeyBoad(Context p_Ctx) {
-//		InputMethodManager imm = (InputMethodManager) p_Ctx.getSystemService(Activity.INPUT_METHOD_SERVICE);
-//		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,
-//				InputMethodManager.HIDE_IMPLICIT_ONLY);
 	}
 
 	/**

@@ -47,12 +47,15 @@ public class GenericWizardStep implements IWizardStep {
     private List<InfoField> fields;
     /** Step    */
     private WizardStep step;
+    /** Table Name  */
+    private String tableName;
 
     @Override
     public Fragment newInstance(Bundle savedInstanceState) {
         step = new WizardStep();
         step.setName(title);
         step.setHelp(help);
+        step.setTableName(tableName);
         step.setFields(fields);
         if(savedInstanceState != null) {
             step.setArguments(savedInstanceState);
@@ -78,6 +81,14 @@ public class GenericWizardStep implements IWizardStep {
     @Override
     public boolean isMandatory() {
         return isMandatory;
+    }
+
+    /**
+     * Set Table Name
+     * @param tableName
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     /**

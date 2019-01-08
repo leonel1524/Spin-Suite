@@ -18,6 +18,7 @@ package org.erpya.base.model;
 
 import android.content.Context;
 
+import org.erpya.base.db.DBManager;
 import org.erpya.base.util.Condition;
 import org.erpya.base.util.Criteria;
 import org.erpya.base.util.LogM;
@@ -99,7 +100,7 @@ public class POInfo implements org.erpya.base.model.IPOInfo {
         }
         try {
             criteria = new Criteria().addCriteria(METADATA_TABLE_NAME, Condition.EQUAL, tableName);
-            Map<String, Object> attributes = org.erpya.base.db.DBManager.getInstance(getContext()).getMap(criteria);
+            Map<String, Object> attributes = DBManager.getInstance(getContext()).getMap(criteria);
             //  Load
             if(attributes != null
                     && !attributes.isEmpty()) {

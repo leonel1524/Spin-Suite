@@ -39,8 +39,11 @@ import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
 
 import org.erpya.base.db.DBSupport;
+import org.erpya.base.model.POInfo;
 import org.erpya.base.util.Condition;
 import org.erpya.base.util.Criteria;
+import org.erpya.base.util.Util;
+import org.erpya.base.util.ValueUtil;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -53,8 +56,6 @@ import java.util.Map;
  * DB class, used for handle connection with Database
  *
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
- * <li> FR [  ]
- * @see https://github.com/erpcya/Spin-Suite/issues/
  */
 public class CouchDBLite_2_0_Support implements DBSupport {
     /** Constant with Database Name */
@@ -92,16 +93,22 @@ public class CouchDBLite_2_0_Support implements DBSupport {
     }
 
     @Override
-    public void saveMap(Map<String, Object> values) throws Exception {
+    public String saveMap(Map<String, Object> values) throws Exception {
         if(values == null) {
-            return;
+            return null;
         }
-        //
-        MutableDocument mutableDocument = new MutableDocument();
         // validate
         if(values == null
                 || values.isEmpty()) {
-            return;
+            return null;
+        }
+        //
+        MutableDocument mutableDocument;
+        String id = ValueUtil.getValueAsString(values.get(POInfo.ID_KEY));
+        if(Util.isEmpty(id)) {
+            mutableDocument = new MutableDocument();
+        } else {
+            mutableDocument = database.getDocument(id).toMutable();
         }
         //  do it
         for(Map.Entry<String, Object> entry : values.entrySet()) {
@@ -129,13 +136,14 @@ public class CouchDBLite_2_0_Support implements DBSupport {
         }
         //  Save document
         database.save(mutableDocument);
+        id = mutableDocument.getId();
         // Create replicators to push and pull changes to and from the cloud.
         Endpoint targetEndpoint = new URLEndpoint(new URI("ws://impala:55084/spin-suite"));
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(database, targetEndpoint);
         replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
         // Add authentication.
-        replConfig.setAuthenticator(new BasicAuthenticator("rMunoz", "rMunoz"));
+        replConfig.setAuthenticator(new BasicAuthenticator("test", "test"));
 
         // Create replicator.
         Replicator replicator = new Replicator(replConfig);
@@ -145,12 +153,14 @@ public class CouchDBLite_2_0_Support implements DBSupport {
             @Override
             public void changed(ReplicatorChange change) {
                 if (change.getStatus().getError() != null)
-                    Log.i("Prueba de Listener", "Error code ::  " + change.getStatus().getError().getCode());
+                    Log.i("Replication Listener", "Error code ::  " + change.getStatus().getError().getCode());
             }
         });
 
         // Start replication.
         replicator.start();
+        //  Return ID
+        return id;
     }
 
     @Override

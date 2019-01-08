@@ -32,8 +32,6 @@ import java.util.Map;
  * Database Manager (Handle support for distinct database)
  *
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
- * <li> FR [  ]
- * @see https://github.com/erpcya/Spin-Suite/issues/
  */
 public final class DBManager {
 
@@ -163,10 +161,8 @@ public final class DBManager {
             database.open();
         }
         //  Save
-        database.saveMap(entity.getMap());
-        if(!isOpen) {
-            database.close();
-        }
+        String id = database.saveMap(entity.getMap());
+        entity.setId(id);
     }
 
     /**
@@ -189,10 +185,6 @@ public final class DBManager {
         }
         //  Get Map
         Map<String, Object> attributes = database.getMap(criteria);
-        //  Close if it has been closed
-        if(!isOpen) {
-            database.close();
-        }
         //  Default return
         return attributes;
     }

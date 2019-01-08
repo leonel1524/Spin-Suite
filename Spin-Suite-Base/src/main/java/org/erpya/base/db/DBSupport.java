@@ -42,8 +42,9 @@ public interface DBSupport {
     /**
      * Save a Map from entity parameter
      * @param entity
+     * @return Id
      */
-    public void saveMap(Map<String, Object> entity) throws Exception;
+    public String saveMap(Map<String, Object> entity) throws Exception;
 
     /**
     * get Map with attributes and values from criteria

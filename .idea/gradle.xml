@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Arduino" />
+            <option value="$PROJECT_DIR$/Arduino-RemoteSetup" />
             <option value="$PROJECT_DIR$/Component" />
             <option value="$PROJECT_DIR$/Database" />
             <option value="$PROJECT_DIR$/Device-Management" />
