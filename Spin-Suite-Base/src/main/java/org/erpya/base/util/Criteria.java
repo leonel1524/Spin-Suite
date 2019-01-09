@@ -1,8 +1,7 @@
 /*************************************************************************************
- * Product: Spin-Suite (Mobile Suite)                       		                 *
+ * Product: Spin-Suite (Mobile Suite)                                                *
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
- * Contributor(s): Yamel Senih ysenih@erpya.com				  		                 *
- * Contributor(s): Carlos Parada cparada@erpya.com				  		             *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
  * This program is free software: you can redistribute it and/or modify              *
  * it under the terms of the GNU General Public License as published by              *
  * the Free Software Foundation, either version 3 of the License, or                 *
@@ -16,26 +15,29 @@
  ************************************************************************************/
 package org.erpya.base.util;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Used for handle Criteria Query
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
- * <li> FR [  ]
- * @see https://github.com/erpcya/Spin-Suite/issues/
  */
-public class Criteria {
+public class Criteria implements Parcelable {
 
     /**
      * Instance of Criteria with table name or alias
      */
     public Criteria() {
+
     }
 
     /** Map for old key and values  */
     private List<Condition> conditionList = new ArrayList<Condition>();
-
+    /** Name for parceable parameter    */
+    public static final String PARCEABLE_NAME = "DefaultCondition";
     /**
      * Add criteria value
      * @param attributeKey
@@ -78,4 +80,32 @@ public class Criteria {
         return conditionList;
     }
 
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Criteria createFromParcel(Parcel parcel) {
+            return new Criteria(parcel);
+        }
+        public Criteria[] newArray(int size) {
+            return new Criteria[size];
+        }
+    };
+
+    public Criteria(Parcel parcel){
+        this();
+        readToParcel(parcel);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(conditionList);
+    }
+
+    public void readToParcel(Parcel parcel){
+        conditionList = new ArrayList<Condition>();
+        parcel.readList(conditionList, getClass().getClassLoader());
+    }
 }

@@ -26,6 +26,8 @@ import android.widget.TextView;
 import org.erpya.base.model.GenericPO;
 import org.erpya.base.model.InfoField;
 import org.erpya.base.model.PO;
+import org.erpya.base.util.Condition;
+import org.erpya.base.util.Criteria;
 import org.erpya.base.util.Util;
 import org.erpya.component.R;
 import org.erpya.component.base.IWizardStepPage;
@@ -49,6 +51,8 @@ public class WizardStep extends Fragment implements IWizardStepPage {
     private String tableName;
     /** Model   */
     private PO stepModel;
+    /** Condition for load  */
+    private Criteria criteria;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -73,15 +77,30 @@ public class WizardStep extends Fragment implements IWizardStepPage {
         }
         ViewGroup.LayoutParams layoutParams = parent.getLayoutParams();
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        Bundle arguments = getArguments();
+        if(arguments != null) {
+            criteria = arguments.getParcelable(Criteria.PARCEABLE_NAME);
+            stepModel = new GenericPO(getContext(), tableName);
+            if(criteria != null) {
+                if(!stepModel.reload(criteria)) {
+                    for(Condition condition : criteria.getCriteriaList()) {
+                        stepModel.setValue(condition.getKeyAttribute(), condition.getValue());
+                    }
+                }
+            }
+        }
         //  Device Name
         if(fields != null) {
             for(InfoField field: fields) {
-                parent.addView(
-                        FieldFactory
-                                .createField(field)
-                                .getFieldComponent(),
-                        layoutParams
-                );
+                Field child = FieldFactory.createField(field).getFieldComponent();
+                //  Set value
+                if(stepModel != null) {
+                    Object value = stepModel.getValueAsObject(child.getFieldDefinition().getColumnName());
+                    if(value != null) {
+                        child.setValue(value);
+                    }
+                }
+                parent.addView(child, layoutParams);
             }
         }
         //

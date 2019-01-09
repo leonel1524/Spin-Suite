@@ -16,15 +16,16 @@
  ************************************************************************************/
 package org.erpya.base.util;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Arrays;
 
 /**
  * Condition class is used as component for Criteria class
  * @author yamel, ysenih@erpya.com , http://www.erpya.com
- * <li> FR [  ]
- * @see https://github.com/erpcya/Spin-Suite/issues/
  */
-public class Condition {
+public class Condition implements Parcelable {
 
     /**
      * For from and to with between
@@ -59,6 +60,13 @@ public class Condition {
     public Condition(String keyAttribute, String comparator, Object... values) {
         this(keyAttribute, comparator, null, null);
         this.values = values;
+    }
+
+    /**
+     * Default constructor
+     */
+    public Condition() {
+        this(null, null, null);
     }
 
     /** Key Attribute   */
@@ -128,5 +136,41 @@ public class Condition {
                 ", valueTo=" + valueTo +
                 ", values=" + Arrays.toString(values) +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Condition createFromParcel(Parcel parcel) {
+            return new Condition(parcel);
+        }
+        public Condition[] newArray(int size) {
+            return new Condition[size];
+        }
+    };
+
+    public Condition(Parcel parcel){
+        this();
+        readToParcel(parcel);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(keyAttribute);
+        dest.writeString(comparator);
+        dest.writeValue(value);
+        dest.writeValue(valueTo);
+        dest.writeArray(values);
+    }
+
+    public void readToParcel(Parcel parcel){
+        keyAttribute = parcel.readString();
+        comparator = parcel.readString();
+        value = parcel.readValue(getClass().getClassLoader());
+        valueTo = parcel.readValue(getClass().getClassLoader());
+        values = parcel.readArray(getClass().getClassLoader());
     }
 }

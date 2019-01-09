@@ -19,6 +19,8 @@ import org.erpya.base.arduino.supported.UNO;
 import org.erpya.base.database.support.CouchDBLite_2_0_Support;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
+import org.erpya.base.util.Condition;
+import org.erpya.base.util.Criteria;
 import org.erpya.base.util.Env;
 
 import java.util.List;
@@ -76,8 +78,6 @@ public class DeviceListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, ArduinoDeviceContent.getInstance(Env.getContext()).getItemList(), mTwoPane));
-        Intent intent = new Intent(getApplicationContext(), AddDeviceWizard.class);
-        startActivity(intent);
     }
 
     public static class SimpleItemRecyclerViewAdapter
@@ -90,20 +90,30 @@ public class DeviceListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ArduinoDeviceContent.DeviceItem item = (ArduinoDeviceContent.DeviceItem) view.getTag();
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putString(DeviceDetailFragment.ARG_ITEM_ID, item.id);
-                    DeviceDetailFragment fragment = new DeviceDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.device_detail_container, fragment)
-                            .commit();
+                Criteria criteria = new Criteria();
+                criteria.addCriteria("DeviceAddress", Condition.EQUAL, item.id);
+                Context context = view.getContext();
+                Intent intent = new Intent(context, AddDeviceWizard.class);
+//                Bundle arguments = intent.getExtras();
+                //  Set to arguments
+                intent.putExtra(Criteria.PARCEABLE_NAME, criteria);
+//                arguments.putParcelable(Criteria.PARCEABLE_NAME, criteria);
+                context.startActivity(intent);
+                if (mTwoPane) { //  Ummm.... what happen if exist three pane? hahahaha
+//                    Bundle arguments = new Bundle();
+                    //
+//                    arguments.putString(DeviceDetailFragment.ARG_ITEM_ID, item.id);
+//                    DeviceDetailFragment fragment = new DeviceDetailFragment();
+//                    fragment.setArguments(arguments);
+//                    mParentActivity.getSupportFragmentManager().beginTransaction()
+//                            .replace(R.id.device_detail_container, fragment)
+//                            .commit();
                 } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, DeviceDetailActivity.class);
-                    intent.putExtra(DeviceDetailFragment.ARG_ITEM_ID, item.id);
-
-                    context.startActivity(intent);
+//                    Context context = view.getContext();
+//                    Intent intent = new Intent(context, DeviceDetailActivity.class);
+//                    intent.putExtra(DeviceDetailFragment.ARG_ITEM_ID, item.id);
+//
+//                    context.startActivity(intent);
                 }
             }
         };

@@ -49,7 +49,7 @@ public class POInfo implements org.erpya.base.model.IPOInfo {
     }
 
     /** Static constant for ID */
-    public static final String ID_KEY = "_id";
+    public static final String ID_KEY = "id";
     /** Static constant for Revision */
     public static final String REVISION_KEY = "_rev";
     /** Static constant for ID */

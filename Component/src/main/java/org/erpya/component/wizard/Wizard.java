@@ -47,6 +47,8 @@ public abstract class Wizard extends AppCompatActivity {
     private Button previousAction;
     /** Next Action */
     private Button nextAction;
+    /** Is last action  */
+    private boolean isLastAction;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -59,7 +61,7 @@ public abstract class Wizard extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         sectionsPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
-        sectionsPagerAdapter.setArguments(savedInstanceState);
+        sectionsPagerAdapter.setArguments(getIntent().getExtras());
         //  Get Previous Action
         previousAction = findViewById(R.id.PreviousAction);
         previousAction.setOnClickListener(new View.OnClickListener() {
@@ -117,8 +119,10 @@ public abstract class Wizard extends AppCompatActivity {
         //  For next action
         if((position + 1) == sectionsPagerAdapter.getCount()) {
             nextAction.setText(R.string.Action_Finish);
+            isLastAction = true;
         } else {
             nextAction.setText(R.string.Action_Next);
+            isLastAction = false;
         }
     }
 
@@ -142,6 +146,11 @@ public abstract class Wizard extends AppCompatActivity {
             }
         } else {
             viewPagerController.setCurrentItem(viewPagerController.getCurrentItem() + 1);
+        }
+        //  Close if is last
+        if((currentStep + 1) == sectionsPagerAdapter.getCount()
+                && isLastAction) {
+            finish();
         }
     }
 

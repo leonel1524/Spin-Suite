@@ -26,6 +26,7 @@ import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
@@ -112,6 +113,9 @@ public class CouchDBLite_2_0_Support implements DBSupport {
         }
         //  do it
         for(Map.Entry<String, Object> entry : values.entrySet()) {
+            if(entry.getValue().equals(POInfo.ID_KEY)) {
+                continue;
+            }
             if(entry.getValue() instanceof Integer) {
                 mutableDocument.setInt(entry.getKey(), (Integer) entry.getValue());
             } else if(entry.getValue() instanceof String) {
@@ -175,11 +179,11 @@ public class CouchDBLite_2_0_Support implements DBSupport {
         Expression expression = getExpressionFromCriteria(criteria);
         if(expression == null) {
             query = QueryBuilder
-                    .select(SelectResult.all())
+                    .select(SelectResult.all(), SelectResult.expression(Meta.id))
                     .from(DataSource.database(database));
         } else {
             query = QueryBuilder
-                    .select(SelectResult.all())
+                    .select(SelectResult.all(), SelectResult.expression(Meta.id))
                     .from(DataSource.database(database))
                     .where(expression);
         }
@@ -190,7 +194,12 @@ public class CouchDBLite_2_0_Support implements DBSupport {
             Dictionary attributes = result.getDictionary(DATABASE_NAME);
             Log.i("Sample", String.format("name -> %s", attributes.getString("name")));
             Log.i("Sample", String.format("type -> %s", attributes.getString("type")));
-            return attributes.toMap();
+            String id = result.getString(POInfo.ID_KEY);
+            Map<String, Object> mapResult = attributes.toMap();
+            if(!Util.isEmpty(id)) {
+                mapResult.put(POInfo.ID_KEY, id);
+            }
+            return mapResult;
         }
         //  Default
         return null;
