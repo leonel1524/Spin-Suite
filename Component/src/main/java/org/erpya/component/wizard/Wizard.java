@@ -28,6 +28,12 @@ import org.erpya.component.R;
 import org.erpya.component.base.CustomPagerAdapter;
 import org.erpya.component.base.CustomViewPager;
 import org.erpya.component.base.IWizardStep;
+import org.erpya.component.wizard.event.WizardEvent;
+import org.erpya.component.wizard.event.WizardEventListener;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Dynamic wizard
@@ -53,6 +59,12 @@ public abstract class Wizard extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private CustomViewPager viewPagerController;
+    /**	Event Listener	*/
+    private List<WizardEventListener> listeners = new ArrayList<WizardEventListener>();
+    /** Events  */
+    private final int VALIDATE = 0;
+    private final int START = 1;
+    private final int FINISH = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +115,7 @@ public abstract class Wizard extends AppCompatActivity {
         });
         //  Default
         changeViewText(0);
+        fireDeviceEvent(START);
     }
 
     /**
@@ -140,6 +153,7 @@ public abstract class Wizard extends AppCompatActivity {
         int currentStep = viewPagerController.getCurrentItem();
         GenericWizardStep step = (GenericWizardStep) sectionsPagerAdapter.getStepDefinition(currentStep);
         boolean isValid = step.validateIt();
+        fireDeviceEvent(VALIDATE);
         if(step.isMandatory()) {
             if(isValid) {
                 viewPagerController.setCurrentItem(viewPagerController.getCurrentItem() + 1);
@@ -150,6 +164,7 @@ public abstract class Wizard extends AppCompatActivity {
         //  Close if is last
         if((currentStep + 1) == sectionsPagerAdapter.getCount()
                 && isLastAction) {
+            fireDeviceEvent(FINISH);
             finish();
         }
     }
@@ -189,4 +204,44 @@ public abstract class Wizard extends AppCompatActivity {
      * Add all Steps
      */
     public abstract void initWizard();
+
+    /**
+     * Add Listener
+     * @param listener
+     * @return void
+     */
+    public void addDeviceListener(WizardEventListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove Listener
+     * @param listener
+     * @return void
+     */
+    public void removeDeviceListener(WizardEventListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Fire event
+     * @param eventType
+     * @return void
+     */
+    private void fireDeviceEvent(int eventType) {
+        WizardEvent eventSource = new WizardEvent(this);
+        //	Get Iterator
+        Iterator<WizardEventListener> iterator = listeners.iterator();
+        while(iterator.hasNext()) {
+            WizardEventListener listener = ((WizardEventListener) iterator.next());
+            //	Iterate
+            if(eventType == VALIDATE) {
+                listener.onValidate(eventSource);
+            } else if(eventType == START) {
+                listener.onStart(eventSource);
+            } else if(eventType == FINISH) {
+                listener.onFinish(eventSource);
+            }
+        }
+    }
 }
