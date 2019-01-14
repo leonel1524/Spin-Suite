@@ -98,6 +98,16 @@ public class WizardStepFactory {
     }
 
     /**
+     * Wit custom class name
+     * @param customClass
+     * @return
+     */
+    public WizardStepFactory withCustomClass(Class<?> customClass) {
+        step.setCustomClass(customClass);
+        return this;
+    }
+
+    /**
      * Get Step definition
      * @return
      */

@@ -21,14 +21,21 @@ import org.erpya.component.base.IWizardStep;
 import org.erpya.component.factory.FieldFactory;
 import org.erpya.component.factory.WizardStepFactory;
 import org.erpya.component.wizard.Wizard;
+import org.erpya.component.wizard.event.WizardEvent;
+import org.erpya.component.wizard.event.WizardEventListener;
 
 /**
  * Custom wizard for add new device
  */
-public class AddDeviceWizard extends Wizard {
+public class AddDeviceWizard extends Wizard implements WizardEventListener {
 
     @Override
     public void initWizard() {
+        //  Custom Device Acknowledgment
+        IWizardStep customStep = WizardStepFactory.createStep(getApplicationContext())
+                .withCustomClass(DeviceAcknowledgment.class)
+                .getStep();
+        addStep(customStep);
         //  Device Definition step
         IWizardStep deviceDefinitionStep = WizardStepFactory.createStep(getApplicationContext())
                 .withTitle(getString(R.string.DeviceDefinitionTitle))
@@ -79,5 +86,20 @@ public class AddDeviceWizard extends Wizard {
                         .getFieldDefinition())
                 .getStep();
         addStep(wifiInfoStep);
+    }
+
+    @Override
+    public void onStart(WizardEvent ev) {
+
+    }
+
+    @Override
+    public void onValidate(WizardEvent ev) {
+
+    }
+
+    @Override
+    public void onFinish(WizardEvent ev) {
+
     }
 }

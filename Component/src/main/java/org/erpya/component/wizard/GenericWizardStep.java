@@ -20,12 +20,14 @@ import android.support.v4.app.Fragment;
 
 import org.erpya.base.model.InfoField;
 import org.erpya.component.base.IWizardStep;
+import org.erpya.component.base.IWizardStepPage;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
+ * @author Yamel Senih, ysenih@erpya.com, http://www.erpya.com
  * Generic Wizard Step
  */
 public class GenericWizardStep implements IWizardStep {
@@ -46,21 +48,27 @@ public class GenericWizardStep implements IWizardStep {
     /** Fields  */
     private List<InfoField> fields;
     /** Step    */
-    private WizardStep step;
+    private IWizardStepPage step;
     /** Table Name  */
     private String tableName;
+    /** Custom Class    */
+    private Class<?> customClass;
 
     @Override
     public Fragment newInstance(Bundle savedInstanceState) {
-        step = new WizardStep();
-        step.setName(title);
-        step.setHelp(help);
-        step.setTableName(tableName);
-        step.setFields(fields);
-        if(savedInstanceState != null) {
-            step.setArguments(savedInstanceState);
+        step = getInstance();
+        if(step instanceof WizardStep) {
+            WizardStep genericStep = (WizardStep) step;
+            genericStep.setName(title);
+            genericStep.setHelp(help);
+            genericStep.setTableName(tableName);
+            genericStep.setFields(fields);
         }
-        return step;
+
+        if(savedInstanceState != null) {
+            ((Fragment) step).setArguments(savedInstanceState);
+        }
+        return (Fragment) step;
     }
 
     @Override
@@ -127,7 +135,39 @@ public class GenericWizardStep implements IWizardStep {
      * Get Step fragment
      * @return
      */
-    public WizardStep getStep() {
+    public IWizardStepPage getStep() {
         return step;
+    }
+
+    /**
+     * Set custom class for it
+     * @param customClass
+     */
+    public void setCustomClass(Class<?> customClass) {
+        this.customClass = customClass;
+    }
+
+    /**
+     * Get Wizard Step
+     * @return
+     */
+    private IWizardStepPage getInstance() {
+        //	Not yet implemented
+        if (customClass == null
+                || !IWizardStepPage.class.isAssignableFrom(customClass)) {
+            return new WizardStep();
+        } else {
+            //
+            Constructor<?> constructor = null;
+            try {
+                constructor = customClass.getDeclaredConstructor();
+                //	new instance
+                return (IWizardStepPage)constructor.newInstance();
+            } catch (Exception e) {
+
+            }
+        }
+        //
+        return null;
     }
 }
