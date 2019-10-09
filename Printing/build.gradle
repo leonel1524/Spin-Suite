@@ -5,7 +5,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 24
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -20,6 +20,10 @@ android {
     }
     dexOptions {
         preDexLibraries = false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
