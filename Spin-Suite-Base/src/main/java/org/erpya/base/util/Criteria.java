@@ -51,6 +51,28 @@ public class Criteria implements Parcelable {
     }
 
     /**
+     * Copy from criteria
+     * @param sourceCriteria
+     * @return
+     */
+    public Criteria copyFromCriteria(Criteria sourceCriteria) {
+        sourceCriteria.getCriteriaList().stream().forEach(sourceCondition -> {
+            addCriteria(sourceCondition);
+        });
+        return this;
+    }
+
+    /**
+     * Add condition from source
+     * @param sourceCondition
+     * @return
+     */
+    public Criteria addCriteria(Condition sourceCondition) {
+        conditionList.add(sourceCondition);
+        return this;
+    }
+
+    /**
      * Add criteria for IN
      * @param attributeKey
      * @param values

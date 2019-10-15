@@ -84,6 +84,16 @@ public class AddDeviceWizard extends Wizard implements WizardEventListener {
                         .withDisplayType(DisplayType.STRING)
                         .withEncrypted(true)
                         .getFieldDefinition())
+                .withAdditionalField(FieldFactory.createField(getApplicationContext())
+                        .withColumnName("DeviceNameReference")
+                        .withTableName("DeviceDefinition")
+                        .withDisplayColumnName("DeviceName")
+                        .withName("reference to Device Name")
+                        .withReadOnly(false)
+                        .withUpdateable(true)
+                        .withMandatory(true)
+                        .withDisplayType(DisplayType.TABLE_DIR)
+                        .getFieldDefinition())
                 .getStep();
         addStep(wifiInfoStep);
     }

@@ -68,6 +68,8 @@ public class POInfoColumn implements org.erpya.base.model.IPOInfoColumn {
             formatPattern = ValueUtil.getValueAsString(attributes.get(ATTRIBUTE_FormatPattern));
             contextInfoScript = ValueUtil.getValueAsString(attributes.get(ATTRIBUTE_ContextInfoScript));
             contextInfoFormatter = ValueUtil.getValueAsString(attributes.get(ATTRIBUTE_ContextInfoFormatter));
+            tableName = ValueUtil.getValueAsString(attributes.get(ATTRIBUTE_TableName));
+            displayColumnName = ValueUtil.getValueAsString(attributes.get(ATTRIBUTE_DisplayColumnName));
         }
     }
 
@@ -153,6 +155,10 @@ public class POInfoColumn implements org.erpya.base.model.IPOInfoColumn {
                 break;
             case ATTRIBUTE_ContextInfoFormatter:
                 contextInfoFormatter = ValueUtil.getValueAsString(value);
+            case ATTRIBUTE_TableName:
+                tableName = ValueUtil.getValueAsString(value);
+            case ATTRIBUTE_DisplayColumnName:
+                displayColumnName = ValueUtil.getValueAsString(value);
                 break;
         }
     }
@@ -209,6 +215,8 @@ public class POInfoColumn implements org.erpya.base.model.IPOInfoColumn {
     private boolean isAllowCopy;
     /** Format Pattern  */
     private String formatPattern;
+    /** Display Column Name */
+    private String displayColumnName;
 
     @Override
     public String getTableName() {
@@ -330,6 +338,14 @@ public class POInfoColumn implements org.erpya.base.model.IPOInfoColumn {
         return formatPattern;
     }
 
+    @Override
+    public String getDisplayColumnName() {
+        if(Util.isEmpty(displayColumnName)) {
+            return DEFAULT_DisplayColumnName + "_" + getColumnName();
+        }
+        return displayColumnName;
+    }
+
     /**
      * Get Context
      * @return
@@ -414,7 +430,7 @@ public class POInfoColumn implements org.erpya.base.model.IPOInfoColumn {
      *  (stored as Integer)
      *  @return true if Lookup
      */
-    public boolean isLookup(int displayType) {
+    public boolean isLookup() {
         return DisplayType.isLookup(getDisplayType());
     }	//	isLookup
 

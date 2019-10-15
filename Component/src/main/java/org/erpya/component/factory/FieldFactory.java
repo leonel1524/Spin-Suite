@@ -18,6 +18,7 @@ package org.erpya.component.factory;
 import android.content.Context;
 
 import org.erpya.component.field.Field;
+import org.erpya.component.field.FieldAutoComplete;
 import org.erpya.component.field.FieldDateTime;
 import org.erpya.component.field.FieldNumber;
 import org.erpya.component.field.FieldText;
@@ -82,6 +83,26 @@ public class FieldFactory {
      */
     public FieldFactory withDisplayType(int displayType) {
         fieldDefinition.setAttribute(InfoField.ATTRIBUTE_DisplayType, displayType);
+        return this;
+    }
+
+    /**
+     * Set Table Name for search for lookup type
+     * @param tableName
+     * @return
+     */
+    public FieldFactory withTableName(String tableName) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_TableName, tableName);
+        return this;
+    }
+
+    /**
+     * Set Display Column Name for lookup type
+     * @param displayColumnName
+     * @return
+     */
+    public FieldFactory withDisplayColumnName(String displayColumnName) {
+        fieldDefinition.setAttribute(InfoField.ATTRIBUTE_DisplayColumnName, displayColumnName);
         return this;
     }
 
@@ -182,12 +203,14 @@ public class FieldFactory {
     public Field getFieldComponent() {
         Field fieldLoaded = null;
         //  For Text
-        if(fieldDefinition.isText()) {
+        if (fieldDefinition.isText()) {
             fieldLoaded = new FieldText(fieldDefinition);
-        } else if(fieldDefinition.isNumeric()) {
+        } else if (fieldDefinition.isNumeric()) {
             fieldLoaded = new FieldNumber(fieldDefinition);
-        } else if(fieldDefinition.isDate()) {
+        } else if (fieldDefinition.isDate()) {
             fieldLoaded = new FieldDateTime(fieldDefinition);
+        } else if (fieldDefinition.isLookup()) {
+            fieldLoaded = new FieldAutoComplete(fieldDefinition);
         } else {
             throw new SpinSuiteException("Unsupported Type" + fieldDefinition.getDisplayType());
         }

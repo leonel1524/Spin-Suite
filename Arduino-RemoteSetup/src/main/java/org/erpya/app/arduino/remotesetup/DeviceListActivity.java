@@ -92,12 +92,11 @@ public class DeviceListActivity extends AppCompatActivity {
                 ArduinoDeviceContent.DeviceItem item = (ArduinoDeviceContent.DeviceItem) view.getTag();
                 Criteria criteria = new Criteria();
                 criteria.addCriteria("DeviceAddress", Condition.EQUAL, item.id);
+                //  For table
                 Context context = view.getContext();
                 Intent intent = new Intent(context, AddDeviceWizard.class);
-//                Bundle arguments = intent.getExtras();
                 //  Set to arguments
                 intent.putExtra(Criteria.PARCEABLE_NAME, criteria);
-//                arguments.putParcelable(Criteria.PARCEABLE_NAME, criteria);
                 context.startActivity(intent);
                 if (mTwoPane) { //  Ummm.... what happen if exist three pane? hahahaha
 //                    Bundle arguments = new Bundle();

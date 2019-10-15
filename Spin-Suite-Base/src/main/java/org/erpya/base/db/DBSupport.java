@@ -18,6 +18,7 @@ package org.erpya.base.db;
 
 import org.erpya.base.util.Criteria;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,29 +32,36 @@ public interface DBSupport {
     /**
      * Open Database for use
      */
-    public void open() throws Exception;
+    void open() throws Exception;
 
     /**
      * Close Database
      * @throws Exception
      */
-    public void close() throws Exception;
+    void close() throws Exception;
 
     /**
      * Save a Map from entity parameter
      * @param entity
      * @return Id
      */
-    public String saveMap(Map<String, Object> entity) throws Exception;
+    String saveMap(Map<String, Object> entity) throws Exception;
 
     /**
     * get Map with attributes and values from criteria
     */
-    public Map<String, Object> getMap(Criteria condition) throws Exception;
+    Map<String, Object> getMap(Criteria condition) throws Exception;
 
+    /**
+     * Get a list with all attributes
+     * @param condition
+     * @return
+     * @throws Exception
+     */
+    List<Map<String, Object>> getListMap(Criteria condition) throws Exception;
     /**
      * Verify if it is open
      * @return
      */
-    public boolean isOpen();
+    boolean isOpen();
 }

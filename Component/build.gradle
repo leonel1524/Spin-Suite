@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -21,6 +21,10 @@ android {
     }
     dexOptions {
         preDexLibraries = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

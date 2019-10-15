@@ -49,161 +49,166 @@ public interface IPOInfoColumn {
     String ATTRIBUTE_FormatPattern = "FormatPattern";
     String ATTRIBUTE_ContextInfoScript = "ContextInfoScript";
     String ATTRIBUTE_ContextInfoFormatter = "ContextInfoFormatter";
+    String ATTRIBUTE_TableName = "TableNameForSearch";
+    String ATTRIBUTE_DisplayColumnName = "DisplayColumnName";
+    String DEFAULT_DisplayColumnName = "DisplayColumnName";
 
 
     /**
      * Get Table Name
      * @return
      */
-    public String getTableName();
+    String getTableName();
 
     /**
      * Get Column Identifier if it exist
      * @return
      */
-    public int getColumnId();
+    int getColumnId();
 
     /**
      * Get Column Name for show
      * @return
      */
-    public String getColumnName();
+    String getColumnName();
 
     /**
      * Get SQL of Column
      * @return
      */
-    public String getColumnSQL();
+    String getColumnSQL();
 
     /**
      * Get Display Type
      * @return
      */
-    public int getDisplayType();
+    int getDisplayType();
 
     /**
      * Get Column Class (Used for know if is Integer, Boolean, String, and other)
      * @return
      */
-    public Class<?> getColumnClass();
+    Class<?> getColumnClass();
 
     /**
      * Verify if it is mandatory before save
      * @return
      */
-    public boolean isMandatory();
+    boolean isMandatory();
 
     /**
      * Get a default logic for new event listener
      * @return
      */
-    public String getDefaultLogic();
+    String getDefaultLogic();
 
     /**
      * Show if it can be updated
      * @return
      */
-    public boolean isUpdateable();
+    boolean isUpdateable();
 
     /**
      * show if it can be always updated
      * @return
      */
-    public boolean isAlwaysUpdateable();
+    boolean isAlwaysUpdateable();
 
     /**
      * Get column label
      * @return
      */
-    public String getColumnLabel();
+    String getColumnLabel();
 
     /**
      * Get description of column
      * @return
      */
-    public String getColumnDescription();
+    String getColumnDescription();
 
     /**
      * Get column help
      * @return
      */
-    public String getColumnHelp();
+    String getColumnHelp();
 
     /**
      * Verify it it is a key
      * @return
      */
-    public boolean isKey();
+    boolean isKey();
 
     /**
      * verify it it have a parent table
      * @return
      */
-    public boolean isParent();
+    boolean isParent();
 
     /**
      * Verify if it a translated column
      * @return
      */
-    public boolean isTranslated();
+    boolean isTranslated();
 
     /**
      * Show if it is a encrypted column
      * @return
      */
-    public boolean isEncrypted();
+    boolean isEncrypted();
 
     /**
      * Show if is a allow logging
      * @return
      */
-    public boolean isAllowLogging();
+    boolean isAllowLogging();
 
     /**
      * Get a validation code for it column
      * @return
      */
-    public String getValidationCode();
+    String getValidationCode();
 
     /**
      * Get field length
      * @return
      */
-    public int getFieldLength();
+    int getFieldLength();
 
     /**
      * Ver minimum value
      * @return
      */
-    public String getValueMin();
+    String getValueMin();
 
     /**
      * Get Maximum value
      * @return
      */
-    public String getValueMax();
+    String getValueMax();
 
     /**
      * Verifi if allow copy
      * @return
      */
-    public boolean isAllowCopy();
+    boolean isAllowCopy();
 
     /**
      * Get Format Pattern
      * @return
      */
-    public String getFormatPattern();
+    String getFormatPattern();
 
     /**
      * Get Context Info Script
      * @return
      */
-    public String getContextInfoScript();
+    String getContextInfoScript();
 
     /**
      * Get Context Info Formatter
      * @return
      */
-    public String getContextInfoFormatter();
+    String getContextInfoFormatter();
+
+    String getDisplayColumnName();
 }

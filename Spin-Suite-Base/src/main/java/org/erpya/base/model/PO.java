@@ -46,6 +46,7 @@ public abstract class PO {
     public PO(Context context, String tableName) {
         this.context = context;
         this.info = new POInfo(context, tableName);
+        setValue(POInfo.METADATA_TABLE_NAME, tableName);
     }
 
     /**

@@ -19,12 +19,9 @@ import org.erpya.base.arduino.setup.ArduinoSetup;
 import org.erpya.base.arduino.setup.SetupAttribute;
 import org.erpya.base.arduino.setup.WIFIAttribute;
 import org.erpya.base.arduino.util.IArduinoStatus;
-import org.erpya.base.database.support.CouchDBLite_2_0_Support;
-import org.erpya.base.db.DBSupport;
 import org.erpya.base.device.util.DeviceManager;
 import org.erpya.base.device.util.DeviceTypeHandler;
 import org.erpya.base.device.util.IDeviceType;
-import org.erpya.base.util.Env;
 import org.erpya.base.util.LogM;
 import org.erpya.base.util.Util;
 

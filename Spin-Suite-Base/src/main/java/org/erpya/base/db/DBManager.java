@@ -26,6 +26,7 @@ import org.erpya.base.util.Env;
 import org.erpya.base.util.Util;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -187,5 +188,27 @@ public final class DBManager {
         Map<String, Object> attributes = database.getMap(criteria);
         //  Default return
         return attributes;
+    }
+
+    /**
+     * Get List woith map for values
+     * @param criteria
+     * @return
+     * @throws Exception
+     */
+    public List<Map<String, Object>> getListMap(Criteria criteria) throws Exception {
+        //  Validate metadata for query
+        if (criteria == null) {
+            return null;
+        }
+        //  Else
+        DBSupport database = getDatabase();
+        //  Is Open
+        boolean isOpen = database.isOpen();
+        if(!isOpen) {
+            database.open();
+        }
+        //  Get Map
+        return database.getListMap(criteria);
     }
 }

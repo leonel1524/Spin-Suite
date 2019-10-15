@@ -156,10 +156,10 @@ public abstract class Wizard extends AppCompatActivity {
         fireDeviceEvent(VALIDATE);
         if(step.isMandatory()) {
             if(isValid) {
-                viewPagerController.setCurrentItem(viewPagerController.getCurrentItem() + 1);
+                viewPagerController.setCurrentItem(currentStep + 1);
             }
         } else {
-            viewPagerController.setCurrentItem(viewPagerController.getCurrentItem() + 1);
+            viewPagerController.setCurrentItem(currentStep + 1);
         }
         //  Close if is last
         if((currentStep + 1) == sectionsPagerAdapter.getCount()

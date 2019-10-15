@@ -228,6 +228,14 @@ public abstract class Field extends LinearLayout {
     protected abstract void setFieldValue(Object value);
 
     /**
+     * set Field Display Value
+     * @param value
+     */
+    public void setFieldDisplauValue(Object value) {
+        //  Optional to be implemented
+    }
+
+    /**
      * Get Value from child
      * @return
      */

@@ -20,66 +20,85 @@ import android.content.Context;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import org.erpya.base.model.InfoField;
 import org.erpya.base.util.DisplayType;
+import org.erpya.base.util.KeyValue;
+import org.erpya.base.util.Util;
 import org.erpya.base.util.ValueUtil;
+import org.erpya.component.base.PersistenceListAdapter;
 
 /**
  * Edit Text component for in / out
  */
-public class FieldText extends Field {
+public class FieldAutoComplete extends Field {
 
     /**
      * Standard constructor
+     *
      * @param context
      */
-    public FieldText(Context context) {
+    public FieldAutoComplete(Context context) {
         super(context);
     }
 
     /**
      * From field definition
+     *
      * @param fieldDefinition
      */
-    public FieldText(InfoField fieldDefinition) {
+    public FieldAutoComplete(InfoField fieldDefinition) {
         super(fieldDefinition);
     }
 
     /**
      * Init from parent
+     *
      * @param context
      * @param attrs
      */
-    public FieldText(Context context, AttributeSet attrs) {
+    public FieldAutoComplete(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public FieldText(Context context, AttributeSet attrs, int defStyle) {
+    public FieldAutoComplete(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
     @Override
     protected void setFieldValue(Object value) {
+        uuid = ValueUtil.getValueAsString(value);
+        if(Util.isEmpty(editText.getText().toString())) {
+            editText.setText(uuid);
+        }
+    }
+
+    @Override
+    public void setFieldDisplauValue(Object value) {
         editText.setText(ValueUtil.getValueAsString(value));
     }
 
     @Override
     protected Object getFieldValue() {
-        return editText.getText().toString();
+        return uuid;
     }
 
     @Override
     protected String getFieldDisplayValue() {
-        return (String) getFieldValue();
+        return editText.getText().toString();
     }
 
-    /** Edit text   */
-    private EditText editText;
+    /**
+     * Edit text
+     */
+    private AutoCompleteTextView editText;
+    private String uuid;
 
     /**
      * Get Edit text used
+     *
      * @return
      */
     protected EditText getEditText() {
@@ -90,7 +109,15 @@ public class FieldText extends Field {
      * Init it from parent
      */
     protected void init() {
-        editText = new EditText(getContext());
+        PersistenceListAdapter adapter = new PersistenceListAdapter(getFieldDefinition());
+        editText = new AutoCompleteTextView(getContext());
+        editText.setAdapter(adapter);
+        editText.setOnItemClickListener((adapterView, view, i, l) -> {
+            KeyValue value = (KeyValue) adapterView.getItemAtPosition(i);
+            if(value != null) {
+                uuid = value.getUuid();
+            }
+        });
         //  Add to parent
         addView(editText);
     }
@@ -110,9 +137,9 @@ public class FieldText extends Field {
     @Override
     protected void initFromInfoField() {
         super.initFromInfoField();
-        if(getFieldDefinition() != null) {
+        if (getFieldDefinition() != null) {
             //  For Input Type
-            if(getInputType() > 0) {
+            if (getInputType() > 0) {
                 editText.setInputType(getInputType());
             }
             //	Set Hint
@@ -121,7 +148,7 @@ public class FieldText extends Field {
             //	Selected All on Focus
             editText.setSelectAllOnFocus(true);
             //	Set Multi-line
-            if((getFieldDefinition().getDisplayType() == DisplayType.TEXT
+            if ((getFieldDefinition().getDisplayType() == DisplayType.TEXT
                     || getFieldDefinition().getDisplayType() == DisplayType.TEXT_LONG
                     || getFieldDefinition().getDisplayType() == DisplayType.MEMO)
                     && !getFieldDefinition().isEncrypted()) {
@@ -132,41 +159,40 @@ public class FieldText extends Field {
 
     /**
      * Get input Type with is Encrypted
-     * @return
+     *
      * @return int
      */
     protected int getInputType() {
         int inputType = 0;
-        if(getFieldDefinition() == null) {
+        if (getFieldDefinition() == null) {
             return inputType;
         }
         int displayType = getFieldDefinition().getDisplayType();
 
-        if(getFieldDefinition().isText()) {
+        if (getFieldDefinition().isText()) {
             //	Encrypted
-            if(getFieldDefinition().isEncrypted()) {
+            if (getFieldDefinition().isEncrypted()) {
                 inputType = InputType.TYPE_CLASS_TEXT |
                         InputType.TYPE_TEXT_VARIATION_PASSWORD;
-            } else if(displayType == DisplayType.TEXT
+            } else if (displayType == DisplayType.TEXT
                     || displayType == DisplayType.TEXT_LONG
                     || displayType == DisplayType.MEMO) {
                 inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE
                         | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
-            } else if(displayType == DisplayType.URL) {
+            } else if (displayType == DisplayType.URL) {
                 inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI;
             } else {
                 inputType = InputType.TYPE_CLASS_TEXT
                         | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
             }
-        } else if(displayType == DisplayType.INTEGER) {
+        } else if (displayType == DisplayType.INTEGER) {
             inputType = InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED;
-        } else if(getFieldDefinition().isNumeric()) {
+        } else if (getFieldDefinition().isNumeric()) {
             inputType = InputType.TYPE_CLASS_NUMBER
                     | InputType.TYPE_NUMBER_FLAG_DECIMAL
                     | InputType.TYPE_NUMBER_FLAG_SIGNED
                     | InputType.TYPE_CLASS_PHONE;
-        }
-        else if(getFieldDefinition().isDate()) {
+        } else if (getFieldDefinition().isDate()) {
             inputType = InputType.TYPE_CLASS_DATETIME;
         }
         //	Default

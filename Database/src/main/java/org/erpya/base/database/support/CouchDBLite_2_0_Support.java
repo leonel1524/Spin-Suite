@@ -20,6 +20,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.couchbase.lite.BasicAuthenticator;
+import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
@@ -75,7 +76,8 @@ public class CouchDBLite_2_0_Support implements DBSupport {
      */
     public CouchDBLite_2_0_Support(Context context) {
         this.context = context;
-        databaseConfiguration = new DatabaseConfiguration(context);
+        CouchbaseLite.init(context);
+        databaseConfiguration = new DatabaseConfiguration();
     }
 
     @Override
@@ -113,7 +115,7 @@ public class CouchDBLite_2_0_Support implements DBSupport {
         }
         //  do it
         for(Map.Entry<String, Object> entry : values.entrySet()) {
-            if(entry.getValue().equals(POInfo.ID_KEY)) {
+            if(entry.getKey().equals(POInfo.ID_KEY)) {
                 continue;
             }
             if(entry.getValue() instanceof Integer) {
@@ -142,12 +144,12 @@ public class CouchDBLite_2_0_Support implements DBSupport {
         database.save(mutableDocument);
         id = mutableDocument.getId();
         // Create replicators to push and pull changes to and from the cloud.
-        Endpoint targetEndpoint = new URLEndpoint(new URI("ws://impala:55084/spin-suite"));
+        Endpoint targetEndpoint = new URLEndpoint(new URI("ws://20.12.0.23:4984/" + DATABASE_NAME));
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(database, targetEndpoint);
         replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
         // Add authentication.
-        replConfig.setAuthenticator(new BasicAuthenticator("test", "test"));
+        replConfig.setAuthenticator(new BasicAuthenticator("sync_gateway", "adempiere"));
 
         // Create replicator.
         Replicator replicator = new Replicator(replConfig);
@@ -205,6 +207,47 @@ public class CouchDBLite_2_0_Support implements DBSupport {
         return null;
     }
 
+    @Override
+    public List<Map<String, Object>> getListMap(Criteria criteria) throws Exception {
+        //  Validate metadata for query
+        if(criteria == null) {
+            return null;
+        }
+        //
+        Query query;
+        //  Add to where
+        Expression expression = getExpressionFromCriteria(criteria);
+        if(expression == null) {
+            query = QueryBuilder
+                    .select(SelectResult.all(), SelectResult.expression(Meta.id))
+                    .from(DataSource.database(database));
+        } else {
+            query = QueryBuilder
+                    .select(SelectResult.all(), SelectResult.expression(Meta.id))
+                    .from(DataSource.database(database))
+                    .where(expression);
+        }
+        //  Populate map
+        ResultSet resultSet = query.execute();
+        List<Map<String, Object>> resultValues = new ArrayList<>();
+        resultSet.allResults().stream().forEach(result -> {
+            Dictionary attributes = result.getDictionary(DATABASE_NAME);
+            Log.i("Sample", String.format("name -> %s", attributes.getString("name")));
+            Log.i("Sample", String.format("type -> %s", attributes.getString("type")));
+            String id = result.getString(POInfo.ID_KEY);
+            Map<String, Object> mapResult = attributes.toMap();
+            if(!Util.isEmpty(id)) {
+                mapResult.put(POInfo.ID_KEY, id);
+            }
+            resultValues.add(mapResult);
+        });
+        if(resultValues.size() > 0) {
+            return resultValues;
+        }
+        //  Default
+        return null;
+    }
+
     private Expression getExpressionFromCriteria(Criteria criteria) {
         List<Condition> conditionList = criteria.getCriteriaList();
         if(conditionList.isEmpty()) {
@@ -218,7 +261,7 @@ public class CouchDBLite_2_0_Support implements DBSupport {
                     expression = Expression.property(condition.getKeyAttribute())
                             .equalTo(getExpressionValue(condition.getValue()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .equalTo(getExpressionValue(condition.getValue())));
                 }
             } else if(condition.getComparator().equals(Condition.LESS)) {
@@ -226,15 +269,15 @@ public class CouchDBLite_2_0_Support implements DBSupport {
                     expression = Expression.property(condition.getKeyAttribute())
                             .lessThan(getExpressionValue(condition.getValue()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .lessThan(getExpressionValue(condition.getValue())));
                 }
             } else if(condition.getComparator().equals(Condition.LESS_EQUAL)) {
                 if(expression == null) {
-                    expression = Expression.property(condition.getKeyAttribute())
+                    expression = expression = Expression.property(condition.getKeyAttribute())
                             .lessThanOrEqualTo(getExpressionValue(condition.getValue()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .lessThanOrEqualTo(getExpressionValue(condition.getValue())));
                 }
             } else if(condition.getComparator().equals(Condition.GREATER)) {
@@ -242,7 +285,7 @@ public class CouchDBLite_2_0_Support implements DBSupport {
                     expression = Expression.property(condition.getKeyAttribute())
                             .greaterThan(getExpressionValue(condition.getValue()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .greaterThan(getExpressionValue(condition.getValue())));
                 }
             } else if(condition.getComparator().equals(Condition.GREATER_EQUAL)) {
@@ -250,7 +293,7 @@ public class CouchDBLite_2_0_Support implements DBSupport {
                     expression = Expression.property(condition.getKeyAttribute())
                             .greaterThanOrEqualTo(getExpressionValue(condition.getValue()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .greaterThanOrEqualTo(getExpressionValue(condition.getValue())));
                 }
             } else if(condition.getComparator().equals(Condition.BETWEEN)) {
@@ -258,7 +301,7 @@ public class CouchDBLite_2_0_Support implements DBSupport {
                     expression = Expression.property(condition.getKeyAttribute())
                             .between(getExpressionValue(condition.getValue()), getExpressionValue(condition.getValueTo()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .between(getExpressionValue(condition.getValue()), getExpressionValue(condition.getValueTo())));
                 }
             } else if(condition.getComparator().equals(Condition.GREATER_EQUAL)) {
@@ -266,7 +309,7 @@ public class CouchDBLite_2_0_Support implements DBSupport {
                     expression = Expression.property(condition.getKeyAttribute())
                             .greaterThanOrEqualTo(getExpressionValue(condition.getValue()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .greaterThanOrEqualTo(getExpressionValue(condition.getValue())));
                 }
             } else if(condition.getComparator().equals(Condition.IN)) {
@@ -274,7 +317,7 @@ public class CouchDBLite_2_0_Support implements DBSupport {
                     expression = Expression.property(condition.getKeyAttribute())
                             .in(getExpressionValueAsArray(condition.getValue()));
                 } else {
-                    expression.and(Expression.property(condition.getKeyAttribute())
+                    expression = expression.and(Expression.property(condition.getKeyAttribute())
                             .in(getExpressionValueAsArray(condition.getValue())));
                 }
             }

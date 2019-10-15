@@ -26,9 +26,11 @@ import android.widget.TextView;
 import org.erpya.base.model.GenericPO;
 import org.erpya.base.model.InfoField;
 import org.erpya.base.model.PO;
+import org.erpya.base.model.POInfo;
 import org.erpya.base.util.Condition;
 import org.erpya.base.util.Criteria;
 import org.erpya.base.util.Util;
+import org.erpya.base.util.ValueUtil;
 import org.erpya.component.R;
 import org.erpya.component.base.IWizardStepPage;
 import org.erpya.component.factory.FieldFactory;
@@ -80,11 +82,17 @@ public class WizardStep extends Fragment implements IWizardStepPage {
         Bundle arguments = getArguments();
         if(arguments != null) {
             criteria = arguments.getParcelable(Criteria.PARCEABLE_NAME);
-            stepModel = new GenericPO(getContext(), tableName);
-            if(criteria != null) {
-                if(!stepModel.reload(criteria)) {
-                    for(Condition condition : criteria.getCriteriaList()) {
-                        stepModel.setValue(condition.getKeyAttribute(), condition.getValue());
+            if(!Util.isEmpty(tableName)) {
+                stepModel = new GenericPO(getContext(), tableName);
+                if(criteria != null) {
+                    //  Add table support
+                    Criteria criteriaForLoad = new Criteria();
+                    criteriaForLoad.copyFromCriteria(criteria);
+                    criteriaForLoad.addCriteria(POInfo.METADATA_TABLE_NAME, Condition.EQUAL, tableName);
+                    if(!stepModel.reload(criteriaForLoad)) {
+                        for(Condition condition : criteriaForLoad.getCriteriaList()) {
+                            stepModel.setValue(condition.getKeyAttribute(), condition.getValue());
+                        }
                     }
                 }
             }
@@ -98,6 +106,12 @@ public class WizardStep extends Fragment implements IWizardStepPage {
                     Object value = stepModel.getValueAsObject(child.getFieldDefinition().getColumnName());
                     if(value != null) {
                         child.setValue(value);
+                        if(child.getFieldDefinition().isLookup()) {
+                            String displayValue = stepModel.getValueAsString(child.getFieldDefinition().getDisplayColumnName());
+                            if(!Util.isEmpty(displayValue)) {
+                                child.setFieldDisplauValue(displayValue);
+                            }
+                        }
                     }
                 }
                 parent.addView(child, layoutParams);
@@ -112,9 +126,9 @@ public class WizardStep extends Fragment implements IWizardStepPage {
         if(parent == null) {
             return false;
         }
-        if(stepModel == null) {
-            stepModel = new GenericPO(getContext(), tableName);
-        }
+        if(Util.isEmpty(tableName)) { {
+           return true;
+        }}
         int count = parent.getChildCount();
         boolean isValid = true;
         for(int i = 0; i < count; i++) {
@@ -125,8 +139,12 @@ public class WizardStep extends Fragment implements IWizardStepPage {
                 if(field.getFieldDefinition().isMandatory()
                         && !isValidField) {
                     isValid = false;
-                } else if(isValidField) {
+                } else if(isValidField
+                        && !Util.isEmpty(tableName)) {
                     stepModel.setValue(field.getFieldDefinition().getColumnName(), field.getValue());
+                    if(field.getFieldDefinition().isLookup()) {
+                        stepModel.setValue(field.getFieldDefinition().getDisplayColumnName(), field.getDisplayValue());
+                    }
                 }
             }
         }
