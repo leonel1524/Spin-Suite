@@ -15,9 +15,11 @@
  ************************************************************************************/
 package org.erpya.security.data;
 
+import org.erpya.base.access.AccessService;
 import org.erpya.security.data.model.LoggedInUser;
-
+import org.spin.grpc.util.Session;
 import java.io.IOException;
+
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
@@ -28,17 +30,21 @@ public class LoginDataSource {
 
         try {
             // TODO: handle loggedInUser authentication
-            LoggedInUser fakeUser =
-                    new LoggedInUser(
-                            java.util.UUID.randomUUID().toString(),
-                            "Jane Doe");
-            return new Result.Success<>(fakeUser);
+            Session session = AccessService.getInstance().requestLoginDefault(username, password, null);
+            if(session != null) {
+                LoggedInUser fakeUser =
+                        new LoggedInUser(session.getUuid(),
+                                session.getUserInfo().getName());
+                return new Result.Success<>(fakeUser);
+            }
+            throw new Exception("User / Password");
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));
         }
     }
 
     public void logout() {
-        // TODO: revoke authentication
+        // TODO: set session uuid
+        AccessService.getInstance().requestLogout(null);
     }
 }

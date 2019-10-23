@@ -16,8 +16,11 @@
 package org.erpya.base.access;
 
 /**
- * Access class for login and enrollment
+ * Default class with constants parameters for AccessService
  */
-public class Access {
-
+public interface AccessProviderValues {
+    /** AccessService default Host */
+    String ACCESS_HOST = "mobile.spin-suite.com";
+    /** AccessService Default Port */
+    int ACCESS_PORT = 50050;
 }

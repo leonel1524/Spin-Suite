@@ -23,20 +23,22 @@ package access;
 
 // The greeting service definition.
 service AccessService {
-  // Request user roles
-  rpc GetUserInfo(LoginRequest) returns (UserInfoValue) {}
-  // Request login from user
-  rpc RunLogin(LoginRequest) returns (Session) {}
-  // Request login and role
-  rpc RunLoginDefault(LoginRequest) returns (Session) {}
-  // Request a Role from uuid
-  rpc RunLogout(LogoutRequest) returns (Session) {}  
-  // Request user roles from Session
-  rpc GetUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}  
-  // Request Menu from Parent UUID
-  rpc GetMenuAndChild(UserInfoRequest) returns (Menu) {}
-  // Request change role
-  rpc RunChangeRole(UserInfoRequest) returns (Session) {}
+	// Request user roles
+	rpc GetUserInfo(LoginRequest) returns (UserInfoValue) {}
+	// Request login from user
+	rpc RunLogin(LoginRequest) returns (Session) {}
+	// Request login and role
+	rpc RunLoginDefault(LoginRequest) returns (Session) {}
+	// Request a Role from uuid
+	rpc RunLogout(LogoutRequest) returns (Session) {}
+	// Request user roles from Session
+	rpc GetUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}
+	// Request Menu from Parent UUID
+	rpc GetMenuAndChild(UserInfoRequest) returns (Menu) {}
+	// Request change role
+	rpc RunChangeRole(UserInfoRequest) returns (Session) {}
+	// Request session
+	rpc GetSession(SessionRequest) returns (Session) {}
 }
 
 // Request a Login Session
@@ -55,6 +57,12 @@ message LogoutRequest {
 	string sessionUuid = 1;
 	string language = 2;
 	string clientVersion = 3;
+}
+
+// Request a Session
+message SessionRequest {
+	string sessionUuid = 1;
+	string clientVersion = 2;
 }
 
 // Request a Change Role
@@ -99,6 +107,25 @@ message Session {
 	UserInfo userInfo = 4;
 	Role role = 5;
 	bool processed = 6;
+	map<string, ContextValue> defaultContext = 7;
+}
+
+// Define value for object
+message ContextValue {
+	int32 intValue = 1;
+	int64 longValue = 2;
+	double doubleValue = 3;
+	bool booleanValue = 4;
+	string stringValue = 5;
+	enum ValueType {
+		INTEGER = 0;
+		LONG = 1;
+		DOUBLE = 2;
+		BOOLEAN = 3;
+		STRING = 4;
+		DATE = 5;
+	}
+	ValueType valueType = 6;
 }
 
 // Role Definition
