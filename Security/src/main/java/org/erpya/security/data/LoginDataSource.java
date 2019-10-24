@@ -14,7 +14,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
 package org.erpya.security.data;
-
 import org.erpya.base.access.AccessService;
 import org.erpya.security.data.model.LoggedInUser;
 import org.spin.grpc.util.Session;
@@ -27,14 +26,13 @@ import java.io.IOException;
 public class LoginDataSource {
 
     public Result<LoggedInUser> login(String username, String password) {
-
         try {
-            // TODO: handle loggedInUser authentication
             Session session = AccessService.getInstance().requestLoginDefault(username, password, null);
             if(session != null) {
                 LoggedInUser fakeUser =
-                        new LoggedInUser(session.getUuid(),
-                                session.getUserInfo().getName());
+                        new LoggedInUser(session.getUserInfo().getName(),
+                                session.getUserInfo().getName(), session.getUuid());
+                AccessService.getInstance().closeServiceProvider();
                 return new Result.Success<>(fakeUser);
             }
             throw new Exception("User / Password");

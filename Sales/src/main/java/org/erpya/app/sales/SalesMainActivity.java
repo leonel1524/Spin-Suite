@@ -28,6 +28,7 @@ import org.erpya.component.factory.FieldFactory;
 import org.erpya.base.util.DisplayType;
 import org.erpya.base.util.Env;
 import org.erpya.security.ui.login.Login;
+import org.erpya.security.util.RSACrypt;
 
 
 public class SalesMainActivity extends AppCompatActivity {
@@ -40,6 +41,7 @@ public class SalesMainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Env.getInstance(getApplicationContext());
         Env.setCurrentSupportedDatabase(CouchDBLite_2_0_Support.class.getName());
+        Env.setCurrentSupportedSecureEngine(RSACrypt.class.getName());
         //  Add dynamic
         final ConstraintLayout parent = findViewById(R.id.parent);
         if(parent != null) {

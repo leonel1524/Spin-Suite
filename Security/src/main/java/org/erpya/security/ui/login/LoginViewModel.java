@@ -18,12 +18,15 @@ package org.erpya.security.ui.login;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.os.AsyncTask;
 import android.util.Patterns;
 
 import org.erpya.security.data.LoginRepository;
 import org.erpya.security.data.Result;
 import org.erpya.security.data.model.LoggedInUser;
 import org.erpya.security.R;
+
+import java.lang.ref.WeakReference;
 
 public class LoginViewModel extends ViewModel {
 
@@ -45,8 +48,19 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
+        new AccessProcessTask(this).execute(username, password);
+    }
 
+    /**
+     * Login calling
+     * @param username
+     * @param password
+     */
+    private Result<LoggedInUser> loginModel(String username, String password) {
+        return loginRepository.login(username, password);
+    }
+
+    private void setResult(Result<LoggedInUser> result) {
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
             loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
@@ -80,5 +94,28 @@ public class LoginViewModel extends ViewModel {
     // A placeholder password validation check
     private boolean isPasswordValid(String password) {
         return password != null && password.trim().length() > 4;
+    }
+
+    private static class AccessProcessTask extends AsyncTask<String, Void, Result<LoggedInUser>> {
+        private final WeakReference<LoginViewModel> loginModel;
+
+        private AccessProcessTask(LoginViewModel loginModel) {
+            this.loginModel = new WeakReference<LoginViewModel>(loginModel);
+        }
+
+        @Override
+        protected Result<LoggedInUser> doInBackground(String... params) {
+            String username = params[0];
+            String password = params[1];
+            return loginModel.get().loginModel(username, password);
+        }
+
+        @Override
+        protected void onPostExecute(Result<LoggedInUser> result) {
+            LoginViewModel source = loginModel.get();
+            if (source != null) {
+                source.setResult(result);
+            }
+        }
     }
 }

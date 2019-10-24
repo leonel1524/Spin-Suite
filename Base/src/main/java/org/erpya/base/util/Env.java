@@ -110,82 +110,6 @@ public final class Env {
 	}
 	
 	/**
-	 * Create default directory
-	 * @param ctx
-	 * @return void
-	 */
-    //  TODO Implement it
-	public static void createDefaultDirectory(Context ctx){
-		/*if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-			String basePathName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator;
-			//	Application Path
-			String dbPath = basePathName + Env.DB_PATH_DIRECTORY;
-			String dbPathName = basePathName + Env.DB_PATH_NAME;
-			//	Documents 
-			String docPathName = basePathName + Env.DOC_DIRECTORY;
-			String tmpPathName = basePathName + Env.TMP_DIRECTORY;
-			String attPathName = basePathName + Env.ATT_DIRECTORY;
-			String bcPathName  = basePathName + Env.BC_DIRECTORY;
-			
-			//	
-			Env.setAppBaseDirectory(ctx, basePathName);
-			Env.setDB_PathName(ctx, dbPathName);
-			Env.setDoc_DirectoryPathName(ctx, docPathName);
-			Env.setTmp_DirectoryPathName(ctx, tmpPathName);
-			Env.setAtt_DirectoryPathName(ctx, attPathName);
-			Env.setBC_DirectoryPathName(ctx, bcPathName);
-			//	Database
-			File f = new File(dbPath);
-			if(!f.exists()) {
-				if(!f.mkdirs())
-					Msg.toastMsg(ctx, ctx.getString(R.string.msg_ErrorCreatingDirectory)
-							+ "\"" + dbPathName + "\"");
-			} else if(f.isDirectory()) {
-				File fDB = new File(dbPathName);
-				fDB.delete();
-			} else if(f.isFile()){
-				if(!f.mkdirs())
-					Msg.toastMsg(ctx, ctx.getString(R.string.msg_ErrorCreatingDirectory) 
-							+ "\"" + dbPathName + "\"");
-			}
-			//	Create Document Folder
-			File doc = new File(docPathName);
-			if(!doc.exists()
-					|| doc.isFile()) {
-				if(!doc.mkdirs())
-					Msg.toastMsg(ctx, ctx.getString(R.string.msg_ErrorCreatingDirectory) 
-							+ "\"" + docPathName + "\"");
-			}
-			//	Create Tmp Folder
-			File tmp = new File(tmpPathName);
-			if(!tmp.exists()
-					|| tmp.isFile()) {
-				if(!tmp.mkdirs())
-					Msg.toastMsg(ctx, ctx.getString(R.string.msg_ErrorCreatingDirectory) 
-							+ "\"" + tmpPathName + "\"");
-			}
-			//	Create Attachment Folder
-			File att = new File(attPathName);
-			if(!att.exists()
-					|| att.isFile()) {
-				if(!att.mkdirs())
-					Msg.toastMsg(ctx, ctx.getString(R.string.msg_ErrorCreatingDirectory) 
-							+ "\"" + attPathName + "\"");
-			}
-			//	Create Business Chat Folder
-			File bc = new File(bcPathName);
-			if(!bc.exists()
-					|| bc.isFile()) {
-				if(!bc.mkdirs())
-					Msg.toastMsg(ctx, ctx.getString(R.string.msg_ErrorCreatingDirectory) 
-							+ "\"" + bcPathName + "\"");
-			}
-		} else {
-			Env.setDB_PathName(ctx, DB.DB_NAME);
-		}*/
-	}
-	
-	/**
 	 * Private
 	 * *** Constructor ***
 	 * @param context
@@ -3195,6 +3119,22 @@ public final class Env {
 	public static void setCurrentSupportedDatabase(String supportPath) {
 		setContext(DB_CURRENT, supportPath);
 	}
+
+	/**
+	 * Get Current Supported Secure Engine
+	 * @return
+	 */
+	public static String getCurrentSupportedSecureEngine() {
+		return getContext(SECURE_CURRENT);
+	}
+
+	/**
+	 * Set current supported Secure Engine
+	 * @param supportPath
+	 */
+	public static void setCurrentSupportedSecureEngine(String supportPath) {
+		setContext(SECURE_CURRENT, supportPath);
+	}
 	
 	/**	Context					*/
 	public static Context context;
@@ -3250,6 +3190,7 @@ public final class Env {
 	private static final String		DB_VERSION 			= "#DB_Version";
 	private static final String		DB_NAME_KEY 		= "#DB_Name";
 	private static final String		DB_CURRENT			= "#CurrentDB";
+	private static final String		SECURE_CURRENT		= "#CurrentSecureEngine";
 	private static final String		DOC_DIRECTORY_KEY 	= "#DOC_Name";
 	private static final String		TMP_DIRECTORY_KEY 	= "#TMP_Name";
 	private static final String		ATT_DIRECTORY_KEY 	= "#ATT_Name";

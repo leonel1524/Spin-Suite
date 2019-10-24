@@ -21,6 +21,8 @@ import org.spin.grpc.util.LoginRequest;
 import org.spin.grpc.util.LogoutRequest;
 import org.spin.grpc.util.Session;
 
+import java.util.concurrent.TimeUnit;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -78,6 +80,15 @@ public class AccessService {
                 .setClientVersion(clientVersion)
                 .build();
         return getServiceProvider().runLoginDefault(request);
+    }
+
+    /**
+     * Close Service Provider
+     */
+    public void closeServiceProvider() throws InterruptedException {
+        if(connectionChannel == null) {
+            connectionChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+        }
     }
 
     /**
