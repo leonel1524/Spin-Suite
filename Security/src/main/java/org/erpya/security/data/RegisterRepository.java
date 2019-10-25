@@ -17,38 +17,41 @@ package org.erpya.security.data;
 
 import org.erpya.base.util.Env;
 import org.erpya.base.util.Util;
-import org.erpya.security.data.model.LoggedInUser;
+import org.erpya.security.data.model.RegisteredUser;
 import org.erpya.security.util.SecureHandler;
 
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
  */
-public class LoginRepository {
+public class RegisterRepository {
 
-    private static volatile LoginRepository instance;
+    private static volatile RegisterRepository instance;
 
     private SecurityDataSource dataSource;
 
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
+    private RegisteredUser user = null;
 
     // private constructor : singleton access
-    private LoginRepository(SecurityDataSource dataSource) {
+    private RegisterRepository(SecurityDataSource dataSource) {
         this.dataSource = dataSource;
-        String userId = Env.getContext("#User_ID");
+        String userName = Env.getContext("#User_UserName");
+        String email = Env.getContext("#User_UserEmail");
+        String displayName = Env.getContext("#User_DisplayName");
         String token = Env.getContext("#SessionToken");
         if(!Util.isEmpty(token)) {
-            String userDisplayName = Env.getContext("#User_DisplayName");
-            user = new LoggedInUser(SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(userId),
-                    userDisplayName, SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(userId));
+            user = new RegisteredUser(displayName, null,
+                    SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(userName),
+                    SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(email),
+                    SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(token));
         }
     }
 
-    public static LoginRepository getInstance(SecurityDataSource dataSource) {
+    public static RegisterRepository getInstance(SecurityDataSource dataSource) {
         if (instance == null) {
-            instance = new LoginRepository(dataSource);
+            instance = new RegisterRepository(dataSource);
         }
         return instance;
     }
@@ -61,25 +64,26 @@ public class LoginRepository {
         if(user == null) {
             return;
         }
-        String token = SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(user.getToken());
-        dataSource.logout(token);
+        dataSource.logout(user.getToken());
         user = null;
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
+    private void setRegisteredUser(RegisteredUser user) {
         this.user = user;
-        String userId = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getUserId());
+        String userName = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getUserName());
         String token = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getToken());
+        String email = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getEmail());
+        Env.setContext("#User_UserName", userName);
+        Env.setContext("#User_UserEMail", email);
         Env.setContext("#SessionToken", token);
-        Env.setContext("#User_ID", userId);
         Env.setContext("#User_DisplayName", user.getDisplayName());
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<RegisteredUser> enroll(String name, String username, String email) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
+        Result<RegisteredUser> result = dataSource.enroll(name, username, email);
         if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+            setRegisteredUser(((Result.Success<RegisteredUser>) result).getData());
         }
         return result;
     }

@@ -13,14 +13,51 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.base.access;
+package org.erpya.security.ui.register;
+
+import android.support.annotation.Nullable;
 
 /**
- * Default class with constants parameters for AccessService
+ * Data validation state of the login form.
  */
-public interface AccessProviderValues {
-    /** AccessService default Host */
-    String ACCESS_HOST = "mobile.spin-suite.com";
-    /** AccessService Default Port */
-    int ACCESS_PORT = 50050;
+class RegisterFormState {
+    @Nullable
+    private Integer nameError;
+    @Nullable
+    private Integer usernameError;
+    @Nullable
+    private Integer emailError;
+    private boolean isDataValid;
+
+    RegisterFormState(@Nullable Integer nameError, @Nullable Integer usernameError, @Nullable Integer emailError) {
+        this.usernameError = usernameError;
+        this.emailError = emailError;
+        this.isDataValid = false;
+    }
+
+    RegisterFormState(boolean isDataValid) {
+        this.nameError = null;
+        this.usernameError = null;
+        this.emailError = null;
+        this.isDataValid = isDataValid;
+    }
+
+    @Nullable
+    Integer getUsernameError() {
+        return usernameError;
+    }
+
+    @Nullable
+    Integer getNameError() {
+        return nameError;
+    }
+
+    @Nullable
+    Integer getEMailError() {
+        return emailError;
+    }
+
+    boolean isDataValid() {
+        return isDataValid;
+    }
 }

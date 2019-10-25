@@ -15,16 +15,26 @@
  ************************************************************************************/
 package org.erpya.security.data;
 import org.erpya.base.access.AccessService;
+import org.erpya.base.access.EnrollmentService;
 import org.erpya.security.data.model.LoggedInUser;
+import org.erpya.security.data.model.RegisteredUser;
 import org.spin.grpc.util.Session;
+import org.spin.grpc.util.User;
+
 import java.io.IOException;
 
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
-public class LoginDataSource {
+public class SecurityDataSource {
 
+    /**
+     * Login user
+     * @param username
+     * @param password
+     * @return
+     */
     public Result<LoggedInUser> login(String username, String password) {
         try {
             Session session = AccessService.getInstance().requestLoginDefault(username, password, null);
@@ -41,8 +51,42 @@ public class LoginDataSource {
         }
     }
 
-    public void logout() {
-        // TODO: set session uuid
-        AccessService.getInstance().requestLogout(null);
+    /**
+     * Enroll new user
+     * @param name
+     * @param username
+     * @param email
+     * @return
+     */
+    public Result<RegisteredUser> enroll(String name, String username, String email) {
+        try {
+            User user = EnrollmentService.getInstance().enrollUser(name, username, email);
+            if(user != null) {
+                RegisteredUser fakeUser =
+                        new RegisteredUser(user.getName(), user.getLastName(), user.getUserName(), user.getEMail(), user.getToken());
+                AccessService.getInstance().closeServiceProvider();
+                return new Result.Success<>(fakeUser);
+            }
+            throw new Exception("User / EMail");
+        } catch (Exception e) {
+            return new Result.Error(new IOException("Error enrollment", e));
+        }
+    }
+
+    /**
+     * Reset password
+     * @param userName
+     * @param email
+     */
+    public void resetPasswod(String userName, String email) {
+        //  TODO: Implement it
+    }
+
+    /**
+     * Logout session
+     * @param token
+     */
+    public void logout(String token) {
+        //  TODO: Implement it
     }
 }

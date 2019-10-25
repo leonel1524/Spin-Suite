@@ -15,11 +15,11 @@
  ************************************************************************************/
 package org.erpya.base.access;
 
-import org.erpya.base.util.Util;
-import org.spin.grpc.util.AccessServiceGrpc;
-import org.spin.grpc.util.LoginRequest;
-import org.spin.grpc.util.LogoutRequest;
-import org.spin.grpc.util.Session;
+import org.spin.grpc.util.EnrollUserRequest;
+import org.spin.grpc.util.EnrollmentServiceGrpc;
+import org.spin.grpc.util.ResetPasswordRequest;
+import org.spin.grpc.util.ResetPasswordResponse;
+import org.spin.grpc.util.User;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,21 +29,20 @@ import io.grpc.ManagedChannelBuilder;
 /**
  * AccessService class for login and enrollment
  */
-public class AccessService {
-    private static final AccessService instance = new AccessService();
+public class EnrollmentService {
+    private static final EnrollmentService instance = new EnrollmentService();
 
     /**
      * Get default instance
      * @return
      */
-    public static AccessService getInstance() {
+    public static EnrollmentService getInstance() {
         return instance;
     }
 
-    private AccessService() {
-        host = GRPCProviderValues.ACCESS_HOST;
-        port = GRPCProviderValues.ACCESS_PORT;
-        language = "en_US";
+    private EnrollmentService() {
+        host = GRPCProviderValues.ENROLLMENT_HOST;
+        port = GRPCProviderValues.ENROLLMENT_PORT;
         clientVersion = BuildConfig.VERSION_CODE + " - " + BuildConfig.VERSION_NAME;
     }
 
@@ -62,24 +61,24 @@ public class AccessService {
      * Get Service Provider
      * @return
      */
-    private AccessServiceGrpc.AccessServiceBlockingStub getServiceProvider() {
-        return AccessServiceGrpc.newBlockingStub(getConnectionProvider());
+    private EnrollmentServiceGrpc.EnrollmentServiceBlockingStub getServiceProvider() {
+        return EnrollmentServiceGrpc.newBlockingStub(getConnectionProvider());
     }
 
     /**
-     * Make login with Role, Organization and Warehouse as default values
+     * Enroll a new user
+     * @param name
+     * @param userName
+     * @param email
+     * @return
      */
-    public Session requestLoginDefault(String userName, String userPass, String language) {
-        if(!Util.isEmpty(language)) {
-            this.language = language;
-        }
-        LoginRequest request = LoginRequest.newBuilder()
+    public User enrollUser(String name, String userName, String email) {
+        EnrollUserRequest request = EnrollUserRequest.newBuilder()
+                .setName(name)
                 .setUserName(userName)
-                .setUserPass(userPass)
-                .setLanguage(this.language)
-                .setClientVersion(clientVersion)
+                .setEMail(email)
                 .build();
-        return getServiceProvider().runLoginDefault(request);
+        return getServiceProvider().enrollUser(request);
     }
 
     /**
@@ -92,26 +91,23 @@ public class AccessService {
     }
 
     /**
-     * Request logout
-     * @param sessionUuid
+     * Reset password
+     * @param userName
+     * @param email
      * @return
      */
-    public Session requestLogout(String sessionUuid) {
-        AccessServiceGrpc.AccessServiceBlockingStub accessService = AccessServiceGrpc.newBlockingStub(getConnectionProvider());
-        LogoutRequest request = LogoutRequest.newBuilder()
-                .setSessionUuid(sessionUuid)
-                .setLanguage(this.language)
-                .setClientVersion(clientVersion)
+    public ResetPasswordResponse resetPassword(String userName, String email) {
+        ResetPasswordRequest request = ResetPasswordRequest.newBuilder()
+                .setUserName(userName)
+                .setEMail(email)
                 .build();
-        return getServiceProvider().runLogout(request);
+        return getServiceProvider().resetPassword(request);
     }
 
-    /** Host for access */
+    /** Host for enroll */
     private String host;
-    /** Port for access */
+    /** Port for enroll */
     private int port;
-    /** Language    */
-    private String language;
     /** Client version  */
     private String clientVersion;
     /** connection  */

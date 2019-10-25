@@ -13,29 +13,18 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.security.ui.login;
-
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
-
-import org.erpya.security.data.SecurityDataSource;
-import org.erpya.security.data.LoginRepository;
+package org.erpya.base.access;
 
 /**
- * ViewModel provider factory to instantiate LoginViewModel.
- * Required given LoginViewModel has a non-empty constructor
+ * Default class with constants parameters for AccessService
  */
-public class LoginViewModelFactory implements ViewModelProvider.Factory {
-
-    @NonNull
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(LoginViewModel.class)) {
-            return (T) new LoginViewModel(LoginRepository.getInstance(new SecurityDataSource()));
-        } else {
-            throw new IllegalArgumentException("Unknown ViewModel class");
-        }
-    }
+public interface GRPCProviderValues {
+    /** AccessService default Host */
+    String ACCESS_HOST = "mobile.spin-suite.com";
+    /** EnrollmentService default Host */
+    String ENROLLMENT_HOST = "mobile.spin-suite.com";
+    /** AccessService Default Port */
+    int ACCESS_PORT = 50050;
+    /*** EnrollmentService and Password reset password  */
+    int ENROLLMENT_PORT = 50047;
 }

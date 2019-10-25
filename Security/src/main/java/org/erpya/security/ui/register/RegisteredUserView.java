@@ -13,29 +13,20 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.security.ui.login;
-
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
-
-import org.erpya.security.data.SecurityDataSource;
-import org.erpya.security.data.LoginRepository;
+package org.erpya.security.ui.register;
 
 /**
- * ViewModel provider factory to instantiate LoginViewModel.
- * Required given LoginViewModel has a non-empty constructor
+ * Class exposing authenticated user details to the UI.
  */
-public class LoginViewModelFactory implements ViewModelProvider.Factory {
+class RegisteredUserView {
+    private String displayName;
+    //... other data fields that may be accessible to the UI
 
-    @NonNull
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(LoginViewModel.class)) {
-            return (T) new LoginViewModel(LoginRepository.getInstance(new SecurityDataSource()));
-        } else {
-            throw new IllegalArgumentException("Unknown ViewModel class");
-        }
+    RegisteredUserView(String displayName) {
+        this.displayName = displayName;
+    }
+
+    String getDisplayName() {
+        return displayName;
     }
 }
