@@ -19,6 +19,7 @@ import org.spin.grpc.util.EnrollUserRequest;
 import org.spin.grpc.util.EnrollmentServiceGrpc;
 import org.spin.grpc.util.ResetPasswordRequest;
 import org.spin.grpc.util.ResetPasswordResponse;
+import org.spin.grpc.util.ResetPasswordTokenRequest;
 import org.spin.grpc.util.User;
 
 import java.util.concurrent.TimeUnit;
@@ -102,6 +103,20 @@ public class EnrollmentService {
                 .setEMail(email)
                 .build();
         return getServiceProvider().resetPassword(request);
+    }
+
+    /**
+     * Reset password from token
+     * @param token
+     * @param password
+     * @return
+     */
+    public ResetPasswordResponse resetPasswordFromToken(String token, String password) {
+        ResetPasswordTokenRequest request = ResetPasswordTokenRequest.newBuilder()
+                .setToken(token)
+                .setPassword(password)
+                .build();
+        return getServiceProvider().resetPasswordFromToken(request);
     }
 
     /** Host for enroll */
