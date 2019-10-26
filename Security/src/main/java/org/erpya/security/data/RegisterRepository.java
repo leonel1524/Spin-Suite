@@ -15,10 +15,7 @@
  ************************************************************************************/
 package org.erpya.security.data;
 
-import org.erpya.base.util.Env;
-import org.erpya.base.util.Util;
 import org.erpya.security.data.model.RegisteredUser;
-import org.erpya.security.util.SecureHandler;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -37,16 +34,6 @@ public class RegisterRepository {
     // private constructor : singleton access
     private RegisterRepository(SecurityDataSource dataSource) {
         this.dataSource = dataSource;
-        String userName = Env.getContext("#User_UserName");
-        String email = Env.getContext("#User_UserEmail");
-        String displayName = Env.getContext("#User_DisplayName");
-        String token = Env.getContext("#SessionToken");
-        if(!Util.isEmpty(token)) {
-            user = new RegisteredUser(displayName, null,
-                    SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(userName),
-                    SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(email),
-                    SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(token));
-        }
     }
 
     public static RegisterRepository getInstance(SecurityDataSource dataSource) {
@@ -70,13 +57,6 @@ public class RegisterRepository {
 
     private void setRegisteredUser(RegisteredUser user) {
         this.user = user;
-        String userName = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getUserName());
-        String token = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getToken());
-        String email = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getEmail());
-        Env.setContext("#User_UserName", userName);
-        Env.setContext("#User_UserEMail", email);
-        Env.setContext("#SessionToken", token);
-        Env.setContext("#User_DisplayName", user.getDisplayName());
     }
 
     public Result<RegisteredUser> enroll(String name, String username, String email) {

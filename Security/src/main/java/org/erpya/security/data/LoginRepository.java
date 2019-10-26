@@ -15,10 +15,7 @@
  ************************************************************************************/
 package org.erpya.security.data;
 
-import org.erpya.base.util.Env;
-import org.erpya.base.util.Util;
-import org.erpya.security.data.model.LoggedInUser;
-import org.erpya.security.util.SecureHandler;
+import org.erpya.security.data.model.SessionInfo;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -32,18 +29,9 @@ public class LoginRepository {
 
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
-
     // private constructor : singleton access
     private LoginRepository(SecurityDataSource dataSource) {
         this.dataSource = dataSource;
-        String userId = Env.getContext("#User_ID");
-        String token = Env.getContext("#SessionToken");
-        if(!Util.isEmpty(token)) {
-            String userDisplayName = Env.getContext("#User_DisplayName");
-            user = new LoggedInUser(SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(userId),
-                    userDisplayName, SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(userId));
-        }
     }
 
     public static LoginRepository getInstance(SecurityDataSource dataSource) {
@@ -53,34 +41,12 @@ public class LoginRepository {
         return instance;
     }
 
-    public boolean isLoggedIn() {
-        return user != null;
-    }
-
     public void logout() {
-        if(user == null) {
-            return;
-        }
-        String token = SecureHandler.getInstance(Env.getContext()).getSecureEngine().decrypt(user.getToken());
-        dataSource.logout(token);
-        user = null;
+        dataSource.logout(SessionInfo.getInstance().getSessionUuid());
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
-        this.user = user;
-        String userId = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getUserId());
-        String token = SecureHandler.getInstance(Env.getContext()).getSecureEngine().encrypt(user.getToken());
-        Env.setContext("#SessionToken", token);
-        Env.setContext("#User_ID", userId);
-        Env.setContext("#User_DisplayName", user.getDisplayName());
-    }
-
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<SessionInfo> login(String username, String password) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
-        }
-        return result;
+        return dataSource.login(username, password);
     }
 }

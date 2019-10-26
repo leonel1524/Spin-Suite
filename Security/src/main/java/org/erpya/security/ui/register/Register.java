@@ -33,6 +33,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.erpya.base.util.Util;
 import org.erpya.security.R;
 public class Register extends AppCompatActivity {
 
@@ -79,7 +80,7 @@ public class Register extends AppCompatActivity {
                 }
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
+                    showLoginFailed(loginResult.getError(), loginResult.getErrorMessage());
                     registerButton.setEnabled(true);
                 }
                 if (loginResult.getSuccess() != null) {
@@ -147,7 +148,7 @@ public class Register extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    private void showLoginFailed(@StringRes Integer errorString, String error) {
+        Toast.makeText(getApplicationContext(), Util.isEmpty(error)? "Error": error, Toast.LENGTH_SHORT).show();
     }
 }

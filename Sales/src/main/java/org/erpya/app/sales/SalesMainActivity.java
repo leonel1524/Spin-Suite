@@ -27,6 +27,7 @@ import org.erpya.base.database.support.CouchDBLite_2_0_Support;
 import org.erpya.component.factory.FieldFactory;
 import org.erpya.base.util.DisplayType;
 import org.erpya.base.util.Env;
+import org.erpya.security.data.model.SessionInfo;
 import org.erpya.security.ui.login.Login;
 import org.erpya.security.util.RSACrypt;
 
@@ -59,9 +60,16 @@ public class SalesMainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SalesMainActivity.this, Login.class);
-                startActivity(intent);
+                startLogin();
             }
         });
+        if(!SessionInfo.getInstance().isLogged()) {
+            startLogin();
+        }
+    }
+
+    private void startLogin() {
+        Intent intent = new Intent(SalesMainActivity.this, Login.class);
+        startActivity(intent);
     }
 }

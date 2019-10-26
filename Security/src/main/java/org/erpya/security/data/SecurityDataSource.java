@@ -16,8 +16,10 @@
 package org.erpya.security.data;
 import org.erpya.base.access.AccessService;
 import org.erpya.base.access.EnrollmentService;
-import org.erpya.security.data.model.LoggedInUser;
 import org.erpya.security.data.model.RegisteredUser;
+import org.erpya.security.data.model.RoleInfo;
+import org.erpya.security.data.model.SessionInfo;
+import org.erpya.security.data.model.UserInfo;
 import org.spin.grpc.util.Session;
 import org.spin.grpc.util.User;
 
@@ -35,15 +37,24 @@ public class SecurityDataSource {
      * @param password
      * @return
      */
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<SessionInfo> login(String username, String password) {
         try {
             Session session = AccessService.getInstance().requestLoginDefault(username, password, null);
             if(session != null) {
-                LoggedInUser fakeUser =
-                        new LoggedInUser(session.getUserInfo().getName(),
-                                session.getUserInfo().getName(), session.getUuid());
+                SessionInfo sessionInfo = SessionInfo.getInstance()
+                        .setSessionUuid(session.getUuid())
+                        .setSessionName(session.getName())
+                        .setSessionId(session.getId());
+                org.spin.grpc.util.UserInfo user = session.getUserInfo();
+                if(user != null) {
+                    sessionInfo.setUserInfo(new UserInfo(username, session.getUserInfo().getName(), null, session.getUserInfo().getDescription(), session.getUserInfo().getComments()));
+                }
+                org.spin.grpc.util.Role role = session.getRole();
+                if(role != null) {
+                    sessionInfo.setRoleInfo(new RoleInfo(role.getId(), role.getUuid(), role.getName(), role.getDescription(), role.getClientName(), role.getClientId()));
+                }
                 AccessService.getInstance().closeServiceProvider();
-                return new Result.Success<>(fakeUser);
+                return new Result.Success<>(sessionInfo.setIsLogged(true));
             }
             throw new Exception("User / Password");
         } catch (Exception e) {

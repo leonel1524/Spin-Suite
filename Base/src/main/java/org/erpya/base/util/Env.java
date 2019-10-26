@@ -22,9 +22,12 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -130,15 +133,7 @@ public final class Env {
 	public static boolean isLoadedActivity() {
         return getContextAsBoolean("#IsLoadedActivity");
 	}
-	
-	/**
-	 * Get if is login user
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean isLogin() {
-        return getContextAsBoolean("#IsLogin");
-	}
+
 	
 	/**
 	 * Set is initial load
@@ -157,16 +152,7 @@ public final class Env {
 	public static void setIsLoadedActivity(boolean value) {
         setContext("#IsLoadedActivity", value);
 	}
-	
-	/**
-	 * Set is login
-	 * @param value
-	 * @return void
-	 */
-	public static void setIsLogin(boolean value) {
-        setContext("#IsLogin", value);
-	}
-	
+
 	/**
 	 * Set access loaded
 	 * @param loaded
@@ -285,71 +271,16 @@ public final class Env {
 			ep.commit();*/
 	}
 
-	/**
-	 * Get Process Access with Role
-	 * @param roleId
-	 * @param processIs
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean getProcessAccess(int roleId, int processIs) {
-		return getContextAsBoolean(S_PROCESS_ACCESS + "|" + roleId + "|" + processIs);
-	}
-	
-	/**
-	 * Get Process Access without Role
-	 * @param processId
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean getProcessAccess(int processId) {
-		return getProcessAccess(getAD_Role_ID(), processId);
-	}
-	
-	/**
-	 * Get Windows Access with Role
-	 * @param roleId
-	 * @param windowId
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean getWindowsAccess(int roleId, int windowId) {
-		return getContextAsBoolean(S_WINDOW_ACCESS + "|" + roleId + "|" + windowId);
+	public static List<String> getKeys(String prefix) {
+		final String searchPrefix = (Util.isEmpty(prefix)? "": prefix.trim());
+		//	Get Preferences
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+		//	Get All Entries
+		return preferences.getAll().keySet().stream()
+				.filter(key -> key != null)
+				.filter(key -> key.startsWith(searchPrefix)).collect(Collectors.toList());
 	}
 
-	/**
-	 * Get Valid DocAction
-	 * @param roleId
-	 * @param documentTypeId
-	 * @param documentAction
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean getDocumentAccess(int roleId, int documentTypeId, String documentAction) {
-		return getContextAsBoolean(S_DOCUMENT_ACCESS + "|" + roleId + "|" + documentTypeId + "|" + documentAction);
-	}
-	
-	/**
-	 * Get Valid DocAction without Role
-	 * @param documentTypeId
-	 * @param documentAction
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean getDocumentAccess(int documentTypeId, String documentAction) {
-		return getDocumentAccess(getAD_Role_ID(), documentTypeId, documentAction);
-	}
-	
-	/**
-	 * Get Windows Access without Role
-	 * @param windowId
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean getWindowsAccess(int windowId) {
-		return getWindowsAccess(windowId);
-	}
-	
 	/**
 	 * Cache Reset
 	 * @return
@@ -463,8 +394,15 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContextObject(String context, Object value) {
-		Editor prefsEditor = getEditor();
-        /*Gson gson = new Gson();
+		if(value instanceof Integer) {
+			setContext(context, (Integer) value);
+		} if(value instanceof Boolean) {
+			setContext(context, (Boolean) value);
+		} else {
+			setContext(context, String.valueOf(value));
+		}
+		/*Editor prefsEditor = getEditor();
+        Gson gson = new Gson();
         String json = gson.toJson(value);
         prefsEditor.putString(context, json);
         prefsEditor.commit();*/
