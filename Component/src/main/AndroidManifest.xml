@@ -8,9 +8,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".menu.MainMenu"
+            android:label="@string/title_activity_main_menu"></activity>
+        <activity
             android:name=".wizard.Wizard"
             android:theme="@style/AppTheme.NoActionBar">
-            android:label="@string/title_activity_wizard"></activity>
+            android:label="@string/title_activity_wizard">
+        </activity>
     </application>
 
 </manifest>
