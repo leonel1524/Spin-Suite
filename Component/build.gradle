@@ -40,3 +40,16 @@ dependencies {
     implementation 'android.arch.navigation:navigation-ui:1.0.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
 }
+
+task deleteJar(type: Delete) {
+    delete 'libs/spin-suite-component.jar'
+}
+
+task createJar(type: Copy) {
+    from 'build/intermediates/intermediate-jars/release/'
+    into 'libs/'
+    include 'classes.jar'
+    rename('classes.jar', 'spin-suite-component.jar')
+}
+
+createJar.dependsOn(deleteJar, build)

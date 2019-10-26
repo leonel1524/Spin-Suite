@@ -38,3 +38,16 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'io.grpc:grpc-protobuf-lite:1.24.0' // CURRENT_GRPC_VERSION
 }
+
+task deleteJar(type: Delete) {
+    delete 'libs/spin-suite-security.jar'
+}
+
+task createJar(type: Copy) {
+    from 'build/intermediates/intermediate-jars/release/'
+    into 'libs/'
+    include 'classes.jar'
+    rename('classes.jar', 'spin-suite-security.jar')
+}
+
+createJar.dependsOn(deleteJar, build)
