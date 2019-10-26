@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
@@ -154,123 +157,10 @@ public final class Env {
 	}
 
 	/**
-	 * Set access loaded
-	 * @param loaded
-	 * @return void
-	 */
-	public static void setAccessLoaded(int roleId, boolean loaded) {
-		if(roleId == 0)
-			return;
-		//	Set
-		setContext(S_IS_ACCESS_LOADED + "|" + roleId, loaded);
-	}
-	
-	/**
-	 * Set Access Loaded for current role
-	 * @param loaded
-	 * @return void
-	 */
-	public static void setAccessLoaded(boolean loaded) {
-		setAccessLoaded(getAD_Role_ID(), loaded);
-	}
-
-	/**
-	 * Is Access Loaded
-	 * @param roleId
+	 * Get Keys from context
+	 * @param prefix
 	 * @return
-	 * @return boolean
 	 */
-	public static boolean isAccessLoaded(int roleId) {
-		if(roleId == 0)
-			return false;
-		//	Set
-		return getContextAsBoolean(S_IS_ACCESS_LOADED + "|" + roleId);
-	}
-	
-	/**
-	 * Is Access Loaded with current role
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean isAccessLoaded() {
-		return isAccessLoaded(Env.getAD_Role_ID());
-	}
-
-	/**
-	 * Load Role Access
-	 * @param roleId
-	 * @return void
-	 */
-	//  TODO Implement it
-	public static void loadRoleAccess(int roleId) {
-		//	Get Process Access
-		/*KeyNamePair[] processAccess = DB.getKeyNamePairs(ctx,
-				"SELECT pa.AD_Process_ID, COALESCE(pa.IsReadWrite, 'N') " +
-				"FROM AD_Process_Access pa " +
-				"WHERE pa.AD_Role_ID = ?", m_AD_Role_ID);
-		//	Get Editor
-		Editor ep = getEditor(ctx);
-		//	Ok
-		boolean ok = false;
-		//	Delete if not exists
-		if(processAccess == null
-				|| processAccess.length == 0) {
-			//	Cache Reset
-			int deleted = cacheReset(ctx, S_PROCESS_ACCESS + "|" + m_AD_Role_ID + "|", false);
-			LogM.log(ctx, "Env", Level.FINE, "Process Access Deleted = " + deleted);
-		} else {
-			for(KeyNamePair pAccess : processAccess) {
-				ep.putString(S_PROCESS_ACCESS + "|" + m_AD_Role_ID + "|" + pAccess.getKey(), pAccess.getName());
-			}
-			//	Set Ok
-			ok = true;
-		}
-		//	Get Windows Access
-		KeyNamePair[] windowsAccess = DB.getKeyNamePairs(ctx,
-				"SELECT wa.SPS_Window_ID, COALESCE(wa.IsReadWrite, 'N') " +
-				"FROM SPS_Window_Access wa " +
-				"WHERE wa.AD_Role_ID = ?", m_AD_Role_ID);
-		//	Delete if not exists
-		if(windowsAccess == null
-				|| windowsAccess.length == 0) {
-			//	Cache Reset
-			int deleted = cacheReset(ctx, S_WINDOW_ACCESS + "|" + m_AD_Role_ID + "|", false);
-			LogM.log(ctx, "Env", Level.FINE, "Windows Access Deleted = " + deleted);
-		} else {
-			for(KeyNamePair wAccess : windowsAccess) {
-				ep.putString(S_WINDOW_ACCESS + "|" + m_AD_Role_ID + "|" + wAccess.getKey(), wAccess.getName());
-			}
-			//	Set Ok
-			ok = true;
-		}
-		//	Get Document Access
-		KeyNamePair[] documentAccess = DB.getKeyNamePairs(ctx,
-				"SELECT da.C_DocType_ID, rl.Value " +
-				"FROM AD_Document_Action_Access da " +
-				"INNER JOIN AD_Ref_List rl ON(rl.AD_Ref_List_ID = da.AD_Ref_List_ID) " +
-				"WHERE da.AD_Role_ID = ?", m_AD_Role_ID);
-		//	Delete if not exists
-		if(documentAccess == null
-				|| documentAccess.length == 0) {
-			//	Cache Reset
-			int deleted = cacheReset(ctx, S_DOCUMENT_ACCESS + "|" + m_AD_Role_ID + "|", false);
-			LogM.log(ctx, "Env", Level.FINE, "Document Access Deleted = " + deleted);
-		} else {
-			//	Delete Old
-			int deleted = cacheReset(ctx, S_DOCUMENT_ACCESS + "|" + m_AD_Role_ID + "|", false);
-			LogM.log(ctx, "Env", Level.FINE, "Document Access Deleted = " + deleted);
-			//
-			for(KeyNamePair dAccess : documentAccess) {
-				ep.putString(S_DOCUMENT_ACCESS + "|" + m_AD_Role_ID + "|" + dAccess.getKey() + "|" + dAccess.getName(), "Y");
-			}
-			//	Set Ok
-			ok = true;
-		}
-		//	Commit
-		if(ok)
-			ep.commit();*/
-	}
-
 	public static List<String> getKeys(String prefix) {
 		final String searchPrefix = (Util.isEmpty(prefix)? "": prefix.trim());
 		//	Get Preferences
@@ -298,37 +188,25 @@ public final class Env {
 	 * @return int
 	 */
 	public static int cacheReset(String prefix, boolean ignorePrefix) {
-		//	Set Default Prefix
-		if(prefix == null)
-			prefix = "";
 		//	Get Preferences
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 		//	Get All Entries
 		Map<String, ?> allEntries = preferences.getAll();
+		Editor editor = getEditor();
 		//	Delete
-		int deleted = 0;
-		//	Get Editor
-		Editor ep = getEditor();
-		for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-			String key = entry.getKey();
-			if(key == null
-					|| (key.startsWith(prefix)
-							&& ignorePrefix)
-					|| (!key.startsWith(prefix)
-							&& !ignorePrefix))
-				continue;
-			//	
-			ep.remove(key);
-			//	Count
-			deleted++;
-			//	Log
-			org.erpya.base.util.LogM.log(getContext(), "ENV", Level.FINE, "Entry [" + key + "] Deleted");
-		}
+		AtomicInteger deletedEntries = new AtomicInteger();
+		getKeys(prefix).forEach(key -> {
+			editor.remove(key);
+			deletedEntries.addAndGet(1);
+			LogM.log(getContext(), "ENV", Level.FINE, "Entry [" + key + "] Deleted");
+		});
+
 		//	Commit
-		if(deleted != 0)
-			ep.commit();
+		if(deletedEntries.get() > 0) {
+			editor.commit();
+		}
 		//	Return
-		return deleted;
+		return deletedEntries.get();
 	}
 	
 	/**
@@ -362,7 +240,7 @@ public final class Env {
 		if (getContext() == null || context == null)
 			return;
 		//	Log
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "removeContext("  + context + ")");
+		LogM.log(getContext(), "Env", Level.FINE, "removeContext("  + context + ")");
 		//	
 		Editor ep = getEditor();
 		ep.remove(context);
@@ -378,13 +256,13 @@ public final class Env {
 		if (getContext() == null || context == null)
 			return;
 		//	Log
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "setContext("  + context + ", " + value + ")");
+		LogM.log(getContext(), "Env", Level.FINE, "setContext("  + context + ", " + value + ")");
 		//
 		if (value == null)
 			value = "";
-		Editor ep = getEditor();
-		ep.putString(context, value);
-		ep.commit();
+		Editor editor = getEditor();
+		editor.putString(context, value);
+		editor.commit();
 	}	//	setContext
 	
 	/**
@@ -420,7 +298,7 @@ public final class Env {
 		if (getContext() == null || context == null)
 			return;
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "=" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "=" + value);
 		//	
 		setContextObject(activityNo+"|"+tabNo+"|"+context, value);
 	}	//	setContext
@@ -457,7 +335,7 @@ public final class Env {
 	public static Object getContextObject(int activityNo, int tabNo, String context, Class<?> clazz) {
 		if (getContext() == null || context == null)
 			throw new IllegalArgumentException ("Require Context");
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "getContextObject=" + activityNo+"|"+tabNo+"|"+context);
+		LogM.log(getContext(), "Env", Level.INFO, "getContextObject=" + activityNo+"|"+tabNo+"|"+context);
 		//	
 		return getContextObject(activityNo+"|"+tabNo+"|"+context, clazz);
 	}	//	getContext
@@ -471,7 +349,7 @@ public final class Env {
 	public static void setContext (String context, int value) {
 		if (getContext() == null || context == null)
 			return;
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "setContext(" + context+", " + value);
+		LogM.log(getContext(), "Env", Level.INFO, "setContext(" + context+", " + value);
 		setContext(context, String.valueOf(value));
 	}	//	setContext
 	
@@ -485,7 +363,7 @@ public final class Env {
 	public static void setContext(String context, long value) {
 		if (getContext() == null || context == null)
 			return;
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "setContext(" + context+", " + value);
+		LogM.log(getContext(), "Env", Level.INFO, "setContext(" + context+", " + value);
 		setContext(context, String.valueOf(value));
 	}
 	
@@ -498,7 +376,7 @@ public final class Env {
 	 *   */
 	public static void setContext (int activityNo, int tabNo, String context, String value) {
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
 		//
 		if (value == null)
 			if (context.endsWith("_ID"))
@@ -521,7 +399,7 @@ public final class Env {
 		if (getContext() == null || context == null)
 			return;
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
 		//
 		setContext(activityNo+"|"+tabNo+"|"+context, value);
 	}	//	setContext
@@ -538,7 +416,7 @@ public final class Env {
 		if (getContext() == null || context == null)
 			return;
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
 		//
 		setContext(activityNo+"|"+tabNo+"|"+context, value);
 	}	//	setContext
@@ -555,7 +433,7 @@ public final class Env {
 		if (getContext() == null || context == null)
 			return;
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "==" + value);
 		//	
 		setContext(activityNo+"|"+tabNo+"|"+context, value);
 	}	//	Set Context
@@ -569,7 +447,7 @@ public final class Env {
 	 */
 	public static void setContext (int activityNo, String context, boolean value) {
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+") " + context + "==" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+") " + context + "==" + value);
 		//
 		setContext(activityNo+"|"+context, value);
 	}	//	Set Context
@@ -584,7 +462,7 @@ public final class Env {
 	 */
 	public static void setContext (int activityNo, int tabNo, String context, int value) {
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "=" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+","+tabNo+") " + context + "=" + value);
 		//	
 		setContext(activityNo+"|"+tabNo+"|"+context, value);
 	}	//	setContext
@@ -598,7 +476,7 @@ public final class Env {
 	 */
 	public static void setContext(int activityNo, String context, int value) {
 		if (activityNo != WINDOW_FIND && activityNo != WINDOW_MLOOKUP)
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+") " + context + "=" + value);
+			LogM.log(getContext(), "Env", Level.FINE, "Context("+activityNo+") " + context + "=" + value);
 		//	
 		setContext(activityNo+"|"+context, value);
 	}	//	setContext
@@ -617,7 +495,7 @@ public final class Env {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.SEVERE, "(" + context + ") = " + s, e);
+			LogM.log(getContext(), "Env", Level.SEVERE, "(" + context + ") = " + s, e);
 		}
 		//	Default Return
 		return 0;
@@ -638,7 +516,7 @@ public final class Env {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.SEVERE, "(" + context + ") = " + s, e);
+			LogM.log(getContext(), "Env", Level.SEVERE, "(" + context + ") = " + s, e);
 		}
 		//	Default Return
 		return 0;
@@ -659,7 +537,7 @@ public final class Env {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.SEVERE, "(" + context + ") = " + s, e);
+			LogM.log(getContext(), "Env", Level.SEVERE, "(" + context + ") = " + s, e);
 		}
 		return 0;
 	}	//	getContextAsInt
@@ -680,7 +558,7 @@ public final class Env {
 	public static String getContext(String context) {
 		SharedPreferences pf = getSharePreferences();
 		String value = pf.getString(context, null);
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "getContext(" + context + ") = " + value);
+		LogM.log(getContext(), "Env", Level.FINE, "getContext(" + context + ") = " + value);
 		return value;
 	}	//	getContext
 	
@@ -772,7 +650,7 @@ public final class Env {
 		//	
 		boolean valid = (s != null && s.equals("Y"));
 		//	Log
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "getContextAsBoolean(" + context + ") = " + valid);
+		LogM.log(getContext(), "Env", Level.FINE, "getContextAsBoolean(" + context + ") = " + valid);
 		return valid;
 	}	//	getContext
 
@@ -785,15 +663,15 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getContextAsBoolean(int activityNo, int tabNo, String context) {
-		String s = getContext(activityNo+"|"+tabNo+"|"+context);
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "getContext=" + activityNo+"|"+tabNo+"|"+context);
+		String contextValue = getContext(activityNo+"|"+tabNo+"|"+context);
+		LogM.log(getContext(), "Env", Level.INFO, "getContext=" + activityNo+"|"+tabNo+"|"+context);
 		// If TAB_INFO, don't check Window and Global context - teo_sarca BF [ 2017987 ]
 		if (TAB_INFO == tabNo)
-			return s != null ? s.equals("Y") : false;
+			return contextValue != null ? contextValue.equals("Y") : false;
 		//
-		if (s == null)
-			s = getContext(activityNo, context);
-		return s != null ? s.equals("Y") : false;
+		if (contextValue == null)
+			contextValue = getContext(activityNo, context);
+		return contextValue != null ? contextValue.equals("Y") : false;
 	}	//	getContext
 
 	/**
@@ -804,13 +682,13 @@ public final class Env {
 	 * @return boolean
 	 */
 	public static boolean getContextAsBoolean(int activityNo, String context) {
-		String s = getContext(activityNo+"|"+context);
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "getContext=" + activityNo+"|"+context);
+		String contextValue = getContext(activityNo+"|"+context);
+		LogM.log(getContext(), "Env", Level.INFO, "getContext=" + activityNo+"|"+context);
 		// If TAB_INFO, don't check Window and Global context - teo_sarca BF [ 2017987 ]
 		//
-		if (s == null)
-			s = getContext(activityNo, context);
-		return s != null ? s.equals("Y") : false;
+		if (contextValue == null)
+			contextValue = getContext(activityNo, context);
+		return contextValue != null ? contextValue.equals("Y") : false;
 	}	//	getContext
 
 	/**
@@ -843,8 +721,8 @@ public final class Env {
 	 *  @return value or ""
 	 */
 	public static String getContext(int activityNo, String context, boolean onlyWindow) {
-		String s = getContext(activityNo+"|"+context);
-		if (s == null) {
+		String contextValue = getContext(activityNo+"|"+context);
+		if (contextValue == null) {
 			//	Explicit Base Values
 			if (context.startsWith("#") || context.startsWith("$"))
 				return getContext(context);
@@ -852,9 +730,9 @@ public final class Env {
 				return "";
 			return getContext("#" + context);
 		} else {
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "getContext(" + activityNo+"|"+context + ") = " + s);
+			LogM.log(getContext(), "Env", Level.FINE, "getContext(" + activityNo+"|"+context + ") = " + contextValue);
 		}
-		return s;
+		return contextValue;
 	}	//	getContext
 
 	/**
@@ -878,15 +756,15 @@ public final class Env {
 	 * @return value or ""
 	 */
 	public static String getContext(int activityNo, int tabNo, String context) {
-		String s = getContext(activityNo+"|"+tabNo+"|"+context);
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "getContext=" + activityNo+"|"+tabNo+"|"+context);
+		String contextValue = getContext(activityNo+"|"+tabNo+"|"+context);
+		LogM.log(getContext(), "Env", Level.INFO, "getContext=" + activityNo+"|"+tabNo+"|"+context);
 		// If TAB_INFO, don't check Window and Global context - teo_sarca BF [ 2017987 ]
 		if (TAB_INFO == tabNo)
-			return s != null ? s : "";
+			return contextValue != null ? contextValue : "";
 		//
-		if (s == null || s.length() == 0)
+		if (contextValue == null || contextValue.length() == 0)
 			return getContext(activityNo, context, false);
-		return s;
+		return contextValue;
 	}	//	getContext
 	
 	/**
@@ -895,8 +773,9 @@ public final class Env {
 	 * @return
 	 * @return String[]
 	 */
+	@Nullable
 	public static String[] getContextAsArray(String context) {
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "getContext=" + context);
+		LogM.log(getContext(), "Env", Level.INFO, "getContext=" + context);
 		SharedPreferences pf = PreferenceManager.getDefaultSharedPreferences(getContext());
 		String set = pf.getString(context, null);
 		//	Default
@@ -963,7 +842,7 @@ public final class Env {
 	 * @return void
 	 */
 	public static void setContext(String context, String[] value) {
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "setContext(" + context+", " + value);
+		LogM.log(getContext(), "Env", Level.INFO, "setContext(" + context+", " + value);
 		Editor ep = getEditor();
 		if(value == null) {
 			ep.putString(context, null);
@@ -1024,13 +903,13 @@ public final class Env {
 	 * @return value or ""
 	 */
 	public static String getContext(int activityNo, int tabNo, String context, boolean onlyTab, boolean onlyWindow) {
-		String s = getContext(activityNo+"|"+tabNo+"|"+context);
+		String contextValue = getContext(activityNo+"|"+tabNo+"|"+context);
 		if (TAB_INFO == tabNo)
-			return s != null ? s : "";
+			return contextValue != null ? contextValue : "";
 		//
-		if (s == null && ! onlyTab)
+		if (contextValue == null && ! onlyTab)
 			return getContext(activityNo, context, onlyWindow);
-		return s;
+		return contextValue;
 	}	//	getContext
 
 	/**
@@ -1174,61 +1053,6 @@ public final class Env {
 	public static void setM_Warehouse_ID(int warehouseId) {
 		setContext("#M_Warehouse_ID", warehouseId);
 	}
-	
-	/**
-	 * Set Save Pass
-	 * @param isSavePass
-	 * @return void
-	 */
-	public static void setSavePass(boolean isSavePass) {
-		setContext("#SavePass", isSavePass);
-	}
-	
-	/**
-	 * Set Request Password
-	 * @return void
-	 */
-	public static void setRequestPass(boolean isAutoLogin) {
-		setContext("#RequestPass", isAutoLogin);
-	}
-
-	/**
-	 * Set Login Pass Code
-	 * @param passcode
-	 * @return void
-	 */
-	public static void setLoginPasscode(int passcode) {
-		setContext("#Login_Passcode", passcode);
-	}
-	
-	/**
-	 * Valid Login Pass Code
-	 * @param passcode
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean isValidLoginPasscode(int passcode) {
-		int internalPasscode = getContextAsInt("#Login_Passcode");
-		return internalPasscode == passcode;
-	}
-
-	/**
-	 * Get Login Pass Code
-	 * @return
-	 * @return int
-	 */
-	public static int getLoginPasscode() {
-		return getContextAsInt("#Login_Passcode");
-	}
-	
-	/**
-	 * Request Password on Login
-	 * @return
-	 * @return boolean
-	 */
-	public static boolean isRequestPass() {
-		return getContextAsBoolean("#RequestPass");
-	}
 
 	/**
 	 * Get database version
@@ -1330,7 +1154,8 @@ public final class Env {
 	 * @return
 	 * @return String
 	 */
-    public static String parseContext(String whereClause, boolean ignoreUnparsable) {
+    @NonNull
+	public static String parseContext(String whereClause, boolean ignoreUnparsable) {
 		return parseContext(0, 0, whereClause, ignoreUnparsable, null);
 	}
 
@@ -1343,7 +1168,8 @@ public final class Env {
 	 * 	@param ignoreUnparsable if true, unsuccessful @return parsed String or "" if not successful and ignoreUnparsable
 	 *	@return parsed context 
 	 */
-    public static String parseContext(int activityNo, int tabNo, String whereClause, boolean ignoreUnparsable, String defaultUnparseable) {
+    @NonNull
+	public static String parseContext(int activityNo, int tabNo, String whereClause, boolean ignoreUnparsable, String defaultUnparseable) {
 		if (Util.isEmpty(whereClause))
 			return "";
 
@@ -1358,7 +1184,7 @@ public final class Env {
 
 			int j = inStr.indexOf('@');						// next @
 			if (j < 0) {
-				org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "No second tag: " + inStr);
+				LogM.log(getContext(), "Env", Level.INFO, "No second tag: " + inStr);
 				return "";						//	no second tag
 			}
 
@@ -1370,7 +1196,7 @@ public final class Env {
 			if (ctxInfo != null && ctxInfo.length() == 0 && (token.startsWith("#") || token.startsWith("$")) )
 				ctxInfo = getContext(token);	// get global context
 			if (ctxInfo != null && ctxInfo.length() == 0) {
-				org.erpya.base.util.LogM.log(getContext(), "Env", Level.INFO, "No Context for: " + token);
+				LogM.log(getContext(), "Env", Level.INFO, "No Context for: " + token);
 				if (!ignoreUnparsable && defaultUnparseable==null)
 					return "";						//	token not found
 				else if (!ignoreUnparsable && defaultUnparseable!=null)
@@ -1385,7 +1211,7 @@ public final class Env {
 		}
 		outStr.append(inStr);						// add the rest of the string
 		//	
-		org.erpya.base.util.LogM.log(getContext(), "Env", Level.FINE, "parseContext(" + inStr + ")");
+		LogM.log(getContext(), "Env", Level.FINE, "parseContext(" + inStr + ")");
 		//	
 		return outStr.toString();
 	}	//	parseContext
@@ -1480,7 +1306,7 @@ public final class Env {
 		try {
 			m_dateFormat.applyPattern(javaDatePattern);
 		} catch (Exception e) {
-			org.erpya.base.util.LogM.log(getContext(), "Env", Level.SEVERE, "Env.setDateFormat(Context, String)" + javaDatePattern, e);
+			LogM.log(getContext(), "Env", Level.SEVERE, "Env.setDateFormat(Context, String)" + javaDatePattern, e);
 			m_dateFormat = null;
 		}
 	}   //  setDateFormat
@@ -1491,7 +1317,7 @@ public final class Env {
 	 * @return
 	 */
 	public static SimpleDateFormat getDateFormat(String javaFormatPattern) {
-		return new SimpleDateFormat(javaFormatPattern);
+		return new SimpleDateFormat(javaFormatPattern, getLocate());
 	}
 
 	/**

@@ -13,14 +13,9 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.base.access;
+package org.erpya.base.server.data;
 
-import org.spin.grpc.util.EnrollUserRequest;
-import org.spin.grpc.util.EnrollmentServiceGrpc;
-import org.spin.grpc.util.ResetPasswordRequest;
-import org.spin.grpc.util.ResetPasswordResponse;
-import org.spin.grpc.util.ResetPasswordTokenRequest;
-import org.spin.grpc.util.User;
+import org.spin.grpc.util.BusinessDataServiceGrpc;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,22 +23,23 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 /**
- * AccessService class for login and enrollment
+ * AccessService class for business data
  */
-public class EnrollmentService {
-    private static final EnrollmentService instance = new EnrollmentService();
+public class BusinessDataService {
+    private static final BusinessDataService instance = new BusinessDataService();
 
     /**
      * Get default instance
      * @return
      */
-    public static EnrollmentService getInstance() {
+    public static BusinessDataService getInstance() {
         return instance;
     }
 
-    private EnrollmentService() {
-        host = AccessProviderDefaultValues.ENROLLMENT_HOST;
-        port = AccessProviderDefaultValues.ENROLLMENT_PORT;
+    private BusinessDataService() {
+        host = BusinessDataProviderDefaultValues.HOST;
+        port = BusinessDataProviderDefaultValues.PORT;
+        language = "en_US";
         clientVersion = BuildConfig.VERSION_CODE + " - " + BuildConfig.VERSION_NAME;
     }
 
@@ -62,25 +58,25 @@ public class EnrollmentService {
      * Get Service Provider
      * @return
      */
-    private EnrollmentServiceGrpc.EnrollmentServiceBlockingStub getServiceProvider() {
-        return EnrollmentServiceGrpc.newBlockingStub(getConnectionProvider());
+    private BusinessDataServiceGrpc.BusinessDataServiceBlockingStub getServiceProvider() {
+        return BusinessDataServiceGrpc.newBlockingStub(getConnectionProvider());
     }
 
-    /**
-     * Enroll a new user
-     * @param name
-     * @param userName
-     * @param email
-     * @return
-     */
-    public User enrollUser(String name, String userName, String email) {
-        EnrollUserRequest request = EnrollUserRequest.newBuilder()
-                .setName(name)
-                .setUserName(userName)
-                .setEMail(email)
-                .build();
-        return getServiceProvider().enrollUser(request);
-    }
+//    /**
+//     * Make login with Role, Organization and Warehouse as default values
+//     */
+//    public Session requestLoginDefault(String userName, String userPass, String language) {
+//        if(!Util.isEmpty(language)) {
+//            this.language = language;
+//        }
+//        LoginRequest request = LoginRequest.newBuilder()
+//                .setUserName(userName)
+//                .setUserPass(userPass)
+//                .setLanguage(this.language)
+//                .setClientVersion(clientVersion)
+//                .build();
+//        return getServiceProvider().runLoginDefault(request);
+//    }
 
     /**
      * Close Service Provider
@@ -91,38 +87,27 @@ public class EnrollmentService {
         }
     }
 
-    /**
-     * Reset password
-     * @param userName
-     * @param email
-     * @return
-     */
-    public ResetPasswordResponse resetPassword(String userName, String email) {
-        ResetPasswordRequest request = ResetPasswordRequest.newBuilder()
-                .setUserName(userName)
-                .setEMail(email)
-                .build();
-        return getServiceProvider().resetPassword(request);
-    }
+//    /**
+//     * Request logout
+//     * @param sessionUuid
+//     * @return
+//     */
+//    public Session requestLogout(String sessionUuid) {
+//        AccessServiceGrpc.AccessServiceBlockingStub accessService = AccessServiceGrpc.newBlockingStub(getConnectionProvider());
+//        LogoutRequest request = LogoutRequest.newBuilder()
+//                .setSessionUuid(sessionUuid)
+//                .setLanguage(this.language)
+//                .setClientVersion(clientVersion)
+//                .build();
+//        return getServiceProvider().runLogout(request);
+//    }
 
-    /**
-     * Reset password from token
-     * @param token
-     * @param password
-     * @return
-     */
-    public ResetPasswordResponse resetPasswordFromToken(String token, String password) {
-        ResetPasswordTokenRequest request = ResetPasswordTokenRequest.newBuilder()
-                .setToken(token)
-                .setPassword(password)
-                .build();
-        return getServiceProvider().resetPasswordFromToken(request);
-    }
-
-    /** Host for enroll */
+    /** Host for access */
     private String host;
-    /** Port for enroll */
+    /** Port for access */
     private int port;
+    /** Language    */
+    private String language;
     /** Client version  */
     private String clientVersion;
     /** connection  */

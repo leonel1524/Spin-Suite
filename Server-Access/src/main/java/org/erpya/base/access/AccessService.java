@@ -41,8 +41,8 @@ public class AccessService {
     }
 
     private AccessService() {
-        host = GRPCProviderValues.ACCESS_HOST;
-        port = GRPCProviderValues.ACCESS_PORT;
+        host = AccessProviderDefaultValues.HOST;
+        port = AccessProviderDefaultValues.PORT;
         language = "en_US";
         clientVersion = BuildConfig.VERSION_CODE + " - " + BuildConfig.VERSION_NAME;
     }

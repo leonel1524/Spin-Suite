@@ -82,6 +82,10 @@ public class SessionInfo {
         return this;
     }
 
+    public int getSessionId() {
+        return sessionId;
+    }
+
     public String getSessionUuid() {
         return sessionUuid;
     }

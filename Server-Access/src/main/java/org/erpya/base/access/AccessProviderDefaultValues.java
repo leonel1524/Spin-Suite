@@ -16,23 +16,15 @@
 package org.erpya.base.access;
 
 /**
- * Default class with constants parameters for AccessService
+ * Default class with constants parameters for Access Service
  */
-public interface GRPCProviderValues {
+public interface AccessProviderDefaultValues {
     /** EnrollmentService default Host */
     String ENROLLMENT_HOST = "mobile.spin-suite.com";
     /** AccessService default Host */
-    String ACCESS_HOST = "mobile.spin-suite.com";
-    /** AccessService default Host */
-    String DICTIONARY_HOST = "mobile.spin-suite.com";
-    /** AccessService default Host */
-    String BUSINESS_DATA_HOST = "mobile.spin-suite.com";
+    String HOST = "mobile.spin-suite.com";
     /*** EnrollmentService and Password reset password  */
     int ENROLLMENT_PORT = 50047;
     /** AccessService Default Port */
-    int ACCESS_PORT = 50050;
-    /** AccessService Default Port */
-    int DICTIONARY_PORT = 50051;
-    /** AccessService Default Port */
-    int BUSINESS_DATA_PORT = 50052;
+    int PORT = 50050;
 }
