@@ -17,27 +17,27 @@ package org.erpya.app.arduino.initialsetup;
 
 import org.erpya.app.arduino.remotesetup.R;
 import org.erpya.base.util.DisplayType;
-import org.erpya.component.base.IWizardStep;
+import org.erpya.component.base.ITab;
 import org.erpya.component.factory.FieldFactory;
-import org.erpya.component.factory.WizardStepFactory;
-import org.erpya.component.wizard.Wizard;
-import org.erpya.component.wizard.event.WizardEvent;
-import org.erpya.component.wizard.event.WizardEventListener;
+import org.erpya.component.factory.TabFactory;
+import org.erpya.component.window.WindowManager;
+import org.erpya.component.window.event.WindowEvent;
+import org.erpya.component.window.event.WindowEventListener;
 
 /**
- * Custom wizard for add new device
+ * Custom activity_wizard for add new device
  */
-public class AddDeviceWizard extends Wizard implements WizardEventListener {
+public class AddDeviceWindowManager extends WindowManager implements WindowEventListener {
 
     @Override
-    public void initWizard() {
+    public void setupTabs() {
         //  Custom Device Acknowledgment
-        IWizardStep customStep = WizardStepFactory.createStep(getApplicationContext())
+        ITab customStep = TabFactory.createTab(getApplicationContext())
                 .withCustomClass(DeviceAcknowledgment.class)
                 .getStep();
-        addStep(customStep);
+        addTab(customStep);
         //  Device Definition step
-        IWizardStep deviceDefinitionStep = WizardStepFactory.createStep(getApplicationContext())
+        ITab deviceDefinitionStep = TabFactory.createTab(getApplicationContext())
                 .withTitle(getString(R.string.DeviceDefinitionTitle))
                 .withHelp(getString(R.string.DeviceDefinitionHelp))
                 .withMandatory(true)
@@ -59,14 +59,14 @@ public class AddDeviceWizard extends Wizard implements WizardEventListener {
                         .withMandatory(false)
                         .withDisplayType(DisplayType.TEXT_LONG)
                         .getFieldDefinition())
-                .withAdditionalField(FieldFactory.createField(AddDeviceWizard.this)
+                .withAdditionalField(FieldFactory.createField(AddDeviceWindowManager.this)
                         .withColumnName("DeviceStartDate")
                         .withName("Start Date")
                         .withMandatory(true)
                         .withUpdateable(true)
                         .withDisplayType(DisplayType.DATE)
                         .getFieldDefinition())
-                .withAdditionalField(FieldFactory.createField(AddDeviceWizard.this)
+                .withAdditionalField(FieldFactory.createField(AddDeviceWindowManager.this)
                         .withColumnName("DeviceStartTime")
                         .withName("Start Time")
                         .withMandatory(true)
@@ -74,9 +74,9 @@ public class AddDeviceWizard extends Wizard implements WizardEventListener {
                         .withDisplayType(DisplayType.TIME)
                         .getFieldDefinition())
                 .getStep();
-        addStep(deviceDefinitionStep);
+        addTab(deviceDefinitionStep);
         //  WIFI Info Step
-        IWizardStep wifiInfoStep = WizardStepFactory.createStep(getApplicationContext())
+        ITab wifiInfoStep = TabFactory.createTab(getApplicationContext())
                 .withTitle(getString(R.string.WIFIInfoTitle))
                 .withHelp(getString(R.string.WIFIInfoHelp))
                 .withTableName("WifiInfo")
@@ -109,21 +109,26 @@ public class AddDeviceWizard extends Wizard implements WizardEventListener {
                         .withDisplayType(DisplayType.TABLE_DIR)
                         .getFieldDefinition())
                 .getStep();
-        addStep(wifiInfoStep);
+        addTab(wifiInfoStep);
     }
 
     @Override
-    public void onStart(WizardEvent ev) {
+    protected int getContentView() {
+        return org.erpya.component.R.layout.activity_wizard;
+    }
+
+    @Override
+    public void onStart(WindowEvent ev) {
 
     }
 
     @Override
-    public void onValidate(WizardEvent ev) {
+    public void onValidate(WindowEvent ev) {
 
     }
 
     @Override
-    public void onFinish(WizardEvent ev) {
+    public void onFinish(WindowEvent ev) {
 
     }
 }

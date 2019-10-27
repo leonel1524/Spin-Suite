@@ -16,7 +16,7 @@
 package org.erpya.component.base;
 
 /**
- * Contract for determine standard methods to be implemented for Fragments used on Wizard
+ * Contract for determine standard methods to be implemented for Fragments used on WindowManager
  */
 public interface IWizardStepPage {
 

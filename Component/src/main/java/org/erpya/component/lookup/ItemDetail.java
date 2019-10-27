@@ -13,44 +13,34 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.component.base;
+package org.erpya.component.lookup;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
-/**
- * Contract for determine standard methods to be implemented for Fragments used on Wizard
- */
-public interface IWizardStep {
+import org.erpya.component.R;
 
-    /**
-     * New instance for load
-     * @param savedInstanceState
-     * @return
-     */
-    Fragment newInstance(Bundle savedInstanceState);
+public class ItemDetail extends AppCompatActivity {
 
-    /**
-     * Get next fragment item position
-     * @return
-     */
-    int getNextItem();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_item_detail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-    /**
-     * This method is called from next action buttom
-     * @return true if is ok
-     */
-    boolean validateIt();
-
-    /**
-     * Get Title for it
-     * @return
-     */
-    String getTitle();
-
-    /**
-     * Verify if is mandatory
-     * @return
-     */
-    boolean isMandatory();
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 }

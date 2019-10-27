@@ -13,32 +13,23 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.component.wizard.event;
+package org.erpya.component.window.event;
+
+import org.erpya.component.window.WindowManager;
+
+import java.util.EventObject;
 
 /**
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
- *	Add event listener for wizard
+ *		Add event listener for activity_wizard
  */
-public interface WizardEventListener {
-
-    /**
-     * Fire event when wizard is started
-     * @param ev
-     * @return void
-     */
-    void onStart(WizardEvent ev);
+public class WindowEvent extends EventObject {
 
 	/**
-	 * Fire event when validate
-	 * @param ev
-	 * @return void
+	 * Defaul constructor
+	 * @param source
 	 */
-	void onValidate(WizardEvent ev);
-
-    /**
-     * Fire event when finish is done
-     * @param ev
-     * @return void
-     */
-    void onFinish(WizardEvent ev);
+	public WindowEvent(WindowManager source) {
+		super(source);
+	}
 }

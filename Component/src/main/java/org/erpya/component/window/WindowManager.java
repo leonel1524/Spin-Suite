@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.component.wizard;
+package org.erpya.component.window;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,24 +21,22 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import org.erpya.component.R;
 import org.erpya.component.base.CustomPagerAdapter;
 import org.erpya.component.base.CustomViewPager;
-import org.erpya.component.base.IWizardStep;
-import org.erpya.component.wizard.event.WizardEvent;
-import org.erpya.component.wizard.event.WizardEventListener;
+import org.erpya.component.base.ITab;
+import org.erpya.component.window.event.WindowEvent;
+import org.erpya.component.window.event.WindowEventListener;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Dynamic wizard
+ * Dynamic activity_wizard
  */
-public abstract class Wizard extends AppCompatActivity {
+public abstract class WindowManager extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -49,10 +47,6 @@ public abstract class Wizard extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private CustomPagerAdapter sectionsPagerAdapter;
-    /** Previous Action */
-    private Button previousAction;
-    /** Next Action */
-    private Button nextAction;
     /** Is last action  */
     private boolean isLastAction;
     /**
@@ -60,7 +54,7 @@ public abstract class Wizard extends AppCompatActivity {
      */
     private CustomViewPager viewPagerController;
     /**	Event Listener	*/
-    private List<WizardEventListener> listeners = new ArrayList<WizardEventListener>();
+    private List<WindowEventListener> listeners = new ArrayList<WindowEventListener>();
     /** Events  */
     private final int VALIDATE = 0;
     private final int START = 1;
@@ -69,33 +63,17 @@ public abstract class Wizard extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.wizard);
+        setContentView(getContentView());
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         sectionsPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
         sectionsPagerAdapter.setArguments(getIntent().getExtras());
-        //  Get Previous Action
-        previousAction = findViewById(R.id.PreviousAction);
-        previousAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                previousAction();
-            }
-        });
-        //  Get next Action
-        nextAction = findViewById(R.id.NextAction);
-        nextAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextAction();
-            }
-        });
         //  Add Steps
-        initWizard();
+        setupTabs();
         // Set up the ViewPager with the sections adapter.
         viewPagerController = findViewById(R.id.container);
         viewPagerController.setAdapter(sectionsPagerAdapter);
-        viewPagerController.setEnableScroll(false);
+        viewPagerController.setEnableScroll(true);
         //  Add listener
         viewPagerController.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -123,35 +101,53 @@ public abstract class Wizard extends AppCompatActivity {
      * @param position
      */
     private void changeViewText(int position) {
-        //  for previous action
-        if(position == 0) {
-            previousAction.setVisibility(View.INVISIBLE);
-        } else {
-            previousAction.setVisibility(View.VISIBLE);
-        }
         //  For next action
         if((position + 1) == sectionsPagerAdapter.getCount()) {
-            nextAction.setText(R.string.Action_Finish);
             isLastAction = true;
         } else {
-            nextAction.setText(R.string.Action_Next);
             isLastAction = false;
         }
+        //  Fire change tab
+        changeTabAction(position);
+    }
+
+    /**
+     * Get tab count
+     * @return
+     */
+    protected int getCount() {
+        return sectionsPagerAdapter.getCount();
+    }
+
+    /**
+     * Verify last action
+     * @return
+     */
+    protected boolean isLastAction() {
+        return isLastAction;
+    }
+
+    /**
+     * Please implement this method for custom view
+     * @return
+     */
+    protected int getContentView() {
+        return R.layout.activity_wizard;
     }
 
     /**
      * Previous Action
      */
-    private void previousAction() {
+    protected void previousAction() {
         viewPagerController.setCurrentItem(viewPagerController.getCurrentItem() - 1);
     }
 
     /**
      * Next Action
      */
-    private void nextAction() {
+    protected void nextAction() {
         int currentStep = viewPagerController.getCurrentItem();
-        GenericWizardStep step = (GenericWizardStep) sectionsPagerAdapter.getStepDefinition(currentStep);
+        GenericTab step = (GenericTab) sectionsPagerAdapter.getStepDefinition(currentStep);
         boolean isValid = step.validateIt();
         fireDeviceEvent(VALIDATE);
         if(step.isMandatory()) {
@@ -195,22 +191,29 @@ public abstract class Wizard extends AppCompatActivity {
      * Add step for view
      * @param step
      */
-    public void addStep(IWizardStep step) {
+    protected void addTab(ITab step) {
         sectionsPagerAdapter.addStep(step);
     }
 
     /**
      * Initialize here child
-     * Add all Steps
+     * Add all Tabs
      */
-    public abstract void initWizard();
+    protected abstract void setupTabs();
+
+    /**
+     * Setup all action buttons
+     */
+    protected abstract void setupActions();
+
+    protected abstract void changeTabAction(int position);
 
     /**
      * Add Listener
      * @param listener
      * @return void
      */
-    public void addDeviceListener(WizardEventListener listener) {
+    public void addDeviceListener(WindowEventListener listener) {
         listeners.add(listener);
     }
 
@@ -219,7 +222,7 @@ public abstract class Wizard extends AppCompatActivity {
      * @param listener
      * @return void
      */
-    public void removeDeviceListener(WizardEventListener listener) {
+    public void removeDeviceListener(WindowEventListener listener) {
         listeners.remove(listener);
     }
 
@@ -229,11 +232,11 @@ public abstract class Wizard extends AppCompatActivity {
      * @return void
      */
     private void fireDeviceEvent(int eventType) {
-        WizardEvent eventSource = new WizardEvent(this);
+        WindowEvent eventSource = new WindowEvent(this);
         //	Get Iterator
-        Iterator<WizardEventListener> iterator = listeners.iterator();
+        Iterator<WindowEventListener> iterator = listeners.iterator();
         while(iterator.hasNext()) {
-            WizardEventListener listener = ((WizardEventListener) iterator.next());
+            WindowEventListener listener = ((WindowEventListener) iterator.next());
             //	Iterate
             if(eventType == VALIDATE) {
                 listener.onValidate(eventSource);

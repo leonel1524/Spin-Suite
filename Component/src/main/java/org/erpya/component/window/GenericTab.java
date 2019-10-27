@@ -13,13 +13,13 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.component.wizard;
+package org.erpya.component.window;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import org.erpya.base.model.InfoField;
-import org.erpya.component.base.IWizardStep;
+import org.erpya.component.base.ITab;
 import org.erpya.component.base.IWizardStepPage;
 
 import java.lang.reflect.Constructor;
@@ -28,11 +28,11 @@ import java.util.List;
 
 /**
  * @author Yamel Senih, ysenih@erpya.com, http://www.erpya.com
- * Generic Wizard Step
+ * Generic WindowManager Step
  */
-public class GenericWizardStep implements IWizardStep {
+public class GenericTab implements ITab {
 
-    public GenericWizardStep() {
+    public GenericTab() {
         nextStep = -1;
         fields = new ArrayList<InfoField>();
     }
@@ -43,7 +43,7 @@ public class GenericWizardStep implements IWizardStep {
     private int nextStep;
     /** Title of Step   */
     private String title;
-    /** Help to show for Wizard Step    */
+    /** Help to show for WindowManager Step    */
     private String help;
     /** Fields  */
     private List<InfoField> fields;
@@ -57,8 +57,8 @@ public class GenericWizardStep implements IWizardStep {
     @Override
     public Fragment newInstance(Bundle savedInstanceState) {
         step = getInstance();
-        if(step instanceof WizardStep) {
-            WizardStep genericStep = (WizardStep) step;
+        if(step instanceof Tab) {
+            Tab genericStep = (Tab) step;
             genericStep.setName(title);
             genericStep.setHelp(help);
             genericStep.setTableName(tableName);
@@ -148,14 +148,14 @@ public class GenericWizardStep implements IWizardStep {
     }
 
     /**
-     * Get Wizard Step
+     * Get WindowManager Step
      * @return
      */
     private IWizardStepPage getInstance() {
         //	Not yet implemented
         if (customClass == null
                 || !IWizardStepPage.class.isAssignableFrom(customClass)) {
-            return new WizardStep();
+            return new Tab();
         } else {
             //
             Constructor<?> constructor = null;

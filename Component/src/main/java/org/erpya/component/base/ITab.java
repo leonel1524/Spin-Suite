@@ -13,35 +13,44 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.app.arduino.initialsetup;
+package org.erpya.component.base;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import org.erpya.component.window.Tab;
+import android.support.v4.app.Fragment;
 
 /**
- * Custom Step for acknowledgment
+ * Contract for determine standard methods to be implemented for Fragments used on WindowManager
  */
-public class DeviceAcknowledgment extends Tab {
+public interface ITab {
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
+     * New instance for load
+     * @param savedInstanceState
+     * @return
      */
-    public DeviceAcknowledgment() {
-    }
+    Fragment newInstance(Bundle savedInstanceState);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
+    /**
+     * Get next fragment item position
+     * @return
+     */
+    int getNextItem();
 
-    @Override
-    public boolean validateStep() {
-        return super.validateStep();
-    }
+    /**
+     * This method is called from next action buttom
+     * @return true if is ok
+     */
+    boolean validateIt();
+
+    /**
+     * Get Title for it
+     * @return
+     */
+    String getTitle();
+
+    /**
+     * Verify if is mandatory
+     * @return
+     */
+    boolean isMandatory();
 }

@@ -7,7 +7,7 @@
     android:id="@+id/parent"
     style="?android:attr/textAppearanceLarge"
     android:padding="16dp"
-    tools:context=".wizard.WizardStep">
+    tools:context=".window.Tab">
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/StepName"
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        android:text="@string/WIFIDetail"
+        android:text="@string/app_name"
         tools:context=".DeviceDetailFragment" />
 
 </LinearLayout>

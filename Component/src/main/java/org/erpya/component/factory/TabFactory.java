@@ -18,33 +18,33 @@ package org.erpya.component.factory;
 import android.content.Context;
 
 import org.erpya.base.model.InfoField;
-import org.erpya.component.base.IWizardStep;
-import org.erpya.component.wizard.GenericWizardStep;
+import org.erpya.component.base.ITab;
+import org.erpya.component.window.GenericTab;
 
 
 /**
  * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
- * Factory for Wizard Step
+ * Factory for WindowManager Step
  */
-public class WizardStepFactory {
+public class TabFactory {
     /**
      * Standard Constructor for it,
      * @param context is mandatory
      */
-    private WizardStepFactory(Context context) {
-        step = new GenericWizardStep();
+    private TabFactory(Context context) {
+        step = new GenericTab();
     }
 
     /** Dynamic Step for load   */
-    private GenericWizardStep step;
+    private GenericTab step;
 
     /**
      * Create Field
      * @param context
      * @return
      */
-    public static WizardStepFactory createStep(Context context) {
-        return new WizardStepFactory(context);
+    public static TabFactory createTab(Context context) {
+        return new TabFactory(context);
     }
 
     /**
@@ -52,7 +52,7 @@ public class WizardStepFactory {
      * @param title
      * @return
      */
-    public WizardStepFactory withTitle(String title) {
+    public TabFactory withTitle(String title) {
         step.setTitle(title);
         return this;
     }
@@ -62,7 +62,7 @@ public class WizardStepFactory {
      * @param tableName
      * @return
      */
-    public WizardStepFactory withTableName(String tableName) {
+    public TabFactory withTableName(String tableName) {
         step.setTableName(tableName);
         return this;
     }
@@ -72,7 +72,7 @@ public class WizardStepFactory {
      * @param help
      * @return
      */
-    public WizardStepFactory withHelp(String help) {
+    public TabFactory withHelp(String help) {
         step.setHelp(help);
         return this;
     }
@@ -82,7 +82,7 @@ public class WizardStepFactory {
      * @param isMandatory
      * @return
      */
-    public WizardStepFactory withMandatory(boolean isMandatory) {
+    public TabFactory withMandatory(boolean isMandatory) {
         step.setMandatory(isMandatory);
         return this;
     }
@@ -92,7 +92,7 @@ public class WizardStepFactory {
      * @param field
      * @return
      */
-    public WizardStepFactory withAdditionalField(InfoField field) {
+    public TabFactory withAdditionalField(InfoField field) {
         step.addField(field);
         return this;
     }
@@ -102,7 +102,7 @@ public class WizardStepFactory {
      * @param customClass
      * @return
      */
-    public WizardStepFactory withCustomClass(Class<?> customClass) {
+    public TabFactory withCustomClass(Class<?> customClass) {
         step.setCustomClass(customClass);
         return this;
     }
@@ -111,7 +111,7 @@ public class WizardStepFactory {
      * Get Step definition
      * @return
      */
-    public IWizardStep getStep() {
+    public ITab getStep() {
         return step;
     }
 }

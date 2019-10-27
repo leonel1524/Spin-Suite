@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.erpya.component.wizard;
+package org.erpya.component.window;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,7 +30,6 @@ import org.erpya.base.model.POInfo;
 import org.erpya.base.util.Condition;
 import org.erpya.base.util.Criteria;
 import org.erpya.base.util.Util;
-import org.erpya.base.util.ValueUtil;
 import org.erpya.component.R;
 import org.erpya.component.base.IWizardStepPage;
 import org.erpya.component.factory.FieldFactory;
@@ -39,9 +38,9 @@ import org.erpya.component.field.Field;
 import java.util.List;
 
 /**
- * This Fragment is for add dynamically a step for wizard
+ * This Fragment is for add dynamically a step for activity_wizard
  */
-public class WizardStep extends Fragment implements IWizardStepPage {
+public class Tab extends Fragment implements IWizardStepPage {
 
     /**
      * The dummy deviceName this fragment is presenting.
@@ -59,7 +58,7 @@ public class WizardStep extends Fragment implements IWizardStepPage {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public WizardStep() {
+    public Tab() {
 
     }
 
