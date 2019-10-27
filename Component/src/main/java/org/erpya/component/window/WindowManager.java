@@ -49,6 +49,8 @@ public abstract class WindowManager extends AppCompatActivity {
     private CustomPagerAdapter sectionsPagerAdapter;
     /** Is last action  */
     private boolean isLastAction;
+    /** Position    */
+    private int currentPosition;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -59,6 +61,7 @@ public abstract class WindowManager extends AppCompatActivity {
     private final int VALIDATE = 0;
     private final int START = 1;
     private final int FINISH = 2;
+    private final int CHANGE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,7 @@ public abstract class WindowManager extends AppCompatActivity {
 
             }
         });
+        setupActions();
         //  Default
         changeViewText(0);
         fireDeviceEvent(START);
@@ -107,8 +111,15 @@ public abstract class WindowManager extends AppCompatActivity {
         } else {
             isLastAction = false;
         }
-        //  Fire change tab
-        changeTabAction(position);
+        fireDeviceEvent(CHANGE);
+    }
+
+    /**
+     * Get current Item position
+     * @return
+     */
+    public int getCurrentItem() {
+        return viewPagerController.getCurrentItem();
     }
 
     /**
@@ -140,6 +151,7 @@ public abstract class WindowManager extends AppCompatActivity {
      */
     protected void previousAction() {
         viewPagerController.setCurrentItem(viewPagerController.getCurrentItem() - 1);
+        fireDeviceEvent(CHANGE);
     }
 
     /**
@@ -157,6 +169,7 @@ public abstract class WindowManager extends AppCompatActivity {
         } else {
             viewPagerController.setCurrentItem(currentStep + 1);
         }
+        fireDeviceEvent(CHANGE);
         //  Close if is last
         if((currentStep + 1) == sectionsPagerAdapter.getCount()
                 && isLastAction) {
@@ -206,14 +219,12 @@ public abstract class WindowManager extends AppCompatActivity {
      */
     protected abstract void setupActions();
 
-    protected abstract void changeTabAction(int position);
-
     /**
      * Add Listener
      * @param listener
      * @return void
      */
-    public void addDeviceListener(WindowEventListener listener) {
+    public void addWindowListener(WindowEventListener listener) {
         listeners.add(listener);
     }
 
@@ -222,7 +233,7 @@ public abstract class WindowManager extends AppCompatActivity {
      * @param listener
      * @return void
      */
-    public void removeDeviceListener(WindowEventListener listener) {
+    public void removeWindowListener(WindowEventListener listener) {
         listeners.remove(listener);
     }
 
@@ -242,6 +253,8 @@ public abstract class WindowManager extends AppCompatActivity {
                 listener.onValidate(eventSource);
             } else if(eventType == START) {
                 listener.onStart(eventSource);
+            } else if(eventType == CHANGE) {
+                listener.onChange(eventSource);
             } else if(eventType == FINISH) {
                 listener.onFinish(eventSource);
             }

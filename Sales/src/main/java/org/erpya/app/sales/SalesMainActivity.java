@@ -27,6 +27,7 @@ import org.erpya.base.database.support.CouchDBLite_2_0_Support;
 import org.erpya.component.factory.FieldFactory;
 import org.erpya.base.util.DisplayType;
 import org.erpya.base.util.Env;
+import org.erpya.component.menu.MainMenu;
 import org.erpya.component.window.Window;
 import org.erpya.security.data.model.SessionInfo;
 import org.erpya.security.ui.login.Login;
@@ -77,7 +78,7 @@ public class SalesMainActivity extends AppCompatActivity {
     }
 
     private void startHome() {
-        Intent intent = new Intent(SalesMainActivity.this, Window.class);
+        Intent intent = new Intent(SalesMainActivity.this, MainMenu.class);
         startActivity(intent);
     }
 }

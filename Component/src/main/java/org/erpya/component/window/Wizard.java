@@ -16,13 +16,14 @@
 package org.erpya.component.window;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
 import org.erpya.component.R;
+import org.erpya.component.window.event.WindowEvent;
+import org.erpya.component.window.event.WindowEventListener;
 
-public class Wizard extends WindowManager {
+public abstract class Wizard extends WindowManager implements WindowEventListener {
 
     /** Previous Action */
     private Button previousAction;
@@ -32,26 +33,11 @@ public class Wizard extends WindowManager {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_window);
-//        CustomPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-//        ViewPager viewPager = findViewById(R.id.container);
-//        viewPager.setAdapter(sectionsPagerAdapter);
-//        TabLayout tabs = findViewById(R.id.tabs);
-//        tabs.setupWithViewPager(viewPager);
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
     }
 
     @Override
-    public void setupTabs() {
-
+    protected int getContentView() {
+        return org.erpya.component.R.layout.activity_wizard;
     }
 
     @Override
@@ -72,20 +58,32 @@ public class Wizard extends WindowManager {
                 nextAction();
             }
         });
+        addWindowListener(this);
     }
 
     @Override
-    protected void changeTabAction(int position) {
-        //  for previous action
-        if(position == 0) {
-            previousAction.setVisibility(View.INVISIBLE);
-        } else {
+    public void onStart(WindowEvent ev) {
+        previousAction.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onValidate(WindowEvent ev) {
+
+    }
+
+    @Override
+    public void onFinish(WindowEvent ev) {
+        nextAction.setText(R.string.Action_Finish);
+    }
+
+    @Override
+    public void onChange(WindowEvent ev) {
+        int position = getCurrentItem();
+        if(position > 0) {
             previousAction.setVisibility(View.VISIBLE);
         }
         //  For next action
-        if(isLastAction()) {
-            nextAction.setText(R.string.Action_Finish);
-        } else {
+        if(!isLastAction()) {
             nextAction.setText(R.string.Action_Next);
         }
     }

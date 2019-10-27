@@ -20,14 +20,12 @@ import org.erpya.base.util.DisplayType;
 import org.erpya.component.base.ITab;
 import org.erpya.component.factory.FieldFactory;
 import org.erpya.component.factory.TabFactory;
-import org.erpya.component.window.WindowManager;
-import org.erpya.component.window.event.WindowEvent;
-import org.erpya.component.window.event.WindowEventListener;
+import org.erpya.component.window.Wizard;
 
 /**
  * Custom activity_wizard for add new device
  */
-public class AddDeviceWindowManager extends WindowManager implements WindowEventListener {
+public class AddDeviceWindowManager extends Wizard {
 
     @Override
     public void setupTabs() {
@@ -110,25 +108,5 @@ public class AddDeviceWindowManager extends WindowManager implements WindowEvent
                         .getFieldDefinition())
                 .getStep();
         addTab(wifiInfoStep);
-    }
-
-    @Override
-    protected int getContentView() {
-        return org.erpya.component.R.layout.activity_wizard;
-    }
-
-    @Override
-    public void onStart(WindowEvent ev) {
-
-    }
-
-    @Override
-    public void onValidate(WindowEvent ev) {
-
-    }
-
-    @Override
-    public void onFinish(WindowEvent ev) {
-
     }
 }

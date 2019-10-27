@@ -41,4 +41,10 @@ public interface WindowEventListener {
      * @return void
      */
     void onFinish(WindowEvent ev);
+
+	/**
+	 * Fire event for change view
+	 * @param ev
+	 */
+	void onChange(WindowEvent ev);
 }
