@@ -88,6 +88,7 @@ public class EnrollmentService {
     public void closeServiceProvider() throws InterruptedException {
         if(connectionChannel != null) {
             connectionChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+            connectionChannel = null;
         }
     }
 

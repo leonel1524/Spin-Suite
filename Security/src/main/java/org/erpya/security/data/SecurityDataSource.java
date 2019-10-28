@@ -74,7 +74,7 @@ public class SecurityDataSource {
             if(user != null) {
                 RegisteredUser fakeUser =
                         new RegisteredUser(user.getName(), user.getLastName(), user.getUserName(), user.getEMail(), user.getToken());
-                AccessService.getInstance().closeServiceProvider();
+                EnrollmentService.getInstance().closeServiceProvider();
                 return new Result.Success<>(fakeUser);
             }
             throw new Exception("User / EMail");
@@ -110,7 +110,7 @@ public class SecurityDataSource {
                                 null, SessionInfo.getInstance().getUserInfo().getUserName(),
                                 SessionInfo.getInstance().getUserInfo().getEMail(),
                                 SessionInfo.getInstance().getSessionUuid());
-                AccessService.getInstance().closeServiceProvider();
+                EnrollmentService.getInstance().closeServiceProvider();
                 return new Result.Success<>(fakeUser);
             }
             throw new Exception("User / EMail");
