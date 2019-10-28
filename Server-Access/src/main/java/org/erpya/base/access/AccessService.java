@@ -86,7 +86,7 @@ public class AccessService {
      * Close Service Provider
      */
     public void closeServiceProvider() throws InterruptedException {
-        if(connectionChannel == null) {
+        if(connectionChannel != null) {
             connectionChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
         }
     }
