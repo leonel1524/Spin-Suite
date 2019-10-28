@@ -16,27 +16,37 @@
 package org.erpya.component.window;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.TabLayout;
 
-public class Window extends AppCompatActivity {
+import org.erpya.component.R;
+
+public class Window extends WindowManager {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_window);
-//        CustomPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-//        ViewPager viewPager = findViewById(R.id.container);
-//        viewPager.setAdapter(sectionsPagerAdapter);
-//        TabLayout tabs = findViewById(R.id.tabs);
-//        tabs.setupWithViewPager(viewPager);
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+    }
+
+
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_window;
+    }
+
+    @Override
+    protected void setupTabs() {
+
+    }
+
+    @Override
+    protected void setupAdapter() {
+        TabLayout tabs = super.findViewById(R.id.tabs);
+        tabs.setupWithViewPager(getViewPagerController());
+        setEnableScroll(true);
+    }
+
+    @Override
+    protected void setupActions() {
+
     }
 }

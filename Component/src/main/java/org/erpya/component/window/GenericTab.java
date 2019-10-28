@@ -48,7 +48,7 @@ public class GenericTab implements ITab {
     /** Fields  */
     private List<InfoField> fields;
     /** Step    */
-    private IWizardStepPage step;
+    private IWizardStepPage tab;
     /** Table Name  */
     private String tableName;
     /** Custom Class    */
@@ -56,9 +56,9 @@ public class GenericTab implements ITab {
 
     @Override
     public Fragment newInstance(Bundle savedInstanceState) {
-        step = getInstance();
-        if(step instanceof Tab) {
-            Tab genericStep = (Tab) step;
+        tab = getInstance();
+        if(tab instanceof Tab) {
+            Tab genericStep = (Tab) tab;
             genericStep.setName(title);
             genericStep.setHelp(help);
             genericStep.setTableName(tableName);
@@ -66,9 +66,9 @@ public class GenericTab implements ITab {
         }
 
         if(savedInstanceState != null) {
-            ((Fragment) step).setArguments(savedInstanceState);
+            ((Fragment) tab).setArguments(savedInstanceState);
         }
-        return (Fragment) step;
+        return (Fragment) tab;
     }
 
     @Override
@@ -78,7 +78,18 @@ public class GenericTab implements ITab {
 
     @Override
     public boolean validateIt() {
-        return step.validateStep();
+        if(tab == null) {
+            return true;
+        }
+        return tab.validate();
+    }
+
+    @Override
+    public boolean saveIt() {
+        if(tab == null) {
+            return true;
+        }
+        return tab.save();
     }
 
     @Override
@@ -108,7 +119,7 @@ public class GenericTab implements ITab {
     }
 
     /**
-     * Set help for step
+     * Set help for tab
      * @param help
      */
     public void setHelp(String help) {
@@ -135,8 +146,8 @@ public class GenericTab implements ITab {
      * Get Step fragment
      * @return
      */
-    public IWizardStepPage getStep() {
-        return step;
+    public IWizardStepPage getTab() {
+        return tab;
     }
 
     /**

@@ -32,7 +32,8 @@ public class AddDeviceWindowManager extends Wizard {
         //  Custom Device Acknowledgment
         ITab customStep = TabFactory.createTab(getApplicationContext())
                 .withCustomClass(DeviceAcknowledgment.class)
-                .getStep();
+                .withTitle("Device Acknowledgment")
+                .getTab();
         addTab(customStep);
         //  Device Definition step
         ITab deviceDefinitionStep = TabFactory.createTab(getApplicationContext())
@@ -71,7 +72,7 @@ public class AddDeviceWindowManager extends Wizard {
                         .withUpdateable(true)
                         .withDisplayType(DisplayType.TIME)
                         .getFieldDefinition())
-                .getStep();
+                .getTab();
         addTab(deviceDefinitionStep);
         //  WIFI Info Step
         ITab wifiInfoStep = TabFactory.createTab(getApplicationContext())
@@ -106,7 +107,7 @@ public class AddDeviceWindowManager extends Wizard {
                         .withMandatory(true)
                         .withDisplayType(DisplayType.TABLE_DIR)
                         .getFieldDefinition())
-                .getStep();
+                .getTab();
         addTab(wifiInfoStep);
     }
 }

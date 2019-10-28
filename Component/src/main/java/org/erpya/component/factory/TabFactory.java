@@ -32,11 +32,11 @@ public class TabFactory {
      * @param context is mandatory
      */
     private TabFactory(Context context) {
-        step = new GenericTab();
+        tab = new GenericTab();
     }
 
     /** Dynamic Step for load   */
-    private GenericTab step;
+    private GenericTab tab;
 
     /**
      * Create Field
@@ -53,7 +53,7 @@ public class TabFactory {
      * @return
      */
     public TabFactory withTitle(String title) {
-        step.setTitle(title);
+        tab.setTitle(title);
         return this;
     }
 
@@ -63,7 +63,7 @@ public class TabFactory {
      * @return
      */
     public TabFactory withTableName(String tableName) {
-        step.setTableName(tableName);
+        tab.setTableName(tableName);
         return this;
     }
 
@@ -73,7 +73,7 @@ public class TabFactory {
      * @return
      */
     public TabFactory withHelp(String help) {
-        step.setHelp(help);
+        tab.setHelp(help);
         return this;
     }
 
@@ -83,7 +83,7 @@ public class TabFactory {
      * @return
      */
     public TabFactory withMandatory(boolean isMandatory) {
-        step.setMandatory(isMandatory);
+        tab.setMandatory(isMandatory);
         return this;
     }
 
@@ -93,7 +93,7 @@ public class TabFactory {
      * @return
      */
     public TabFactory withAdditionalField(InfoField field) {
-        step.addField(field);
+        tab.addField(field);
         return this;
     }
 
@@ -103,7 +103,7 @@ public class TabFactory {
      * @return
      */
     public TabFactory withCustomClass(Class<?> customClass) {
-        step.setCustomClass(customClass);
+        tab.setCustomClass(customClass);
         return this;
     }
 
@@ -111,7 +111,7 @@ public class TabFactory {
      * Get Step definition
      * @return
      */
-    public ITab getStep() {
-        return step;
+    public ITab getTab() {
+        return tab;
     }
 }

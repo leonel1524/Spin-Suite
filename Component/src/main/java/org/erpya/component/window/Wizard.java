@@ -16,19 +16,22 @@
 package org.erpya.component.window;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
-import android.widget.Button;
 
 import org.erpya.component.R;
 import org.erpya.component.window.event.WindowEvent;
 import org.erpya.component.window.event.WindowEventListener;
 
+/**
+ * Standard Wizard implementation
+ */
 public abstract class Wizard extends WindowManager implements WindowEventListener {
 
     /** Previous Action */
-    private Button previousAction;
+    private FloatingActionButton previousAction;
     /** Next Action */
-    private Button nextAction;
+    private FloatingActionButton nextAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +40,18 @@ public abstract class Wizard extends WindowManager implements WindowEventListene
 
     @Override
     protected int getContentView() {
-        return org.erpya.component.R.layout.activity_wizard;
+        return R.layout.activity_wizard;
+    }
+
+    @Override
+    protected void setupAdapter() {
+        setEnableScroll(false);
     }
 
     @Override
     public void setupActions() {
         //  Get Previous Action
-        previousAction = findViewById(R.id.PreviousAction);
+        previousAction = findViewById(R.id.previous_action);
         previousAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +59,7 @@ public abstract class Wizard extends WindowManager implements WindowEventListene
             }
         });
         //  Get next Action
-        nextAction = findViewById(R.id.NextAction);
+        nextAction = findViewById(R.id.next_action);
         nextAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +71,7 @@ public abstract class Wizard extends WindowManager implements WindowEventListene
 
     @Override
     public void onStart(WindowEvent ev) {
-        previousAction.setVisibility(View.INVISIBLE);
+
     }
 
     @Override
@@ -73,7 +81,7 @@ public abstract class Wizard extends WindowManager implements WindowEventListene
 
     @Override
     public void onFinish(WindowEvent ev) {
-        nextAction.setText(R.string.Action_Finish);
+
     }
 
     @Override
@@ -81,10 +89,8 @@ public abstract class Wizard extends WindowManager implements WindowEventListene
         int position = getCurrentItem();
         if(position > 0) {
             previousAction.setVisibility(View.VISIBLE);
-        }
-        //  For next action
-        if(!isLastAction()) {
-            nextAction.setText(R.string.Action_Next);
+        } else {
+            previousAction.setVisibility(View.GONE);
         }
     }
 }

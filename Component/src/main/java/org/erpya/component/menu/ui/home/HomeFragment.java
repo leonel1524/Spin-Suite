@@ -28,6 +28,9 @@ import android.arch.lifecycle.ViewModelProviders;
 
 import org.erpya.component.R;
 
+/**
+ * Load Main Menu from Server
+ */
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;

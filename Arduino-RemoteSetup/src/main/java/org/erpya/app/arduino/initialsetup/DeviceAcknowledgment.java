@@ -41,7 +41,7 @@ public class DeviceAcknowledgment extends Tab {
     }
 
     @Override
-    public boolean validateStep() {
-        return super.validateStep();
+    public boolean validate() {
+        return super.validate();
     }
 }

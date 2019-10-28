@@ -65,7 +65,7 @@ public class Tab extends Fragment implements IWizardStepPage {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.wizard_step, container, false);
+        View rootView = inflater.inflate(R.layout.tab, container, false);
         parent = rootView.findViewById(R.id.parent);
         //  Set Name and Help
         if(!Util.isEmpty(name)) {
@@ -121,12 +121,35 @@ public class Tab extends Fragment implements IWizardStepPage {
     }
 
     @Override
-    public boolean validateStep() {
+    public boolean validate() {
         if(parent == null) {
             return false;
         }
         if(Util.isEmpty(tableName)) { {
            return true;
+        }}
+        int count = parent.getChildCount();
+        for(int i = 0; i < count; i++) {
+            View view = parent.getChildAt(i);
+            if(view instanceof Field) {
+                Field field = (Field) view;
+                boolean isValidField = field.validateValue();
+                if(field.getFieldDefinition().isMandatory()
+                        && !isValidField) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean save() {
+        if(parent == null) {
+            return false;
+        }
+        if(Util.isEmpty(tableName)) { {
+            return true;
         }}
         int count = parent.getChildCount();
         boolean isValid = true;
@@ -148,7 +171,9 @@ public class Tab extends Fragment implements IWizardStepPage {
             }
         }
         //  Save
-        stepModel.saveEx();
+        if(isValid) {
+            stepModel.saveEx();
+        }
         return isValid;
     }
 

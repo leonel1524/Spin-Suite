@@ -49,8 +49,6 @@ public abstract class WindowManager extends AppCompatActivity {
     private CustomPagerAdapter sectionsPagerAdapter;
     /** Is last action  */
     private boolean isLastAction;
-    /** Position    */
-    private int currentPosition;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -76,7 +74,9 @@ public abstract class WindowManager extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         viewPagerController = findViewById(R.id.container);
         viewPagerController.setAdapter(sectionsPagerAdapter);
-        viewPagerController.setEnableScroll(true);
+        viewPagerController.setEnableScroll(false);
+        setupAdapter();
+        setupActions();
         //  Add listener
         viewPagerController.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -94,10 +94,33 @@ public abstract class WindowManager extends AppCompatActivity {
 
             }
         });
-        setupActions();
         //  Default
         changeViewText(0);
         fireDeviceEvent(START);
+    }
+
+    /**
+     * enable page scroll
+     * @param isEnabled
+     */
+    protected void setEnableScroll(boolean isEnabled) {
+        viewPagerController.setEnableScroll(isEnabled);
+    }
+
+    /**
+     * Get view Pager controller
+     * @return
+     */
+    protected CustomViewPager getViewPagerController() {
+        return viewPagerController;
+    }
+
+    /**
+     * Get adapter
+     * @return
+     */
+    protected CustomPagerAdapter getSectionsPagerAdapter() {
+        return sectionsPagerAdapter;
     }
 
     /**
@@ -111,6 +134,9 @@ public abstract class WindowManager extends AppCompatActivity {
         } else {
             isLastAction = false;
         }
+        int currentStep = viewPagerController.getCurrentItem();
+        ITab tab = sectionsPagerAdapter.getStepDefinition(currentStep);
+        tab.saveIt();
         fireDeviceEvent(CHANGE);
     }
 
@@ -139,14 +165,6 @@ public abstract class WindowManager extends AppCompatActivity {
     }
 
     /**
-     * Please implement this method for custom view
-     * @return
-     */
-    protected int getContentView() {
-        return R.layout.activity_wizard;
-    }
-
-    /**
      * Previous Action
      */
     protected void previousAction() {
@@ -159,10 +177,10 @@ public abstract class WindowManager extends AppCompatActivity {
      */
     protected void nextAction() {
         int currentStep = viewPagerController.getCurrentItem();
-        GenericTab step = (GenericTab) sectionsPagerAdapter.getStepDefinition(currentStep);
-        boolean isValid = step.validateIt();
+        ITab tab = sectionsPagerAdapter.getStepDefinition(currentStep);
+        boolean isValid = tab.validateIt();
         fireDeviceEvent(VALIDATE);
-        if(step.isMandatory()) {
+        if(tab.isMandatory()) {
             if(isValid) {
                 viewPagerController.setCurrentItem(currentStep + 1);
             }
@@ -215,9 +233,21 @@ public abstract class WindowManager extends AppCompatActivity {
     protected abstract void setupTabs();
 
     /**
+     * Initialize here child
+     * Add all Tabs
+     */
+    protected abstract void setupAdapter();
+
+    /**
      * Setup all action buttons
      */
     protected abstract void setupActions();
+
+    /**
+     * Please implement this method for custom view
+     * @return
+     */
+    protected abstract int getContentView();
 
     /**
      * Add Listener

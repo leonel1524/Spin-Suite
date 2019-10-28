@@ -43,6 +43,12 @@ public interface ITab {
     boolean validateIt();
 
     /**
+     * Save current tab
+     * @return
+     */
+    boolean saveIt();
+
+    /**
      * Get Title for it
      * @return
      */
