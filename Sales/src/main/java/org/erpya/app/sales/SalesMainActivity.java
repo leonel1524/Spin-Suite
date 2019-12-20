@@ -17,10 +17,10 @@ package org.erpya.app.sales;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 
 import org.erpya.base.database.support.CouchDBLite_2_0_Support;
@@ -28,7 +28,6 @@ import org.erpya.component.factory.FieldFactory;
 import org.erpya.base.util.DisplayType;
 import org.erpya.base.util.Env;
 import org.erpya.component.menu.MainMenu;
-import org.erpya.component.window.Window;
 import org.erpya.security.data.model.SessionInfo;
 import org.erpya.security.ui.login.Login;
 import org.erpya.security.util.RSACrypt;
